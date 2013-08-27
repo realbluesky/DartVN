@@ -1,0 +1,26 @@
+options:
+  name: Stasis Concerto
+  stage_id: vnStage #id of the canvas containing div
+  scale: SHOW_ALL #SHOW_ALL, NO_SCALE, NO_BORDER, EXACT_FIT
+  align: NONE #NONE, LEFT, RIGHT, TOP, TOP_LEFT, TOP_RIGHT, BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT
+  width: 1920
+  height: 1080
+characters:
+  gumshoe:
+    name: Gum Shoe
+    emotions:
+      laughing:
+        src: ../assets/image/gumshoe/gumshoe.laughing.png
+        atlas: ../assets/image/gumshoe/gumshoe.laughing.json
+        frames: 8
+        width: 180
+        height: 200
+        timing: [2,.2]
+      tired:
+        src: ../assets/image/gumshoe/tired7.png
+        frames: 7
+        width: 180
+        height: 200
+        timing: [.4,.4,.4,.5,2,.6]
+script:
+  - [bg, 0xFF000000]

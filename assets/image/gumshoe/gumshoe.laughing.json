@@ -1,0 +1,76 @@
+{"frames": [
+
+{
+	"filename": "laughing1",
+	"frame": {"x":1242,"y":2,"w":158,"h":174},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":26,"w":158,"h":174},
+	"sourceSize": {"w":158,"h":174}
+},
+{
+	"filename": "laughing2",
+	"frame": {"x":1066,"y":2,"w":158,"h":174},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":26,"w":158,"h":174},
+	"sourceSize": {"w":158,"h":174}
+},
+{
+	"filename": "laughing3",
+	"frame": {"x":536,"y":2,"w":158,"h":176},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":24,"w":158,"h":176},
+	"sourceSize": {"w":158,"h":176}
+},
+{
+	"filename": "laughing4",
+	"frame": {"x":358,"y":2,"w":158,"h":176},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":24,"w":158,"h":176},
+	"sourceSize": {"w":158,"h":176}
+},
+{
+	"filename": "laughing5",
+	"frame": {"x":180,"y":2,"w":158,"h":176},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":24,"w":158,"h":176},
+	"sourceSize": {"w":158,"h":176}
+},
+{
+	"filename": "laughing6",
+	"frame": {"x":2,"y":2,"w":158,"h":176},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":24,"w":158,"h":176},
+	"sourceSize": {"w":158,"h":176}
+},
+{
+	"filename": "laughing7",
+	"frame": {"x":890,"y":2,"w":158,"h":174},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":26,"w":158,"h":174},
+	"sourceSize": {"w":158,"h":174}
+},
+{
+	"filename": "laughing8",
+	"frame": {"x":714,"y":2,"w":158,"h":174},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":11,"y":26,"w":158,"h":174},
+	"sourceSize": {"w":158,"h":174}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "gumshoe.laughing.png",
+	"format": "RGBA8888",
+	"size": {"w":1424,"h":162},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:930d35cff1c7446012816d500ad8dd64:1/1$"
+}
+}

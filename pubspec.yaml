@@ -1,0 +1,8 @@
+name: dartvn
+version: 0.0.0
+author: Alex Gann
+description: Visual Novel engine
+dependencies:
+  browser: any
+  stagexl: any
+  yaml: any
