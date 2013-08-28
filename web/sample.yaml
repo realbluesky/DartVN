@@ -23,4 +23,11 @@ characters:
         height: 200
         timing: [.4,.4,.4,.5,2,.6]
 script:
-  - [bg, 0xFF000000]
+  # verbs and their arguments
+  # general structure [primary verb, sub-verb, value, {options}]
+  # bg "set background..."
+  #   color "...to solid color" [bg, color, 0xFF000000, {trans: fade, ease:linear}]
+  - [bg, color, 0xFF000000, {trans: fade}]
+  - [bg, color, 0xFF0000FF]
+  - [bg, color, 0x44FFFF00, {trans: fade}]
+  - [bg, color, 0xFFFF00FF]

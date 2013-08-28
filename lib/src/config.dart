@@ -6,27 +6,25 @@ class Config {
   VNConfigFunction onConfig;
   Map _config;
   Map characters;
+  VN _vn;
   
-  Config(String configYaml) {
-    var request = HttpRequest.getString(configYaml).then(configure);
+  Map get config => _config;
+  
+  Config(String configYaml, VN vn) {
+    _vn = vn;
+    var request = html.HttpRequest.getString(configYaml).then(configure);
   }
   
   configure(String response) {
     _config = loadYaml(response);
     
     var opt = _config['options'];
-    var canvas = query('#${opt['stage_id']}');
+    var canvas = html.query('#${opt['stage_id']}');
     stage = new Stage('vnStage', canvas, opt['width'], opt['height']);
     //todo load these two from config yaml somehow...
     stage.scaleMode = StageScaleMode.SHOW_ALL;
     stage.align = StageAlign.NONE;
-    //add background container
-    var whitebg = new Bitmap(new BitmapData(opt['width'], opt['height'], false, Color.White));
-    var bg = new Layer();
-    bg.addChild(whitebg);
-    bg.name = 'background';
     
-    stage.addChild(bg);
     var renderLoop = new RenderLoop();
     renderLoop.addStage(stage);
     
@@ -41,6 +39,9 @@ class Config {
       //default emotion to first emotion - keys in map are alphabetically sorted, not order in yaml?
       char.setEmotion(char.emotions.keys.first);
     });
+    
+    stage.addChild(_vn);
+    stage.juggler.add(_vn);
     
     //add script
     script = new Script(_config['script']);
