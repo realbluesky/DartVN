@@ -34,9 +34,11 @@ class VN extends DisplayObjectContainer implements Animatable {
       
       script.next();
 
-      /* working with flipbooks and texture atlas
+      //working with flipbooks and texture atlas
+      /*
       var bitmapDatas = resourceManager.getTextureAtlas('gumshoe.laughing').getBitmapDatas('laughing');
-      var flipBook = new FlipBook(bitmapDatas, 5);
+      var flipBook = new FlipBook(bitmapDatas);
+      flipBook.frameDurations = [2,.2];
       flipBook.x = 200;
       flipBook.y = 200;
       flipBook.play();
@@ -59,6 +61,7 @@ class VN extends DisplayObjectContainer implements Animatable {
     
     if(nextKeys.contains(ke.keyCode)) script.next();
     else if(prevKeys.contains(ke.keyCode)) script.prev();
+    ke.stopImmediatePropagation();
   }
   
   bool advanceTime(num time) {

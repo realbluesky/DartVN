@@ -5,6 +5,9 @@ options:
   align: NONE #NONE, LEFT, RIGHT, TOP, TOP_LEFT, TOP_RIGHT, BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT
   width: 1920
   height: 1080
+assets:
+  naturebg: ../assets/image/naturebg.jpg
+  oceanbg: ../assets/image/oceanbg.jpg
 characters:
   gumshoe:
     name: Gum Shoe
@@ -27,7 +30,9 @@ script:
   # general structure [primary verb, sub-verb, value, {options}]
   # bg "set background..."
   #   color "...to solid color" [bg, color, 0xFF000000, {trans: fade, ease:linear}]
+  #   image "...to image" [bg, image, asset name, {trans: fadethru, color: 0xFF000000}]
   - [bg, color, 0xFF000000, {trans: fade}]
-  - [bg, color, 0xFF0000FF]
-  - [bg, color, 0x44FFFF00, {trans: fade}]
-  - [bg, color, 0xFFFF00FF]
+  - [bg, image, oceanbg, {trans: fadethru, color: 0xFFFFFFFF}]
+  - [bg, image, naturebg, {trans: fadethru, color: 0xFF000000}]
+  - [bg, color, 0xFF112233, {trans: fade}]
+  - [bg, color, 0xFF558842]

@@ -28,6 +28,12 @@ class Config {
     var renderLoop = new RenderLoop();
     renderLoop.addStage(stage);
     
+    //load assets
+    if(_config.containsKey('assets')) {
+      Map assets = _config['assets'];
+      assets.forEach((name, url) => resourceManager.addBitmapData(name, url));
+    }
+    
     //add characters
     _config['characters'].forEach((String charid, Map charmap) {
       Character char = new Character(charid, charmap['name'], {});

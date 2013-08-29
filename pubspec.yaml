@@ -4,5 +4,6 @@ author: Alex Gann
 description: Visual Novel engine
 dependencies:
   browser: any
-  stagexl: any
+  stagexl:
+    git: https://github.com/bp74/StageXL.git
   yaml: any

@@ -10,8 +10,11 @@ packages:
     source: hosted
     version: "0.6.19"
   stagexl:
-    description: stagexl
-    source: hosted
+    description:
+      ref: null
+      resolved-ref: "58d40911c07b03c0e4bc7bb1f027018666c076c7"
+      url: "https://github.com/bp74/StageXL.git"
+    source: git
     version: "0.8.4"
   yaml:
     description: yaml
