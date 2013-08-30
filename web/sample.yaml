@@ -1,5 +1,5 @@
 options:
-  name: Stasis Concerto
+  name: DartVN Sample
   stage_id: vnStage #id of the canvas containing div
   scale: SHOW_ALL #SHOW_ALL, NO_SCALE, NO_BORDER, EXACT_FIT
   align: NONE #NONE, LEFT, RIGHT, TOP, TOP_LEFT, TOP_RIGHT, BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT

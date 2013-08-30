@@ -17,8 +17,8 @@ class VN extends DisplayObjectContainer implements Animatable {
 
   Juggler _juggler;
   GlassPlate _glassPlate;
-  
   Juggler get juggler => _juggler;
+  List<bool> prevNext = [false,true];
 
   VN(String configYaml) {
     resourceManager = new ResourceManager();
@@ -50,7 +50,7 @@ class VN extends DisplayObjectContainer implements Animatable {
   }
   
   _onMouseClick(MouseEvent me) {
-    script.next();
+    if(prevNext[1]) script.next();
   }
   
   _onKeyDown(KeyboardEvent ke) {
@@ -59,9 +59,9 @@ class VN extends DisplayObjectContainer implements Animatable {
     
     final List prevKeys = [html.KeyCode.LEFT, html.KeyCode.UP, html.KeyCode.PAGE_UP];
     
-    if(nextKeys.contains(ke.keyCode)) script.next();
-    else if(prevKeys.contains(ke.keyCode)) script.prev();
-    ke.stopImmediatePropagation();
+    if(nextKeys.contains(ke.keyCode) && prevNext[1]) { script.next(); ke.stopImmediatePropagation(); }
+    else if(prevKeys.contains(ke.keyCode) && prevNext[0]) { script.prev(); ke.stopImmediatePropagation(); }
+    
   }
   
   bool advanceTime(num time) {

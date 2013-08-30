@@ -51,14 +51,14 @@ class Script {
         
         newBackground.name = 'background';
         if(options.containsKey('trans')) {
+          vn.prevNext = [false,false];
+          Tween tween;
           switch(options['trans']) {
             case 'fade':
               newBackground.alpha = 0;
               vn.addChild(newBackground);
-              vn.juggler.tween(newBackground, 1.0, TransitionFunction.easeInQuadratic).animate.alpha.to(1.0);
-              if(currentBackground != null) vn.juggler
-                ..tween(currentBackground, 1.0, TransitionFunction.easeInQuadratic).animate.alpha.to(0.0)
-                ..delayCall(() => vn.removeChild(currentBackground), 1.0);
+              tween = vn.juggler.tween(newBackground, 1.0, TransitionFunction.easeInQuadratic);
+              tween.animate.alpha.to(1.0);
               break;
             case 'fadethru':
               Bitmap thruBackground;
@@ -67,23 +67,21 @@ class Script {
               newBackground.alpha = 0;
               vn.addChild(newBackground);
               vn.addChild(thruBackground);
+              tween = vn.juggler.tween(thruBackground, 1.0, TransitionFunction.easeInQuadratic);
+              tween.animate.alpha.to(1.0);
               vn.juggler.tween(thruBackground, 1.0, TransitionFunction.easeInQuadratic)
-                ..animate.alpha.to(1.0)
-                ..onComplete = () => newBackground.alpha = 1.0;
-              if(currentBackground != null) vn.juggler
-                ..tween(currentBackground, 1.0, TransitionFunction.easeInQuadratic).animate.alpha.to(0.0)
-                ..delayCall(() => vn.removeChild(currentBackground), 1.0);
-              var outtween = new Tween(thruBackground, 1.0, TransitionFunction.easeInQuadratic);
-              outtween.animate.alpha.to(0.0);
-              outtween.delay = 1;
-              vn.juggler.add(outtween);
+                ..animate.alpha.to(0.0)
+                ..delay = 1;
               var delayedAction = new DelayedCall(()=> vn.removeChild(thruBackground), 2.0);
               vn.juggler.add(delayedAction);
               break;
           }
+          
+          tween.onComplete = () { if(currentBackground != null) { vn.removeChild(currentBackground); } newBackground.alpha = 1; vn.prevNext = [true,true]; };
         } else { //no transition
           if(currentBackground != null) vn.removeChild(currentBackground);  
           vn.addChild(newBackground);
+          vn.prevNext = [true,true];
         }
         
         
