@@ -75,6 +75,36 @@ class Script {
               var delayedAction = new DelayedCall(()=> vn.removeChild(thruBackground), 2.0);
               vn.juggler.add(delayedAction);
               break;
+            case 'fadeacross':
+              Layer container = new Layer() 
+                  ..name = 'background'
+                  ..width = stage.width
+                  ..height = stage.height;
+              Shape fade = new Shape();
+              GraphicsGradient gradient = new GraphicsGradient.linear(0, 0, stage.width*4, 0)
+                                          ..addColorStop(0, 0x00FFFFFF)
+                                          ..addColorStop(.4, 0x00FFFFFF)
+                                          ..addColorStop(.6, 0xFFFFFFFF)
+                                          ..addColorStop(1, 0xFFFFFFFF);
+              fade.graphics
+                ..beginPath()
+                ..rect(0, 0, stage.width*4, stage.height)
+                ..closePath()
+                ..fillGradient(gradient);
+              fade
+                ..compositeOperation = CompositeOperation.DESTINATION_OUT
+                ..width = stage.width*4
+                ..x = -stage.width*3;
+              container.compositeOperation = CompositeOperation.SOURCE_OVER;
+              //Maybe want to apply AlphaMaskFilter to newBackground using my fade Shape, but class wants BitmapData
+              container.addChild(newBackground);
+              container.addChild(fade);
+              vn.addChild(container);
+              //Then use juggler transition to expand the matrix of the filter to have the new background fade across on top of the current?
+              tween = vn.juggler.tween(fade, 2, TransitionFunction.easeInOutQuadratic)
+                  ..animate.x.to(0);
+              var delayedAction = new DelayedCall(()=> container.removeChild(fade), 2);
+              break;
           }
           
           tween.onComplete = () { if(currentBackground != null) { vn.removeChild(currentBackground); } newBackground.alpha = 1; vn.prevNext = [true,true]; };

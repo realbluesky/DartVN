@@ -33,6 +33,6 @@ script:
   #   image "...to image" [bg, image, asset name, {trans: fadethru, color: 0xFF000000}]
   - [bg, color, 0xFF000000, {trans: fade}]
   - [bg, image, oceanbg, {trans: fadethru, color: 0xFFFFFFFF}]
-  - [bg, image, naturebg, {trans: fadethru, color: 0xFF000000}]
+  - [bg, image, naturebg, {trans: fadeacross}]
   - [bg, color, 0xFF112233, {trans: fade}]
   - [bg, color, 0xFF558842]
