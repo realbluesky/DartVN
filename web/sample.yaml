@@ -3,11 +3,17 @@ options:
   stage_id: vnStage #id of the canvas containing div
   scale: SHOW_ALL #SHOW_ALL, NO_SCALE, NO_BORDER, EXACT_FIT
   align: NONE #NONE, LEFT, RIGHT, TOP, TOP_LEFT, TOP_RIGHT, BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT
+  #hardcoded defaults
   width: 1920
   height: 1080
+  dur: 1 
+  dir: right
+  trans: fade
 assets:
   naturebg: ../assets/image/naturebg.jpg
   oceanbg: ../assets/image/oceanbg.jpg
+  treebg: ../assets/image/treebg.jpg
+  treesbg: ../assets/image/treesbg.jpg
 characters:
   gumshoe:
     name: Gum Shoe
@@ -31,8 +37,8 @@ script:
   # bg "set background..."
   #   color "...to solid color" [bg, color, 0xFF000000, {trans: fade, ease:linear}]
   #   image "...to image" [bg, image, asset name, {trans: fadethru, color: 0xFF000000}]
-  - [bg, color, 0xFF000000, {trans: fade}]
-  - [bg, image, oceanbg, {trans: fadethru, color: 0xFFFFFFFF}]
-  - [bg, image, naturebg, {trans: fadeacross}]
-  - [bg, color, 0xFF112233, {trans: fade}]
-  - [bg, color, 0xFF558842]
+  - [bg, color, 0xFF000000, {trans: fade, dur: .5}]
+  - [bg, image, oceanbg, {trans: fadeacross, dur: 3, dir: left}]
+  - [bg, image, treebg, {trans: fadeacross, dur: 4, dir: right}]
+  - [bg, image, naturebg, {trans: fadeacross, dur: 2, dir: up}]
+  - [bg, image, treesbg, {trans: fadeacross, dur: 5, dir: down}]

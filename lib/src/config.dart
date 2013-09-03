@@ -18,6 +18,13 @@ class Config {
   configure(String response) {
     _config = loadYaml(response);
     
+    //set some defaults where not provided
+    Map defaults = {'dur': 1.0, 'dir': 'right', 'trans': 'fade', 'width':1920, 'height':1080};
+    defaults.forEach((k,v) {
+      _config['options'].putIfAbsent(k, ()=>v);  
+    });
+    
+    
     var opt = _config['options'];
     var canvas = html.query('#${opt['stage_id']}');
     stage = new Stage('vnStage', canvas, opt['width'], opt['height']);

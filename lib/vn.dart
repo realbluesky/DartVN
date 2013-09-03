@@ -1,6 +1,7 @@
 library dartvn;
 
 import 'dart:html' as html;
+import 'dart:math';
 import 'package:stagexl/stagexl.dart';
 import 'package:yaml/yaml.dart';
 
@@ -19,6 +20,7 @@ class VN extends DisplayObjectContainer implements Animatable {
   GlassPlate _glassPlate;
   Juggler get juggler => _juggler;
   List<bool> prevNext = [false,true];
+  Map options;
 
   VN(String configYaml) {
     resourceManager = new ResourceManager();
@@ -26,7 +28,8 @@ class VN extends DisplayObjectContainer implements Animatable {
     _juggler = new Juggler();
     this.name = 'vn';
     config.onConfig = ((config) {
-      _glassPlate = new GlassPlate(config.config['options']['width'], config.config['options']['height']);
+      options = config.config['options'];
+      _glassPlate = new GlassPlate(options['width'], options['height']);
       _glassPlate.onMouseClick.listen(_onMouseClick);
       _glassPlate.onKeyDown.listen(_onKeyDown);
       addChild(_glassPlate);
