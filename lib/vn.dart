@@ -9,6 +9,8 @@ part 'src/config.dart';
 part 'src/character.dart';
 part 'src/layer.dart';
 part 'src/script.dart';
+part 'src/verb.dart';
+part 'src/verb/bg.dart';
 
 ResourceManager resourceManager;
 Stage stage;
