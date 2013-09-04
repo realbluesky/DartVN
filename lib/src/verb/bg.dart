@@ -75,37 +75,42 @@ class bg extends Verb {
           Shape fade = new Shape();
           Bitmap fadeBackground = new Bitmap(newBackground.bitmapData);
           GraphicsGradient gradient = new GraphicsGradient.linear(0, 0, gradientWidthHeight[0], gradientWidthHeight[1])
-          ..addColorStop(stops[0], 0xFF000000)
+            ..addColorStop(stops[0], 0xFF000000)
             ..addColorStop(stops[1], 0x00000000);
           fade.graphics
             ..beginPath()
-              ..rect(0, 0, pathWidthHeight[0], pathWidthHeight[1])
-                ..closePath()
-                  ..fillGradient(gradient);
-              var alphaMask = new BitmapData(fade.width, fade.height, true, 0x00000000)
-                  ..draw(fade);
-              fadeBackground
-                ..filters = [new AlphaMaskFilter(alphaMask)]
-                ..applyCache(0,0,stage.width.toInt(),stage.height.toInt());
-              vn.addChild(fadeBackground);
-              vn.addChild(newBackground);
-              tween = vn.juggler.transition(startStop[0], startStop[1], dur, TransitionFunction.linear, (value) {
-                AlphaMaskFilter gradient = fadeBackground.filters[0];
-                gradient.matrix
-                  ..identity()
-                  ..translate(horizontal?value:0, horizontal?0:value);
-                fadeBackground.refreshCache();
-                if(reverse) newBackground.clipRectangle = new Rectangle(horizontal?value-startStop[1]-1:0,
-                                                                        horizontal?0:value-startStop[1]-1,
-                                                                        horizontal?max(startStop[0]-value+startStop[1],0):stage.width.toInt(),
-                                                                        horizontal?stage.height.toInt():max(startStop[0]-value+startStop[1],0));
-                else newBackground.clipRectangle = new Rectangle(0, 0, horizontal?max(0,value+1):stage.width.toInt(), horizontal?stage.height.toInt():max(0,value+1));
-              });    
-              vn.juggler.delayCall(()=> vn.removeChild(fadeBackground), dur);
-              break;
+            ..rect(0, 0, pathWidthHeight[0], pathWidthHeight[1])
+            ..closePath()
+            ..fillGradient(gradient);
+          var alphaMask = new BitmapData(fade.width, fade.height, true, 0x00000000)
+            ..draw(fade);
+          fadeBackground
+            ..filters = [new AlphaMaskFilter(alphaMask)]
+            ..applyCache(0,0,stage.width.toInt(),stage.height.toInt());
+          vn.addChild(newBackground);
+          vn.addChild(fadeBackground);
+          tween = vn.juggler.transition(startStop[0], startStop[1], dur, TransitionFunction.linear, (value) {
+            AlphaMaskFilter gradient = fadeBackground.filters[0];
+            gradient.matrix
+              ..identity()
+              ..translate(horizontal?value:0, horizontal?0:value);
+            fadeBackground.refreshCache();
+            switch(dir) {
+              case 'right': newBackground.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),stage.width.toInt()), stage.height.toInt());
+                break;
+              case 'left': newBackground.clipRectangle = new Rectangle(max(value-startStop[1]-1,0), 0, max(startStop[0]-value+startStop[1],0), stage.height.toInt());
+                break;
+              case 'down': newBackground.clipRectangle = new Rectangle(0, 0, stage.width.toInt(), min(max(0,value+1),stage.height.toInt()));
+                break;
+              case 'up': newBackground.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), stage.width.toInt(), max(startStop[0]-value+startStop[1],0));
+                break;
+            }
+          });    
+          vn.juggler.delayCall(()=> vn.removeChild(fadeBackground), dur);
+          break;
           }
           if(tween != null) tween.onComplete = () { if(currentBackground != null) { vn.removeChild(currentBackground); } newBackground.alpha = 1; vn.prevNext = [true,true]; };
-          else vn.prevNext = [true,true]; 
+          else { vn.prevNext = [true,true]; } 
         } else { //no transition
           if(currentBackground != null) vn.removeChild(currentBackground);  
           vn.addChild(newBackground);

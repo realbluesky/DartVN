@@ -36,8 +36,7 @@ class Script {
     if(line.length>3) options = line[3];
     
     switch(verb) {
-      case 'bg':
-        new bg(subverb, value, options);        
+      case 'bg': new bg(subverb, value, options);        
         break;
       default:
         print('Unrecognized verb, $verb');
