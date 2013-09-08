@@ -7,10 +7,12 @@ import 'package:yaml/yaml.dart';
 
 part 'src/config.dart';
 part 'src/character.dart';
-part 'src/layer.dart';
 part 'src/script.dart';
+part 'src/option.dart';
+part 'src/option/layer.dart';
+part 'src/option/position.dart';
 part 'src/verb.dart';
-part 'src/verb/bg.dart';
+part 'src/verb/set.dart';
 
 ResourceManager resourceManager;
 Stage stage;

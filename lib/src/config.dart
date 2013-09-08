@@ -19,11 +19,13 @@ class Config {
     _config = loadYaml(response);
     
     //set some defaults where not provided
-    Map defaults = {'dur': 1.0, 'dir': 'right', 'trans': 'fade', 'width':1920, 'height':1080};
+    Map defaults = {'dur': 1.0, 'dir': 'right', 'trans': 'fade', 'width':1920, 'height':1080, 'layers': ['bg']};
     defaults.forEach((k,v) {
       _config['options'].putIfAbsent(k, ()=>v);  
     });
     
+    //add layers, glassplate added onConfig so it is always on top
+    _config['options']['layers'].forEach((v) => _vn.addChild(new Layer()..name = v));
     
     var opt = _config['options'];
     var canvas = html.query('#${opt['stage_id']}');
@@ -38,7 +40,9 @@ class Config {
     //load assets
     if(_config.containsKey('assets')) {
       Map assets = _config['assets'];
-      assets.forEach((name, url) => resourceManager.addBitmapData(name, url));
+      var imagePath = assets.containsKey('image_path')?assets['image_path']:'';
+      if(assets.containsKey('images')) assets['images'].forEach((name, url) => resourceManager.addBitmapData(name, imagePath + url));
+      if(assets.containsKey('sounds')) assets['sounds'].forEach((name, url) => resourceManager.addSound(name, imagePath + url));
     }
     
     //add characters

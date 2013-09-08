@@ -26,17 +26,15 @@ class Script {
   }
   
   dynamic exec() {
-    var line;
+    List line;
     Map options = {};
     line = _script[currentLine];
     
     var verb = line[0];
-    var subverb = line[1];
-    var value = line[2];
-    if(line.length>3) options = line[3];
+    List rest = line.sublist(1);
     
     switch(verb) {
-      case 'bg': new bg(subverb, value, options);        
+      case 'set': new Set(rest);
         break;
       default:
         print('Unrecognized verb, $verb');

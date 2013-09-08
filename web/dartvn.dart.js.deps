@@ -117,10 +117,12 @@ file:///C:/Users/Alex/dart/dart-sdk/lib/web_gl/dart2js/web_gl_dart2js.dart
 file:///C:/Users/Alex/dart/dart-sdk/lib/web_sql/dart2js/web_sql_dart2js.dart
 file:///C:/Users/Alex/github/dartvn/lib/src/character.dart
 file:///C:/Users/Alex/github/dartvn/lib/src/config.dart
-file:///C:/Users/Alex/github/dartvn/lib/src/layer.dart
+file:///C:/Users/Alex/github/dartvn/lib/src/option.dart
+file:///C:/Users/Alex/github/dartvn/lib/src/option/layer.dart
+file:///C:/Users/Alex/github/dartvn/lib/src/option/position.dart
 file:///C:/Users/Alex/github/dartvn/lib/src/script.dart
 file:///C:/Users/Alex/github/dartvn/lib/src/verb.dart
-file:///C:/Users/Alex/github/dartvn/lib/src/verb/bg.dart
+file:///C:/Users/Alex/github/dartvn/lib/src/verb/set.dart
 file:///C:/Users/Alex/github/dartvn/lib/vn.dart
 file:///C:/Users/Alex/github/dartvn/web/dartvn.dart
 file:///C:/Users/Alex/github/dartvn/web/packages/meta/meta.dart

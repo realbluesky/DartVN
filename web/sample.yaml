@@ -9,11 +9,23 @@ options:
   dur: 1 
   dir: right
   trans: fade
+  #layers are ordered as they appear below, back to front
+  layers: [bg, mg, fg, ui]
+  positions:
+    bg: {top: 0, left: 0} 
+    stage_left: {bottom: 0, left: 100}
+    stage_right: {bottom: 0, right: 100}
+    center_middle: {center: 0, middle: 0}
+    menu: {top: 0, right: 0}
 assets:
-  naturebg: ../assets/image/naturebg.jpg
-  oceanbg: ../assets/image/oceanbg.jpg
-  treebg: ../assets/image/treebg.jpg
-  treesbg: ../assets/image/treesbg.jpg
+  image_path: ../assets/image/
+  images:
+    naturebg: naturebg.jpg
+    oceanbg: oceanbg.jpg
+    treebg: treebg.jpg
+    treesbg: treesbg.jpg
+    link: link.png
+    zelda: zelda.png
 characters:
   gumshoe:
     name: Gum Shoe
@@ -34,11 +46,14 @@ characters:
 script:
   # verbs and their arguments
   # general structure [primary verb, sub-verb, value, {options}]
-  # bg "set background..."
-  #   color "...to solid color" [bg, color, 0xFF000000, {trans: fade, ease:linear}]
-  #   image "...to image" [bg, image, asset name, {trans: fadethru, color: 0xFF000000}]
-  - [bg, color, 0xFF000000, {trans: fade, dur: .5}]
-  - [bg, image, oceanbg, {trans: fadeacross, dur: 2, dir: left}]
-  - [bg, image, treebg, {trans: fade, dur: 1}]
-  - [bg, image, naturebg, {trans: fadethru, dur: 2, color: 0xFF000000}]
-  - [bg, image, treesbg, {trans: fadeacross, dur: 2, dir: down}]
+  # set "set position to display atlas/image/color" - examples:
+  #   [set, layer, position, atlas/image/color, {options}]
+  #   [set, bg, bg, 0xFF000000, {trans: fade}]
+  #   [set, mg, stage_left, asset_name, {trans: fadethru, color: 0xFF000000}]
+  - [set, bg, bg, 0xFF000000, {trans: fade, dur: .5}]
+  - [set, bg, bg, oceanbg, {trans: fadeacross, dur: 2, dir: left}]
+  - [set, mg, stage_left, link, {trans: fade, dur: 1}]
+  - [set, mg, stage_right, zelda, {trans: fade, dur: 1, dir: up}]
+  - [set, bg, bg, treebg, {trans: fade, dur: 1}]
+  - [set, bg, bg, naturebg, {trans: fadethru, dur: 2, color: 0xFF000000}]
+  - [set, bg, bg, treesbg, {trans: fadeacross, dur: 2, dir: down}]
