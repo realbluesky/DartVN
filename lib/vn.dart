@@ -25,6 +25,7 @@ class VN extends DisplayObjectContainer implements Animatable {
   Juggler get juggler => _juggler;
   List<bool> prevNext = [false,true];
   Map options;
+  Map assets;
 
   VN(String configYaml) {
     resourceManager = new ResourceManager();
@@ -33,6 +34,7 @@ class VN extends DisplayObjectContainer implements Animatable {
     this.name = 'vn';
     config.onConfig = ((config) {
       options = config.config['options'];
+      assets = config.config['assets'];
       _glassPlate = new GlassPlate(options['width'], options['height']);
       _glassPlate.onMouseClick.listen(_onMouseClick);
       _glassPlate.onKeyDown.listen(_onKeyDown);
