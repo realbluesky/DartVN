@@ -31,10 +31,10 @@ class Script {
     line = _script[currentLine];
     
     var verb = line[0];
-    List rest = line.sublist(1);
+    List args = line.sublist(1);
     
     switch(verb) {
-      case 'set': new Set(rest);
+      case 'set': new Set(args);
         break;
       default:
         print('Unrecognized verb, $verb');

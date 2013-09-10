@@ -12,11 +12,16 @@ options:
   #layers are ordered as they appear below, back to front
   layers: [bg, mg, fg, ui]
   positions:
-    bg: {top: 0, left: 0} 
+    tl: {top: 0, left: 0} 
     stage_left: {bottom: 0, left: 100}
     stage_right: {bottom: 0, right: 100}
+    center_top: {center: 0, top: 50}
     center_middle: {center: 0, middle: 0}
+    center_bottom: {center: 0, bottom: 50}
     menu: {top: 0, right: 0}
+  text_formats:
+    #name: ['font, stack', size, color, bold, italic]
+    title: ['"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', 30, 0x00000000, true, false]
 assets:
   image_path: ../assets/image/
   images:
@@ -52,11 +57,14 @@ script:
   #   [set, layer, position, atlas/image/color, {options}]
   #   [set, bg, bg, 0xFF000000, {trans: fade}]
   #   [set, mg, stage_left, asset_name, {trans: fadethru, color: 0xFF000000}]
-  - [set, bg, bg, 0xFF000000, {trans: fade, dur: .5}]
-  - [set, bg, bg, oceanbg, {trans: fadeacross, dur: 2, dir: left}]
+  - [set, bg, tl, naturebg, {trans: fade, dur: .5}]
+  - [set, bg, tl, oceanbg, {trans: fadeacross, dur: 2, dir: left}]
   - [set, mg, stage_left, link, {trans: fade, dur: 1}]
   - [set, mg, stage_right, zelda, {trans: fade, dur: 1, dir: up}]
   - [set, fg, center_middle, text_bubble, {trans: fade}]
-  - [set, bg, bg, treebg, {trans: fade, dur: 1}]
-  - [set, bg, bg, naturebg, {trans: fadethru, dur: 2, color: 0xFF000000}]
-  - [set, bg, bg, treesbg, {trans: fadeacross, dur: 2, dir: down}]
+  - [set, fg, center_middle, "String that isn't asset, therefore print text", {text_format: title, mode: add}]
+  - [set, fg, center_middle] #clear a position by passsing nothing
+  - [set, mg] #clear a layer by passing nothing
+  - [set, bg, tl, treebg, {trans: fade, dur: 1}]
+  - [set, bg, tl, naturebg, {trans: fadethru, dur: 2, color: 0xFF000000}]
+  - [set, bg, tl, treesbg, {trans: fadeacross, dur: 2, dir: down}]

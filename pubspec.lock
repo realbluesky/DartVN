@@ -4,19 +4,19 @@ packages:
   browser:
     description: browser
     source: hosted
-    version: "0.6.19"
+    version: "0.7.1"
   meta:
     description: meta
     source: hosted
-    version: "0.6.19"
+    version: "0.7.1"
   stagexl:
     description:
       ref: null
-      resolved-ref: "58d40911c07b03c0e4bc7bb1f027018666c076c7"
+      resolved-ref: "6f2dc7e10f5a19eaf9738c98a97f6a64228eb6a0"
       url: "https://github.com/bp74/StageXL.git"
     source: git
-    version: "0.8.4"
+    version: "0.8.5"
   yaml:
     description: yaml
     source: hosted
-    version: "0.6.19"
+    version: "0.7.1"

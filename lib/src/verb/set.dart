@@ -3,56 +3,97 @@ part of dartvn;
 class Set extends Verb {
   
   Set(List args) {
-    var position; var value; Map options; Map posArgs; Bitmap currentBitmap; var newName;
+    var posName; var value; Map options; Map posArgs; var currentBitmap; var newName; Position position;
     VN vn = stage.getChildByName('vn');
     Layer layer = vn.getChildByName(args[0]);
-    if(args.length>1) position = args[1];
+    if(args.length>1) posName = args[1];
     if(args.length>2) value = args[2];
     options = args.length>3?args[3]:{};
+    var trans = options.containsKey('trans')?options['trans'] : vn.options['trans'];
+    var dur = options.containsKey('dur')?options['dur'] : vn.options['dur'];
     
-    if(position is! Map) {
-      currentBitmap = layer.getChildByName(position);
-      posArgs = vn.options['positions'][position];
-      newName = position;
-    } else {
-      posArgs = position;
+    if(posName is String) {
+      posArgs = vn.options['positions'][posName];
+      if(layer.getChildByName(posName) == null) layer.addChild(new Position(posArgs)..name = posName);
+      position = layer.getChildByName(posName);
+      if(options['mode']!='add' && position.numChildren > 0) currentBitmap = position.getChildAt(0);
+      newName = posName;
+    } else if(posName is Map) {
+      posArgs = posName;
+      layer.addChild(new Position(posArgs)..name = value.toString());
       newName = value.toString();
+    } else { //emptying this layer!
+      vn.juggler.tween(layer, dur, TransitionFunction.easeInQuadratic)
+        ..animate.alpha.to(0)
+        ..onComplete = () {
+         layer.removeChildren();
+         layer.alpha = 1;
+        };
+      return; //free to jump out now
     }
     
-    //eventually add Map detection for gradients?
-    Bitmap newBitmap;
+
+    var newBitmap;
+    var tween;
+    //eventually add Map detection for gradients?    
     if(value is int) newBitmap = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, value));
     else if(vn.assets['images'].containsKey(value)) newBitmap = new Bitmap(resourceManager.getBitmapData(value));
     else if(vn.assets['shapes'].containsKey(value)) {
-      Map shapeArgs = vn.assets['shapes'][value];
-      Shape shape = new Shape();
-      shape.graphics.beginPath();      
-      switch(shapeArgs['shape']) {
+      Map sa = vn.assets['shapes'][value]; //shape arguments
+      var sw = sa.containsKey('stroke_color')?(sa.containsKey('stroke_width')?sa['stroke_width']:1):0;
+      Shape shape = new Shape();     
+      shape.graphics.beginPath();
+      switch(sa['shape']) {
         case 'rect':
-          if(shapeArgs.containsKey('corner_radius')) shape.graphics.rectRound(0, 0, shapeArgs['width'], shapeArgs['height'], shapeArgs['corner_radius'], shapeArgs['corner_radius']);
-          else shape.graphics.rect(0, 0, shapeArgs['width'], shapeArgs['height']);
+          if(sa.containsKey('corner_radius')) shape.graphics.rectRound(sw, sw, sa['width']-sw*2, sa['height']-sw*2, sa['corner_radius']-sw, sa['corner_radius']-sw);
+          else shape.graphics.rect(sw, sw, sa['width']-sw*2, sa['height']-sw*2);
+          break;
+        case 'ellipse':
+          shape.graphics.ellipse(sa['width']/2, sa['height']/2, sa['width']-sw*2, sa['height']-sw*2);
           break;
       }
       shape.graphics.closePath();
-      if(shapeArgs.containsKey('fill_color')) shape.graphics.fillColor(shapeArgs['fill_color']);
-      if(shapeArgs.containsKey('stroke_color')) {
-        num strokeWidth = shapeArgs.containsKey('stroke_width')?shapeArgs['stroke_width']:1;
-        shape.graphics.strokeColor(shapeArgs['stroke_color'], strokeWidth);
+      if(sa.containsKey('fill_color')) shape.graphics.fillColor(sa['fill_color']);
+      BitmapData drawn = new BitmapData(sa['width'], sa['height'], true, 0x00000000);
+      drawn.draw(shape);
+      if(sa.containsKey('stroke_color')) {
+        Shape stroke = new Shape();
+        stroke.graphics.beginPath();
+        switch(sa['shape']) {
+          case 'rect':
+            if(sa.containsKey('corner_radius')) stroke.graphics.rectRound(sw/2, sw/2, sa['width']-sw, sa['height']-sw, sa['corner_radius']-sw/2, sa['corner_radius']-sw/2);
+            else stroke.graphics.rect(sw/2, sw/2, sa['width']-sw, sa['height']-sw);
+            break;
+          case 'ellipse':
+            stroke.graphics.ellipse(sa['width']/2, sa['height']/2, sa['width']-sw, sa['height']-sw);
+            break;
+        }
+        stroke.graphics.closePath();
+        stroke.graphics.strokeColor(sa['stroke_color'], sw);
+        drawn.draw(stroke);
       }
-      newBitmap = new Bitmap(new BitmapData(shape.width, shape.height, true, 0x00000000)..draw(shape));
+      newBitmap = new Bitmap(drawn); 
+    } else if(value is String) { //not an image or shape, so just display the text
+      List tf = vn.options['text_formats'][options['text_format']];
+      newBitmap = new TextField(value, new TextFormat(tf[0], tf[1], tf[2], bold:tf[3], italic:tf[4]))..autoSize = TextFieldAutoSize.LEFT;
+    } else if(currentBitmap != null) { //no value set, empty position or even empty layer if no position
+      if(position != null) {
+        vn.juggler.tween(position, dur, TransitionFunction.easeInQuadratic)
+          ..animate.alpha.to(0)
+          ..onComplete = () => layer.removeChild(position);
+        return; //free to jump out 
+      }
+      newBitmap = new Bitmap();
     }
     
-    _setPosition(newBitmap, posArgs);
+    position.add(newBitmap);
     newBitmap.name = newName;
-    var trans = options.containsKey('trans')?options['trans']:vn.options['trans'];
-
     vn.prevNext = [false,false];
-    var tween;
-    var dur = options.containsKey('dur')? options['dur'] : vn.options['dur'];
+    
     switch(trans) {
       case 'fade':
         newBitmap.alpha = 0;
-        layer.addChild(newBitmap);
+        position.addChild(newBitmap);
         tween = vn.juggler.tween(newBitmap, dur, TransitionFunction.easeInQuadratic);
         tween.animate.alpha.to(1.0);
         break;
@@ -61,14 +102,14 @@ class Set extends Verb {
         thruBitmap = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, options['color']));
         thruBitmap.alpha = 0;
         newBitmap.alpha = 0;
-        layer.addChild(newBitmap);
-        layer.addChild(thruBitmap);
+        position.addChild(newBitmap);
+        position.addChild(thruBitmap);
         tween = vn.juggler.tween(thruBitmap, dur/2, TransitionFunction.easeInQuadratic);
         tween.animate.alpha.to(1.0);
         vn.juggler.tween(thruBitmap, dur/2, TransitionFunction.easeInQuadratic)
           ..animate.alpha.to(0.0)
             ..delay = dur/2;
-        vn.juggler.delayCall(()=> layer.removeChild(thruBitmap), dur);
+        vn.juggler.delayCall(()=> position.removeChild(thruBitmap), dur);
         break;
       case 'fadeacross':
         var dir = options.containsKey('dir')? options['dir'] : vn.options['dir'];
@@ -112,8 +153,8 @@ class Set extends Verb {
         fadeBackground
           ..filters = [new AlphaMaskFilter(alphaMask)]
           ..applyCache(0,0,stage.width.toInt(),stage.height.toInt());
-        layer.addChild(newBitmap);
-        layer.addChild(fadeBackground);
+        position.addChild(newBitmap);
+        position.addChild(fadeBackground);
         tween = vn.juggler.transition(startStop[0], startStop[1], dur, TransitionFunction.linear, (value) {
           AlphaMaskFilter gradient = fadeBackground.filters[0];
           gradient.matrix
@@ -131,15 +172,15 @@ class Set extends Verb {
               break;
           }
         });    
-        vn.juggler.delayCall(()=> layer.removeChild(fadeBackground), dur);
+        vn.juggler.delayCall(()=> position.removeChild(fadeBackground), dur);
         break;
       case 'none':
-        if(currentBitmap != null) layer.removeChild(currentBitmap);  
-        layer.addChild(newBitmap);
+        if(currentBitmap != null) position.removeChild(currentBitmap);  
+        position.addChild(newBitmap);
         vn.prevNext = [true,true];
         break;
       }
-      if(tween != null) tween.onComplete = () { if(currentBitmap != null) { layer.removeChild(currentBitmap); } newBitmap.alpha = 1; vn.prevNext = [true,true]; };
+      if(tween != null) tween.onComplete = () { if(currentBitmap != null) { position.removeChild(currentBitmap); } newBitmap.alpha = 1; vn.prevNext = [true,true]; };
       else { vn.prevNext = [true,true]; }   
   }
   
