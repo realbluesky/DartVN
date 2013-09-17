@@ -3,6 +3,7 @@ file:///C:/Users/agann/GitHub/dartvn/lib/src/config.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option/layer.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option/position.dart
+file:///C:/Users/agann/GitHub/dartvn/lib/src/option/vntransition.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/script.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/verb.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/verb/set.dart
@@ -171,6 +172,7 @@ file:///C:/Users/agann/dart/dart-sdk/lib/convert/codec.dart
 file:///C:/Users/agann/dart/dart-sdk/lib/convert/convert.dart
 file:///C:/Users/agann/dart/dart-sdk/lib/convert/converter.dart
 file:///C:/Users/agann/dart/dart-sdk/lib/convert/encoding.dart
+file:///C:/Users/agann/dart/dart-sdk/lib/convert/html_escape.dart
 file:///C:/Users/agann/dart/dart-sdk/lib/convert/json.dart
 file:///C:/Users/agann/dart/dart-sdk/lib/convert/latin1.dart
 file:///C:/Users/agann/dart/dart-sdk/lib/convert/line_splitter.dart
