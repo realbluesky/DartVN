@@ -11,6 +11,7 @@ part 'src/script.dart';
 part 'src/option.dart';
 part 'src/option/layer.dart';
 part 'src/option/position.dart';
+part 'src/option/vntransition.dart';
 part 'src/verb.dart';
 part 'src/verb/set.dart';
 
