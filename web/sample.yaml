@@ -11,6 +11,7 @@ options:
     dir: right
     trans: fade
     wait: 1
+    text_format: dialog
   #layers are ordered as they appear below, back to front
   layers: [bg, mg, fg, ui]
   positions:
@@ -63,17 +64,18 @@ script:
   #   [set, layer, position, atlas/image/color, {options}]
   #   [set, bg, bg, 0xFF000000, {trans: fade}]
   #   [set, mg, stage_left, asset_name, {trans: fadethru, color: 0xFF000000}]
-  - [set, bg, tl, 0xFF000000]
-  - [set, mg, center_middle, "DartVN Sample by Real Blue Sky", {text_format: title, trans: fade, dur: 2, wait: 3}]
-  - [set, bg, tl, naturebg, {trans: fadeacross, dur: 2}]
-  - [set, bg, tl, oceanbg, {trans: fadeacross, dur: 2, dir: left}]
-  - [set, mg, stage_left, link, {trans: fade, dur: 1}]
-  - [set, mg, stage_right, zelda, {trans: fade, dur: 1, dir: up}]
-  - [set, fg, center_middle, text_bubble, {wait: none}]
-  - [set, fg, center_middle, "String that isn't asset, therefore print text", {text_format: dialog, mode: add, wait: user}]
-  - [set, fg, center_middle] #clear a position by passsing nothing
+  - [set, bg, tl, 0xFF000000]  
+  - [set, mg, center_middle, "DartVN Sample - for Testing", {text_format: title, dur: 2}]
+  - [set, mg, center_middle, "", {wait: none, dur: 2}]
+  - [set, bg, tl, naturebg, {dur: 2}]
+  - [set, bg, tl, oceanbg, {trans: fadeacross, dur: 2, dir: up}]
+  - [set, mg, stage_left, link, {trans: fadeacross, dir: up, dur: 1, wait: 1}]
+  - [set, mg, stage_right, zelda, {trans: fadethru, color: 0xFFFFFFFF, dur: .75}]
+  - [set, fg, center_middle, text_bubble, {wait: none, dur: 1}]
+  - [set, fg, center_middle, "String that isn't asset, therefore print text", {text_format: dialog, mode: add, wait: 1}]
+  - [set, fg, center_middle, "", {wait: none}] #clear a position by passsing nothing
   - [set, mg] #clear a layer by passing nothing
   - [set, bg, tl, treebg, {trans: fadethru, color: 0xFF000000, dur: 2}]
   - [set, bg, tl, treesbg, {trans: fadeacross, dur: 2, dir: down}]
-  - [set, bg, tl, naturebg, {trans: fadethru, dur: 2, color: 0xFF000000}]
+  - [set, bg, tl, naturebg, {trans: fadethru, dur: 2, color: 0xFFFFFFFF}]
   

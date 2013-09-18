@@ -13,7 +13,7 @@ class Set extends Verb {
     Map opts = {};// = vn.options; can restore this when addAll is implemented
     Layer layer = vn.getChildByName(args[0]);
     if(args.length>1) posName = args[1];
-    if(args.length>2) value = args[2];
+    if(args.length>2) value = (args[2]=="")?null:args[2];
     if(args.length>3) {
       //can't do this yet because YamlMap doesn't implement addAll, instead have below 5 lines
       //opts.addAll(args[3]);
@@ -47,9 +47,8 @@ class Set extends Verb {
     }
     
     var newObject;
-    var tween;
     //eventually add Map detection for gradients?    
-    if(value is int) newObject = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, value));
+    if(value is num) newObject = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, value));
     else if(vn.assets['images'].containsKey(value)) newObject = new Bitmap(resourceManager.getBitmapData(value));
     else if(vn.assets['shapes'].containsKey(value)) {
       Map sa = vn.assets['shapes'][value]; //shape arguments
@@ -94,6 +93,7 @@ class Set extends Verb {
         vn.juggler.tween(position, opts['dur'], TransitionFunction.easeInQuadratic)
           ..animate.alpha.to(0)
           ..onComplete = () { layer.removeChild(position); if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']); };
+        if(opts['wait'] == 'none' || opts['wait'] == null) script.next();
         return; //free to jump out 
       }
       newObject = new Bitmap();
@@ -115,7 +115,6 @@ class Set extends Verb {
       case 'none':
         if(priorObject != null) position.removeChild(priorObject);  
         position.addChild(newObject);
-        vn.prevNext = [true,true];
         if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
         break;
       }

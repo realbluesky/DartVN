@@ -27,15 +27,15 @@ abstract class VNTransition extends Option {
   }
   
   void during() {
-    print(args.toString());
+    //print(args.toString());
   }
   
   void after() {
     //if prior was set, need to remove it
     if(prior != null) position.removeChild(prior);
     current.alpha = 1;
-    vn.prevNext = [true,true];
-    if(args['wait'] is num) vn.juggler.delayCall(()=> script.next(), args['wait']);
+    if(args['wait'] == 'user') vn.prevNext = [true,true];
+    else if(args['wait'] is num) vn.juggler.delayCall(()=> script.next(), args['wait']);
   }
 }
 
@@ -76,8 +76,10 @@ class FadeThruTransition extends VNTransition {
   
   during() {
     super.during();
-    temp = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, args['color']));
-    temp.alpha = 0;
+    temp = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), false, args['color']))
+        ..alpha = 0
+        ..filters = [new AlphaMaskFilter(current.bitmapData)]
+        ..applyCache(0, 0, current.width.toInt(), current.height.toInt());
     current.alpha = 0;
     position.add(current);
     position.add(temp);
@@ -116,27 +118,27 @@ class FadeAcrossTransition extends VNTransition {
     super.during();
     var fadePortion = 1/5;
     var stops = [0,1];
-    var gradientWidthHeight = [stage.width*fadePortion,0];
-    var pathWidthHeight = [stage.width*fadePortion,stage.height];
+    var gradientWidthHeight = [current.width*fadePortion,0];
+    var pathWidthHeight = [current.width*fadePortion,current.height];
     bool horizontal = true;
-    var startStop = [-stage.width*fadePortion, stage.width];
+    var startStop = [-current.width*fadePortion, current.width];
     switch(args['dir']) {
       case 'left':
         stops = new List.from(stops.reversed);
-        startStop = [stage.width,-stage.width*fadePortion];
+        startStop = [current.width,-current.width*fadePortion];
         break;
       case 'down':
-        gradientWidthHeight = [0,stage.height*fadePortion];
-        pathWidthHeight = [stage.width,stage.height*fadePortion];
+        gradientWidthHeight = [0,current.height*fadePortion];
+        pathWidthHeight = [current.width,current.height*fadePortion];
         horizontal = false;
-        startStop = [-stage.height*fadePortion, stage.height];
+        startStop = [-current.height*fadePortion, current.height];
         break;
       case 'up':
         stops = new List.from(stops.reversed);
-        gradientWidthHeight = [0,stage.height*fadePortion];
-        pathWidthHeight = [stage.width,stage.height*fadePortion];
+        gradientWidthHeight = [0,current.height*fadePortion];
+        pathWidthHeight = [current.width,current.height*fadePortion];
         horizontal = false;
-        startStop = [stage.height,-stage.height*fadePortion];
+        startStop = [current.height,-current.height*fadePortion];
         break;
     }              
     Shape fade = new Shape();
@@ -159,13 +161,13 @@ class FadeAcrossTransition extends VNTransition {
     tween = vn.juggler.transition(startStop[0], startStop[1], args['dur'], TransitionFunction.linear, (value) {
       temp.applyCache(horizontal?value.toInt():0, horizontal?0:value.toInt(), fade.width.toInt(),fade.height.toInt());
       switch(args['dir']) {
-        case 'right': current.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),stage.width.toInt()), stage.height.toInt());
+        case 'right': current.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),current.width.toInt()), current.height.toInt());
         break;
-        case 'left': current.clipRectangle = new Rectangle(max(value-startStop[1]-1,0), 0, max(startStop[0]-value+startStop[1],0), stage.height.toInt());
+        case 'left': current.clipRectangle = new Rectangle(max(value-startStop[1]-1,0), 0, max(startStop[0]-value+startStop[1],0), current.height.toInt());
         break;
-        case 'down': current.clipRectangle = new Rectangle(0, 0, stage.width.toInt(), min(max(0,value+1),stage.height.toInt()));
+        case 'down': current.clipRectangle = new Rectangle(0, 0, current.width.toInt(), min(max(0,value+1),current.height.toInt()));
         break;
-        case 'up': current.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), stage.width.toInt(), max(startStop[0]-value+startStop[1],0));
+        case 'up': current.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), current.width.toInt(), max(startStop[0]-value+startStop[1],0));
         break;
       }
     });    
