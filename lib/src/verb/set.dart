@@ -105,18 +105,17 @@ class Set extends Verb {
     //disable user script movement
     vn.prevNext = [false,false];
     
-    switch(opts['trans']) {
-      case 'fade': new FadeTransition(position, newObject, opts);
-        break;
-      case 'fadethru': new FadeThruTransition(position, newObject, opts);
-        break;
-      case 'fadeacross': new FadeAcrossTransition(position, newObject, opts);       
-        break;
-      case 'none':
+    //transition map, will be able to be moved later
+    VNTransition vnt = new VNTransition(position, newObject, opts);
+    Map transMap = {'fade': vnt.fadeTransition, 'fadethru': vnt.fadeThruTransition, 'fadeacross': vnt.fadeAcrossTransition, 
+                    'slide': vnt.slideTransition};
+    if(transMap.containsKey(opts['trans'])) {
+      transMap[opts['trans']]();
+    }
+    else {
         if(priorObject != null) position.removeChild(priorObject);  
         position.addChild(newObject);
         if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
-        break;
       }
     
     if(opts['wait'] == 'none' || opts['wait'] == null) script.next();

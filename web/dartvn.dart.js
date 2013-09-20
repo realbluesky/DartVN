@@ -173,6 +173,8 @@ $$.Closure$linear = [Z, {"": "Closure;call$1,$name"}];
 
 $$.Closure$easeInQuadratic = [Z, {"": "Closure;call$1,$name"}];
 
+$$.Closure$easeOutQuadratic = [Z, {"": "Closure;call$1,$name"}];
+
 (function (reflectionData) {
   function map(x){x={x:x};delete x.x;return x}
   if (!init.libraries) init.libraries = [];
@@ -6038,6 +6040,18 @@ _AsBroadcastStream: {"": "Stream;_liblib3$_source,_onListenHandler,_onCancelHand
     this._liblib3$_controller = null;
     t1.cancel$0();
   },
+  _pauseSubscription$1: function(resumeSignal) {
+    var t1 = this._subscription;
+    if (t1 == null)
+      return;
+    t1.pause$1(t1, resumeSignal);
+  },
+  _resumeSubscription$0: function() {
+    var t1 = this._subscription;
+    if (t1 == null)
+      return;
+    t1.resume$0();
+  },
   _AsBroadcastStream$3: function(_source, _onListenHandler, _onCancelHandler, $T) {
     var t1 = new P._AsBroadcastStreamController(null, this.get$_onListen(), this.get$_onCancel(), 0, null, null, null, null);
     H.setRuntimeTypeInfo(t1, [$T]);
@@ -6081,6 +6095,15 @@ _AsBroadcastStream__onListen_closure: {"": "Closure;this_0",
 },
 
 _BroadcastSubscriptionWrapper: {"": "Object;_stream",
+  pause$1: function(_, resumeSignal) {
+    this._stream._pauseSubscription$1(resumeSignal);
+  },
+  pause$0: function($receiver) {
+    return this.pause$1($receiver, null);
+  },
+  resume$0: function() {
+    this._stream._resumeSubscription$0();
+  },
   cancel$0: function() {
     this._stream._cancelSubscription$0();
   }
@@ -11274,15 +11297,12 @@ Position_add_closure: {"": "Closure;box_0,child_1,width_2,height_3,sw_4,sh_5",
   "+call:2:0": 0
 },
 
-VNTransition: {"": "Option;name>,position>,current<,args<,temp<",
-  before$0: function() {
+VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,tween",
+  _before$0: function() {
     if (J.$eq(J.$index$asx(this.args, "mode"), "add") !== true && J.$gt$n(this.position.get$numChildren(), 0))
       this.prior = this.position.getChildAt$1(0);
-    this.during$0();
   },
-  during$0: function() {
-  },
-  after$0: function() {
+  _after$0: function() {
     var t1 = this.prior;
     if (t1 != null)
       this.position.removeChild$1(t1);
@@ -11294,32 +11314,16 @@ VNTransition: {"": "Option;name>,position>,current<,args<,temp<",
     else {
       t1 = J.$index$asx(this.args, "wait");
       if (typeof t1 === "number")
-        this.vn.get$juggler().delayCall$2(new N.VNTransition_after_closure(), J.$index$asx(this.args, "wait"));
+        this.vn.get$juggler().delayCall$2(new N.VNTransition__after_closure(), J.$index$asx(this.args, "wait"));
     }
   },
-  VNTransition$3: function(position, current, args) {
-    this.vn = $.stage.getChildByName$1("vn");
-    this.position = position;
-    this.current = current;
-    this.args = args;
-    this.before$0();
-  }
-},
-
-VNTransition_after_closure: {"": "Closure;",
-  call$0: function() {
-    return $.script.next$0();
+  get$_after: function() {
+    return new P.BoundClosure$0(this, "_after$0", null);
   },
-  "+call:0:0": 0
-},
-
-FadeTransition: {"": "VNTransition;name,position,current,args,vn,layer,prior,temp,tween",
-  before$0: function() {
-    N.VNTransition.prototype.before$0.call(this);
-  },
-  during$0: function() {
+  fadeTransition$0: function() {
     var t1, t2;
-    N.VNTransition.prototype.during$0.call(this);
+    this.name = "fade";
+    this._before$0();
     t1 = this.current;
     t1.set$alpha;
     t1._alpha = 0;
@@ -11329,23 +11333,29 @@ FadeTransition: {"": "VNTransition;name,position,current,args,vn,layer,prior,tem
     t2 = t1.get$animate();
     t2.get$alpha;
     t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t1.set$onComplete(t1, this.get$after());
+    t1.set$onComplete(t1, this.get$_after());
   },
-  after$0: function() {
-    N.VNTransition.prototype.after$0.call(this);
+  get$fadeTransition: function() {
+    return new P.BoundClosure$0(this, "fadeTransition$0", null);
   },
-  get$after: function() {
-    return new P.BoundClosure$0(this, "after$0", null);
-  }
-},
-
-FadeThruTransition: {"": "VNTransition;name,position,current,args,vn,layer,prior,temp,tween",
-  before$0: function() {
-    N.VNTransition.prototype.before$0.call(this);
-  },
-  during$0: function() {
+  fadeThruTransition$0: function() {
     var t1, t2, t3;
-    N.VNTransition.prototype.during$0.call(this);
+    this.name = "fadethru";
+    this._before$0();
+    t1 = this.current;
+    if (typeof t1 !== "object" || t1 === null || !t1.$isBitmap) {
+      t1 = J.toInt$0$nx(t1.get$width(t1));
+      t2 = this.current;
+      t2 = Z.BitmapData$(t1, J.toInt$0$nx(t2.get$height(t2)), true, 0, 1);
+      t2.draw$1(this.current);
+      t1 = $.DisplayObject__nextID;
+      $.DisplayObject__nextID = t1 + 1;
+      t1 = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+      t1.set$bitmapData(t2);
+      t1._pixelSnapping = "auto";
+      t1._clipRectangle = null;
+      this.current = t1;
+    }
     t1 = this.current;
     t1 = J.toInt$0$nx(t1.get$width(t1));
     t2 = this.current;
@@ -11372,50 +11382,38 @@ FadeThruTransition: {"": "VNTransition;name,position,current,args,vn,layer,prior
     t2 = t1._tweenPropertyFactory;
     t2.get$alpha;
     t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t1._onComplete = new N.FadeThruTransition_during_closure(this);
+    t1._onComplete = new N.VNTransition_fadeThruTransition_closure(this);
     t1 = this.vn.get$juggler().tween$3(this.temp, J.$div$n(J.$index$asx(this.args, "dur"), 2), Z.TransitionFunction_easeInQuadratic$closure);
     t2 = t1._tweenPropertyFactory;
     t2.get$alpha;
     t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
     t1.set$delay(J.$div$n(J.$index$asx(this.args, "dur"), 2));
-    t1._onComplete = this.get$after();
-    this.vn.get$juggler().delayCall$2(new N.FadeThruTransition_during_closure0(this), J.$index$asx(this.args, "dur"));
+    t1._onComplete = this.get$_after();
+    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeThruTransition_closure0(this), J.$index$asx(this.args, "dur"));
   },
-  after$0: function() {
-    N.VNTransition.prototype.after$0.call(this);
+  get$fadeThruTransition: function() {
+    return new P.BoundClosure$0(this, "fadeThruTransition$0", null);
   },
-  get$after: function() {
-    return new P.BoundClosure$0(this, "after$0", null);
-  }
-},
-
-FadeThruTransition_during_closure: {"": "Closure;this_0",
-  call$0: function() {
-    var t1 = this.this_0.get$current();
-    t1.set$alpha;
-    t1.set$_alpha(1);
-    return 1;
-  },
-  "+call:0:0": 0
-},
-
-FadeThruTransition_during_closure0: {"": "Closure;this_1",
-  call$0: function() {
-    var t1 = this.this_1;
-    return J.get$position$x(t1).removeChild$1(t1.get$temp());
-  },
-  "+call:0:0": 0
-},
-
-FadeAcrossTransition: {"": "VNTransition;name,position,current,args,vn,layer,prior,temp,tween",
-  before$0: function() {
-    N.VNTransition.prototype.before$0.call(this);
-    this.current.set$clipRectangle(new Z.Rectangle(0, 0, 0, 0));
-  },
-  during$0: function() {
-    var t1, stops, t2, gradientWidthHeight, t3, pathWidthHeight, fade, gradient, t4, t5, alphaMask;
+  fadeAcrossTransition$0: function() {
+    var t1, t2, t3, stops, gradientWidthHeight, pathWidthHeight, fade, gradient, t4, t5, alphaMask;
     t1 = {};
-    N.VNTransition.prototype.during$0.call(this);
+    this.name = "fadeacross";
+    this._before$0();
+    t2 = this.current;
+    if (typeof t2 !== "object" || t2 === null || !t2.$isBitmap) {
+      t2 = J.toInt$0$nx(t2.get$width(t2));
+      t3 = this.current;
+      t3 = Z.BitmapData$(t2, J.toInt$0$nx(t3.get$height(t3)), true, 0, 1);
+      t3.draw$1(this.current);
+      t2 = $.DisplayObject__nextID;
+      $.DisplayObject__nextID = t2 + 1;
+      t2 = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+      t2.set$bitmapData(t3);
+      t2._pixelSnapping = "auto";
+      t2._clipRectangle = null;
+      this.current = t2;
+    }
+    this.current.set$clipRectangle(new Z.Rectangle(0, 0, 0, 0));
     stops = [0, 1];
     t2 = this.current;
     gradientWidthHeight = [J.$mul$n(t2.get$width(t2), 0.2), 0];
@@ -11539,20 +11537,89 @@ FadeAcrossTransition: {"": "VNTransition;name,position,current,args,vn,layer,pri
     t4 = t5[0];
     if (1 >= t3)
       throw H.ioore(1);
-    this.tween = t2.transition$5(t2, t4, t5[1], J.$index$asx(this.args, "dur"), Z.TransitionFunction_linear$closure, new N.FadeAcrossTransition_during_closure(t1, this, fade));
-    this.vn.get$juggler().delayCall$2(new N.FadeAcrossTransition_during_closure0(this), J.$index$asx(this.args, "dur"));
+    t2.transition$5(t2, t4, t5[1], J.$index$asx(this.args, "dur"), Z.TransitionFunction_easeOutQuadratic$closure, new N.VNTransition_fadeAcrossTransition_closure(t1, this, fade))._onComplete = this.get$_after();
+    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeAcrossTransition_closure0(this), J.$index$asx(this.args, "dur"));
+  },
+  get$fadeAcrossTransition: function() {
+    return new P.BoundClosure$0(this, "fadeAcrossTransition$0", null);
+  },
+  slideTransition$0: function() {
+    var t1, t2, t3, t4, start, horizontal;
+    this.name = "slide";
+    this._before$0();
+    t1 = this.current;
+    t1.set$alpha;
+    t1._alpha = 0;
+    J.add$1$ax(this.position, this.current);
+    t1 = this.current;
+    t1 = J.$negate$n(t1.get$width(t1));
+    t2 = $.stage;
+    t2.get$width;
+    t2 = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width;
+    t3 = $.stage;
+    t3.get$height;
+    t3 = t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height;
+    t4 = this.current;
+    t4 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3, "down", J.$negate$n(t4.get$height(t4))]);
+    start = t4.$index(t4, J.$index$asx(this.args, "dir"));
+    horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.args, "dir"));
+    t4 = this.vn.get$juggler();
+    t1 = this.current;
+    if (horizontal)
+      t1 = t1.get$x(t1);
+    else {
+      t1.get$y;
+      t1 = t1._y;
+    }
+    this.tween = t4.transition$5(t4, start, t1, J.$index$asx(this.args, "dur"), Z.TransitionFunction_easeOutQuadratic$closure, new N.VNTransition_slideTransition_closure(this, horizontal));
     t1 = this.tween;
-    t1.set$onComplete(t1, this.get$after());
+    t1.set$onStart(new N.VNTransition_slideTransition_closure0(this));
+    t1.set$onComplete(t1, this.get$_after());
   },
-  after$0: function() {
-    N.VNTransition.prototype.after$0.call(this);
+  get$slideTransition: function() {
+    return new P.BoundClosure$0(this, "slideTransition$0", null);
   },
-  get$after: function() {
-    return new P.BoundClosure$0(this, "after$0", null);
-  }
+  VNTransition$3: function(position, current, args) {
+    this.vn = $.stage.getChildByName$1("vn");
+    this.position = position;
+    this.current = current;
+    this.args = args;
+  },
+  static: {
+VNTransition$: function(position, current, args) {
+  var t1 = new N.VNTransition(null, null, null, null, null, null, null, null, null);
+  t1.VNTransition$3(position, current, args);
+  return t1;
+}}
+
 },
 
-FadeAcrossTransition_during_closure: {"": "Closure;box_0,this_1,fade_2",
+VNTransition__after_closure: {"": "Closure;",
+  call$0: function() {
+    return $.script.next$0();
+  },
+  "+call:0:0": 0
+},
+
+VNTransition_fadeThruTransition_closure: {"": "Closure;this_0",
+  call$0: function() {
+    var t1 = this.this_0.get$current();
+    t1.set$alpha;
+    t1.set$_alpha(1);
+    return 1;
+  },
+  "+call:0:0": 0
+},
+
+VNTransition_fadeThruTransition_closure0: {"": "Closure;this_1",
+  call$0: function() {
+    var t1 = this.this_1;
+    return J.get$position$x(t1).removeChild$1(t1.get$temp());
+  },
+  "+call:0:0": 0
+},
+
+VNTransition_fadeAcrossTransition_closure: {"": "Closure;box_0,this_1,fade_2",
   call$1: function(value) {
     var t1, t2, t3, t4, t5, t6;
     t1 = this.this_1;
@@ -11607,10 +11674,31 @@ FadeAcrossTransition_during_closure: {"": "Closure;box_0,this_1,fade_2",
   "+call:1:0": 0
 },
 
-FadeAcrossTransition_during_closure0: {"": "Closure;this_3",
+VNTransition_fadeAcrossTransition_closure0: {"": "Closure;this_3",
   call$0: function() {
     var t1 = this.this_3;
     return J.get$position$x(t1).removeChild$1(t1.get$temp());
+  },
+  "+call:0:0": 0
+},
+
+VNTransition_slideTransition_closure: {"": "Closure;this_0,horizontal_1",
+  call$1: function(value) {
+    var t1 = this.this_0;
+    if (this.horizontal_1)
+      J.set$x$x(t1.get$current(), value);
+    else
+      J.set$y$x(t1.get$current(), value);
+  },
+  "+call:1:0": 0
+},
+
+VNTransition_slideTransition_closure0: {"": "Closure;this_2",
+  call$0: function() {
+    var t1 = this.this_2.get$current();
+    t1.set$alpha;
+    t1.set$_alpha(1);
+    return 1;
   },
   "+call:0:0": 0
 },
@@ -11659,7 +11747,7 @@ Verb: {"": "Object;"},
 
 Set: {"": "Verb;",
   Set$1: function(args, box_0) {
-    var vn, layer, t1, posName, value, posArgs, t2, priorObject, newName, newObject, sa, sw, shape, t3, t4, drawn, stroke, tf;
+    var vn, layer, t1, posName, value, posArgs, t2, priorObject, newName, newObject, sa, sw, shape, t3, t4, drawn, stroke, tf, vnt, transMap;
     box_0.position_0 = null;
     vn = $.stage.getChildByName$1("vn");
     box_0.opts_1 = H.makeLiteralMap([]);
@@ -11860,31 +11948,17 @@ Set: {"": "Verb;",
     newObject.set$name;
     newObject._name = newName;
     vn.set$prevNext([false, false]);
-    switch (J.$index$asx(box_0.opts_1, "trans")) {
-      case "fade":
-        t1 = new N.FadeTransition(null, null, null, null, null, null, null, null, null);
-        t1.VNTransition$3(box_0.position_0, newObject, box_0.opts_1);
-        t1.name = "fade";
-        break;
-      case "fadethru":
-        t1 = new N.FadeThruTransition(null, null, null, null, null, null, null, null, null);
-        t1.VNTransition$3(box_0.position_0, newObject, box_0.opts_1);
-        t1.name = "fadethru";
-        break;
-      case "fadeacross":
-        t1 = new N.FadeAcrossTransition(null, null, null, null, null, null, null, null, null);
-        t1.VNTransition$3(box_0.position_0, newObject, box_0.opts_1);
-        t1.name = "fadeacross";
-        break;
-      case "none":
-        if (priorObject != null)
-          box_0.position_0.removeChild$1(priorObject);
-        box_0.position_0.addChild$1(newObject);
-        t1 = J.$index$asx(box_0.opts_1, "wait");
-        if (typeof t1 === "number")
-          vn.get$juggler().delayCall$2(new N.Set_closure2(), J.$index$asx(box_0.opts_1, "wait"));
-        break;
-      default:
+    vnt = N.VNTransition$(box_0.position_0, newObject, box_0.opts_1);
+    transMap = H.makeLiteralMap(["fade", vnt.get$fadeTransition(), "fadethru", vnt.get$fadeThruTransition(), "fadeacross", vnt.get$fadeAcrossTransition(), "slide", vnt.get$slideTransition()]);
+    if (transMap.containsKey$1(J.$index$asx(box_0.opts_1, "trans")) === true)
+      transMap.$index(transMap, J.$index$asx(box_0.opts_1, "trans")).call$0();
+    else {
+      if (priorObject != null)
+        box_0.position_0.removeChild$1(priorObject);
+      box_0.position_0.addChild$1(newObject);
+      t1 = J.$index$asx(box_0.opts_1, "wait");
+      if (typeof t1 === "number")
+        vn.get$juggler().delayCall$2(new N.Set_closure2(), J.$index$asx(box_0.opts_1, "wait"));
     }
     if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
       $.script.next$0();
@@ -16786,6 +16860,13 @@ TransitionFunction_easeInQuadratic: function(ratio) {
   return J.$mul$n(ratio, ratio);
 },
 
+TransitionFunction_easeOutQuadratic: function(ratio) {
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  ratio = 1 - ratio;
+  return 1 - ratio * ratio;
+},
+
 Sound_load: function(url, soundLoadOptions) {
   if ($.SoundMixer__engine == null)
     Z.SoundMixer__initEngine();
@@ -17159,6 +17240,9 @@ Transition: {"": "Animatable;_startValue,_targetValue,_transitionFunction,_curre
   _transitionFunction$1: function(arg0) {
     return this._transitionFunction.call$1(arg0);
   },
+  _onStart$0: function() {
+    return this._onStart.call$0();
+  },
   _onUpdate$1: function(arg0) {
     return this._onUpdate.call$1(arg0);
   },
@@ -17187,8 +17271,11 @@ Transition: {"": "Animatable;_startValue,_targetValue,_transitionFunction,_curre
       if (typeof t1 !== "number")
         return this.advanceTime$1$bailout1(6, 0, t1);
       if (t1 >= 0) {
-        if (!this._started)
+        if (!this._started) {
           this._started = true;
+          if (this._onStart != null)
+            this._onStart$0();
+        }
         t1 = this._currentTime;
         if (typeof t1 !== "number")
           return this.advanceTime$1$bailout1(7, 0, t1);
@@ -17254,8 +17341,11 @@ Transition: {"": "Animatable;_startValue,_targetValue,_transitionFunction,_curre
               if (state0 === 11 || state0 === 10 || state0 === 9 || state0 === 8 || state0 === 7 || state0 === 0 && J.$ge$n(t1, 0))
                 switch (state0) {
                   case 0:
-                    if (!this._started)
+                    if (!this._started) {
                       this._started = true;
+                      if (this._onStart != null)
+                        this._onStart$0();
+                    }
                     t1 = this._currentTime;
                   case 7:
                     state0 = 0;
@@ -17289,6 +17379,9 @@ Transition: {"": "Animatable;_startValue,_targetValue,_transitionFunction,_curre
         state0 = 0;
         return J.$lt$n(t1, t2);
     }
+  },
+  set$onStart: function($function) {
+    this._onStart = $function;
   },
   set$onComplete: function(_, $function) {
     this._onComplete = $function;
@@ -17433,6 +17526,9 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
   _transitionFunction$1: function(arg0) {
     return this._transitionFunction.call$1(arg0);
   },
+  _onStart$0: function() {
+    return this._onStart.call$0();
+  },
   _onComplete$0: function() {
     return this._onComplete.call$0();
   },
@@ -17480,6 +17576,8 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
             tp = t1[i];
             tp.startValue = tp._getPropertyValue$1(tp, t2);
           }
+          if (this._onStart != null)
+            this._onStart$0();
         }
         t1 = this._currentTime;
         if (typeof t1 !== "number")
@@ -17558,6 +17656,8 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
                         tp = t1[i];
                         tp.startValue = tp._getPropertyValue$1(tp, t2);
                       }
+                      if (this._onStart != null)
+                        this._onStart$0();
                     }
                     t1 = this._currentTime;
                   case 8:
@@ -17602,6 +17702,9 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
     if (this._started === false)
       this._currentTime = J.$sub$n(J.$add$ns(this._currentTime, this._delay), value);
     this._delay = value;
+  },
+  set$onStart: function($function) {
+    this._onStart = $function;
   },
   set$onComplete: function(_, $function) {
     this._onComplete = $function;
@@ -17678,7 +17781,8 @@ Bitmap: {"": "DisplayObject;_bitmapData,_pixelSnapping,_clipRectangle,_liblib4$_
       bitmapData.render$1(renderState);
     else
       bitmapData.renderClipped$2(renderState, t1);
-  }
+  },
+  $isBitmap: true
 },
 
 BitmapData: {"": "Object;_width,_height,_transparent,_pixelRatio,_pixelRatioSource,_renderMode,_destinationWidth,_destinationHeight,_destinationX,_destinationY,_sourceX,_sourceY,_sourceWidth,_sourceHeight,_liblib4$_source,_context",
@@ -22406,6 +22510,7 @@ init.globalFunctions.Element__determineMouseWheelEventType$closure = W.Element__
 init.globalFunctions.main$closure = G.main$closure = new G.Closure$main(G.main, "main$closure");
 init.globalFunctions.TransitionFunction_linear$closure = Z.TransitionFunction_linear$closure = new Z.Closure$linear(Z.TransitionFunction_linear, "TransitionFunction_linear$closure");
 init.globalFunctions.TransitionFunction_easeInQuadratic$closure = Z.TransitionFunction_easeInQuadratic$closure = new Z.Closure$easeInQuadratic(Z.TransitionFunction_easeInQuadratic, "TransitionFunction_easeInQuadratic$closure");
+init.globalFunctions.TransitionFunction_easeOutQuadratic$closure = Z.TransitionFunction_easeOutQuadratic$closure = new Z.Closure$easeOutQuadratic(Z.TransitionFunction_easeOutQuadratic, "TransitionFunction_easeOutQuadratic$closure");
 // Runtime type support
 Z.DisplayObject.$isDisplayObject = true;
 Z.Stage.$isDisplayObject = true;

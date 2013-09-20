@@ -1,6 +1,6 @@
 part of dartvn;
 
-abstract class VNTransition extends Option {
+class VNTransition extends Option {
   String name;
   Position position;
   var current;
@@ -12,7 +12,6 @@ abstract class VNTransition extends Option {
     this.position = position;
     this.current = current;
     this.args = args;
-    before();
   }
   
   DisplayObjectContainer layer;
@@ -20,62 +19,42 @@ abstract class VNTransition extends Option {
   DisplayObject temp;
   var tween;
   
-  void before() {
+  void _before() {
     //always need to check for prior if mode isn't add
     if(args['mode']!='add' && position.numChildren > 0) prior = position.getChildAt(0);
-    during();
   }
   
-  void during() {
+  void _during() {
     //print(args.toString());
   }
   
-  void after() {
+  void _after() {
     //if prior was set, need to remove it
     if(prior != null) position.removeChild(prior);
     current.alpha = 1;
     if(args['wait'] == 'user') vn.prevNext = [true,true];
     else if(args['wait'] is num) vn.juggler.delayCall(()=> script.next(), args['wait']);
   }
-}
 
 //-----------------------------------------------------------------------------//
-class FadeTransition extends VNTransition {  
-  FadeTransition(Position position, var current, Map args) : super(position, current, args) {
-    this.name = 'fade';
-  }
-  
-  before() {
-    super.before();
-  }
-  
-  during() {
-    super.during();
+ void fadeTransition() {
+   name = 'fade'; 
+   _before();
+    _during();
     current.alpha = 0;
     position.add(current);
     tween = vn.juggler.tween(current, args['dur'], TransitionFunction.easeInQuadratic);
     tween..animate.alpha.to(1.0)
-         ..onComplete = after;
+         ..onComplete = _after;
   }
   
-  after() {
-    super.after();
-  }
-  
-}
 
 //---------------------------------------------------------------------------------//
-class FadeThruTransition extends VNTransition {  
-  FadeThruTransition(Position position, var current, Map args) : super(position, current, args) {
-    this.name = 'fadethru';
-  }
-  
-  before() {
-    super.before();
-  }
-  
-  during() {
-    super.during();
+  void fadeThruTransition() {  
+    name = 'fadethru';
+    _before();
+    _during();
+    if(current is! Bitmap) current = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), true, 0x00000000)..draw(current));
     temp = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), false, args['color']))
         ..alpha = 0
         ..filters = [new AlphaMaskFilter(current.bitmapData)]
@@ -83,39 +62,27 @@ class FadeThruTransition extends VNTransition {
     current.alpha = 0;
     position.add(current);
     position.add(temp);
-
+  
     vn.juggler.tween(temp, args['dur']/2, TransitionFunction.easeInQuadratic)
         ..animate.alpha.to(1.0)
         ..onComplete = () => current.alpha = 1;
-
+  
     vn.juggler.tween(temp, args['dur']/2, TransitionFunction.easeInQuadratic)
       ..animate.alpha.to(0.0)
       ..delay = args['dur']/2
-      ..onComplete = after;
+      ..onComplete = _after;
     
     vn.juggler.delayCall(()=> position.removeChild(temp), args['dur']);
   }
-  
-  after() {
-    super.after();
-    
-  }
-  
-}
+
 
 //---------------------------------------------------------------------------------//
-class FadeAcrossTransition extends VNTransition {  
-  FadeAcrossTransition(Position position, var current, Map args) : super(position, current, args) {
-    this.name = 'fadeacross';
-  }
-  
-  before() {
-    super.before();
-    current.clipRectangle = new Rectangle.zero();    
-  }
-  
-  during() {
-    super.during();
+  void fadeAcrossTransition() {  
+    name = 'fadeacross';
+    _before();   
+    _during();
+    if(current is! Bitmap) current = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), true, 0x00000000)..draw(current));
+    current.clipRectangle = new Rectangle.zero(); 
     var fadePortion = 1/5;
     var stops = [0,1];
     var gradientWidthHeight = [current.width*fadePortion,0];
@@ -158,7 +125,7 @@ class FadeAcrossTransition extends VNTransition {
         ..applyCache(startStop[0].toInt(),startStop[1].toInt(),fade.width.toInt(),fade.height.toInt());
     position.add(temp);
     position.add(current);
-    tween = vn.juggler.transition(startStop[0], startStop[1], args['dur'], TransitionFunction.linear, (value) {
+    vn.juggler.transition(startStop[0], startStop[1], args['dur'], TransitionFunction.easeOutQuadratic, (value) {
       temp.applyCache(horizontal?value.toInt():0, horizontal?0:value.toInt(), fade.width.toInt(),fade.height.toInt());
       switch(args['dir']) {
         case 'right': current.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),current.width.toInt()), current.height.toInt());
@@ -170,13 +137,33 @@ class FadeAcrossTransition extends VNTransition {
         case 'up': current.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), current.width.toInt(), max(startStop[0]-value+startStop[1],0));
         break;
       }
-    });    
+    }).onComplete = _after;    
     vn.juggler.delayCall(()=> position.removeChild(temp), args['dur']);
-    tween.onComplete = after;
   }
   
-  after() {
-    super.after();
+
+//-----------------------------------------------------------------------------//
+  void slideTransition() {  
+    name = 'slide';
+    _before();
+    _during();
+    current.alpha=0;
+    position.add(current); //sets current final position
+    var start = { 'right': -current.width,
+                  'left':   stage.width,
+                  'up':     stage.height,
+                  'down':  -current.height}[args['dir']];
+    var horizontal = ['right','left'].contains(args['dir']);    
+    
+    tween = vn.juggler.transition(start, horizontal?current.x:current.y, args['dur'], TransitionFunction.easeOutQuadratic, (value) {
+      if(horizontal) current.x = value;
+      else current.y = value;
+
+    });
+    
+    tween..onStart = (() =>  current.alpha=1 )
+         ..onComplete = _after; 
   }
-  
+ 
 }
+  
