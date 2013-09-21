@@ -1,0 +1,44 @@
+{"frames": [
+
+{
+	"filename": "hand",
+	"frame": {"x":2,"y":2,"w":619,"h":840},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":619,"h":840},
+	"sourceSize": {"w":619,"h":840}
+},
+{
+	"filename": "open",
+	"frame": {"x":1154,"y":2,"w":507,"h":794},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":3,"w":507,"h":794},
+	"sourceSize": {"w":511,"h":800}
+},
+{
+	"filename": "shield",
+	"frame": {"x":623,"y":2,"w":529,"h":780},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":529,"h":780},
+	"sourceSize": {"w":529,"h":780}
+},
+{
+	"filename": "spirit",
+	"frame": {"x":1154,"y":511,"w":508,"h":600},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":600},
+	"sourceSize": {"w":508,"h":600}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "zelda.png",
+	"format": "RGBA8888",
+	"size": {"w":1950,"h":1021},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ce3d2ef016841482bdc22c9bda9b8a40:1/1$"
+}
+}

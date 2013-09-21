@@ -30,9 +30,8 @@ class Config {
     var opt = _config['options'];
     var canvas = html.query('#${opt['stage_id']}');
     stage = new Stage('vnStage', canvas, opt['width'], opt['height']);
-    //todo load these two from config yaml somehow...
-    stage.scaleMode = StageScaleMode.SHOW_ALL;
-    stage.align = StageAlign.NONE;
+    stage.scaleMode = VN.scaleMode[opt['scale']];
+    stage.align = VN.align[opt['align']];
     
     var renderLoop = new RenderLoop();
     renderLoop.addStage(stage);
@@ -41,11 +40,15 @@ class Config {
     if(_config.containsKey('assets')) {
       Map assets = _config['assets'];
       var imagePath = assets.containsKey('image_path')?assets['image_path']:'';
-      if(assets.containsKey('images')) assets['images'].forEach((name, url) => resourceManager.addBitmapData(name, imagePath + url));
+      if(assets.containsKey('images')) assets['images'].forEach((name, String url) {
+        if(url.endsWith('.json')) resourceManager.addTextureAtlas(name, imagePath + url, TextureAtlasFormat.JSONARRAY);
+        else resourceManager.addBitmapData(name, imagePath + url); 
+      });
       if(assets.containsKey('sounds')) assets['sounds'].forEach((name, url) => resourceManager.addSound(name, imagePath + url));
     }
     
     //add characters
+    /*
     _config['characters'].forEach((String charid, Map charmap) {
       Character char = new Character(charid, charmap['name'], {});
       charmap['emotions'].forEach((String emoid, Map emomap) {
@@ -56,7 +59,9 @@ class Config {
       //default emotion to first emotion - keys in map are alphabetically sorted, not order in yaml?
       char.setEmotion(char.emotions.keys.first);
     });
+    */
     
+    _vn.mask = new Mask.rectangle(0, 0, opt['width'], opt['height']);
     stage.addChild(_vn);
     stage.juggler.add(_vn);
     

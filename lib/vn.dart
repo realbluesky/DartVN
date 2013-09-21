@@ -27,7 +27,7 @@ class VN extends DisplayObjectContainer implements Animatable {
   List<bool> prevNext = [false,true];
   Map options;
   Map assets;
-
+  
   VN(String configYaml) {
     resourceManager = new ResourceManager();
     var config = new Config(configYaml, this);
@@ -77,5 +77,38 @@ class VN extends DisplayObjectContainer implements Animatable {
   bool advanceTime(num time) {
     _juggler.advanceTime(time);
   }
+  
+  static Map<String, String> scaleMode = 
+    {'exactFit': StageScaleMode.EXACT_FIT, 'noBorder': StageScaleMode.NO_BORDER,
+     'noScale': StageScaleMode.NO_SCALE, 'showAll': StageScaleMode.SHOW_ALL};
+  
+  static Map<String, String> align = 
+    {'bottom': StageAlign.BOTTOM, 'bottomLeft': StageAlign.BOTTOM_LEFT, 'bottomRight': StageAlign.BOTTOM_RIGHT,
+     'top': StageAlign.TOP, 'topLeft': StageAlign.TOP_LEFT, 'topRight': StageAlign.TOP_RIGHT,
+     'left': StageAlign.LEFT, 'right': StageAlign.RIGHT, 'none': StageAlign.NONE};
+  
+  static Map<String, EaseFunction> ease = 
+    {'linear': TransitionFunction.linear, 'sine': TransitionFunction.sine, 
+     'cosine': TransitionFunction.cosine, 'random': TransitionFunction.random, 'easeInQuadratic': TransitionFunction.easeInQuadratic,
+     'easeOutQuadratic': TransitionFunction.easeOutQuadratic, 'easeInOutQuadratic': TransitionFunction.easeInOutQuadratic, 
+     'easeOutInQuadratic': TransitionFunction.easeOutInQuadratic, 'easeInCubic': TransitionFunction.easeInCubic, 
+     'easeOutCubic': TransitionFunction.easeOutCubic, 'easeInOutCubic': TransitionFunction.easeInOutCubic, 
+     'easeOutInCubic': TransitionFunction.easeOutInCubic, 'easeInQuartic': TransitionFunction.easeInQuartic, 
+     'easeOutQuartic': TransitionFunction.easeOutQuartic, 'easeInOutQuartic': TransitionFunction.easeInOutQuartic, 
+     'easeOutInQuartic': TransitionFunction.easeOutInQuartic, 'easeInQuintic': TransitionFunction.easeInQuintic, 
+     'easeOutQuintic': TransitionFunction.easeOutQuintic, 'easeInOutQuintic': TransitionFunction.easeInOutQuintic, 
+     'easeOutInQuintic': TransitionFunction.easeOutInQuintic, 'easeInCircular': TransitionFunction.easeInCircular, 
+     'easeOutCircular': TransitionFunction.easeOutCircular, 'easeInOutCircular': TransitionFunction.easeInOutCircular, 
+     'easeOutInCircular': TransitionFunction.easeOutInCircular, 'easeInSine': TransitionFunction.easeInSine, 
+     'easeOutSine': TransitionFunction.easeOutSine, 'easeInOutSine': TransitionFunction.easeInOutSine, 
+     'easeOutInSine': TransitionFunction.easeOutInSine, 'easeInExponential': TransitionFunction.easeInExponential, 
+     'easeOutExponential': TransitionFunction.easeOutExponential, 'easeInOutExponential': TransitionFunction.easeInOutExponential, 
+     'easeOutInExponential': TransitionFunction.easeOutInExponential, 'easeInBack': TransitionFunction.easeInBack, 
+     'easeOutBack': TransitionFunction.easeOutBack, 'easeInOutBack': TransitionFunction.easeInOutBack, 
+     'easeOutInBack': TransitionFunction.easeOutInBack, 'easeInElastic': TransitionFunction.easeInElastic, 
+     'easeOutElastic': TransitionFunction.easeOutElastic, 'easeInOutElastic': TransitionFunction.easeInOutElastic, 
+     'easeOutInElastic': TransitionFunction.easeOutInElastic, 'easeInBounce': TransitionFunction.easeInBounce, 
+     'easeOutBounce': TransitionFunction.easeOutBounce, 'easeInOutBounce': TransitionFunction.easeInOutBounce, 
+     'easeOutInBounce': TransitionFunction.easeOutInBounce};
 
 }

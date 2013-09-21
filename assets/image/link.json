@@ -1,0 +1,84 @@
+{"frames": [
+
+{
+	"filename": "boomerang",
+	"frame": {"x":2,"y":1004,"w":1019,"h":780},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1019,"h":780},
+	"sourceSize": {"w":1019,"h":780}
+},
+{
+	"filename": "bow",
+	"frame": {"x":817,"y":2,"w":974,"h":786},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":11,"w":974,"h":786},
+	"sourceSize": {"w":996,"h":800}
+},
+{
+	"filename": "calm",
+	"frame": {"x":1793,"y":784,"w":446,"h":836},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":2,"w":446,"h":836},
+	"sourceSize": {"w":450,"h":840}
+},
+{
+	"filename": "fairy",
+	"frame": {"x":2,"y":2,"w":813,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":813,"h":1000},
+	"sourceSize": {"w":813,"h":1000}
+},
+{
+	"filename": "flute",
+	"frame": {"x":2276,"y":1232,"w":660,"h":800},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":660,"h":800},
+	"sourceSize": {"w":660,"h":800}
+},
+{
+	"filename": "jump",
+	"frame": {"x":817,"y":790,"w":528,"h":900},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":528,"h":900},
+	"sourceSize": {"w":528,"h":900}
+},
+{
+	"filename": "map",
+	"frame": {"x":1793,"y":2,"w":789,"h":780},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":789,"h":780},
+	"sourceSize": {"w":789,"h":780}
+},
+{
+	"filename": "sword",
+	"frame": {"x":784,"y":1320,"w":784,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":784,"h":700},
+	"sourceSize": {"w":784,"h":700}
+},
+{
+	"filename": "whip",
+	"frame": {"x":1570,"y":1320,"w":704,"h":700},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":704,"h":700},
+	"sourceSize": {"w":704,"h":700}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "link.png",
+	"format": "RGBA8888",
+	"size": {"w":2939,"h":2034},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:93efe9338e3b145363f37621208bf0e1:1/1$"
+}
+}

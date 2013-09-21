@@ -36,7 +36,7 @@ class Set extends Verb {
       layer.addChild(new Position(posArgs)..name = value.toString());
       newName = value.toString();
     } else { //no position/value specified, emptying this layer
-      vn.juggler.tween(layer, opts['dur'], TransitionFunction.easeInQuadratic)
+      vn.juggler.tween(layer, opts['dur'], VN.ease[opts['ease']])
         ..animate.alpha.to(0)
         ..onComplete = () {
          if(layer.numChildren>0) layer.removeChildren();
@@ -47,9 +47,24 @@ class Set extends Verb {
     }
     
     var newObject;
-    //eventually add Map detection for gradients?    
-    if(value is num) newObject = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, value));
-    else if(vn.assets['images'].containsKey(value)) newObject = new Bitmap(resourceManager.getBitmapData(value));
+    //eventually add Map detection for gradients?
+    if(value == null) {
+      if(priorObject != null) { //no value set, empty position
+        if(position != null) {
+          vn.juggler.tween(position, opts['dur'], VN.ease[opts['ease']])
+            ..animate.alpha.to(0)
+            ..onComplete = () { layer.removeChild(position); if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']); };
+          if(opts['wait'] == 'none' || opts['wait'] == null) script.next();
+          return; //free to jump out 
+        }
+      newObject = new Bitmap();
+      }
+    } 
+    else if(value is num) newObject = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, value));
+    else if(vn.assets['images'].containsKey(value.split('.')[0])) {
+      if(value.contains('.')) newObject = new Bitmap(resourceManager.getTextureAtlas(value.split('.')[0]).getBitmapData(value.split('.')[1]));
+      else newObject = new Bitmap(resourceManager.getBitmapData(value));
+    }
     else if(vn.assets['shapes'].containsKey(value)) {
       Map sa = vn.assets['shapes'][value]; //shape arguments
       var sw = sa.containsKey('stroke_color')?(sa.containsKey('stroke_width')?sa['stroke_width']:1):0;
@@ -88,15 +103,6 @@ class Set extends Verb {
     } else if(value is String) { //not an image or shape, so just display the text
       List tf = vn.options['text_formats'][opts['text_format']];
       newObject = new TextField(value, new TextFormat(tf[0], tf[1], tf[2], bold:tf[3], italic:tf[4]))..autoSize = TextFieldAutoSize.LEFT;
-    } else if(priorObject != null) { //no value set, empty position
-      if(position != null) {
-        vn.juggler.tween(position, opts['dur'], TransitionFunction.easeInQuadratic)
-          ..animate.alpha.to(0)
-          ..onComplete = () { layer.removeChild(position); if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']); };
-        if(opts['wait'] == 'none' || opts['wait'] == null) script.next();
-        return; //free to jump out 
-      }
-      newObject = new Bitmap();
     }
     
     //position.add(newObject);

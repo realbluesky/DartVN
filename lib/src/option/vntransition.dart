@@ -4,14 +4,14 @@ class VNTransition extends Option {
   String name;
   Position position;
   var current;
-  Map args;
+  Map opts;
   VN vn;
   
   VNTransition(Position position, var current, Map args) { 
     this.vn = stage.getChildByName('vn'); 
     this.position = position;
     this.current = current;
-    this.args = args;
+    this.opts = args;
   }
   
   DisplayObjectContainer layer;
@@ -21,7 +21,7 @@ class VNTransition extends Option {
   
   void _before() {
     //always need to check for prior if mode isn't add
-    if(args['mode']!='add' && position.numChildren > 0) prior = position.getChildAt(0);
+    if(opts['mode']!='add' && position.numChildren > 0) prior = position.getChildAt(0);
   }
   
   void _during() {
@@ -32,8 +32,8 @@ class VNTransition extends Option {
     //if prior was set, need to remove it
     if(prior != null) position.removeChild(prior);
     current.alpha = 1;
-    if(args['wait'] == 'user') vn.prevNext = [true,true];
-    else if(args['wait'] is num) vn.juggler.delayCall(()=> script.next(), args['wait']);
+    if(opts['wait'] == 'user') vn.prevNext = [true,true];
+    else if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
   }
 
 //-----------------------------------------------------------------------------//
@@ -43,7 +43,7 @@ class VNTransition extends Option {
     _during();
     current.alpha = 0;
     position.add(current);
-    tween = vn.juggler.tween(current, args['dur'], TransitionFunction.easeInQuadratic);
+    tween = vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']]);
     tween..animate.alpha.to(1.0)
          ..onComplete = _after;
   }
@@ -55,7 +55,7 @@ class VNTransition extends Option {
     _before();
     _during();
     if(current is! Bitmap) current = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), true, 0x00000000)..draw(current));
-    temp = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), false, args['color']))
+    temp = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), false, opts['color']))
         ..alpha = 0
         ..filters = [new AlphaMaskFilter(current.bitmapData)]
         ..applyCache(0, 0, current.width.toInt(), current.height.toInt());
@@ -63,16 +63,16 @@ class VNTransition extends Option {
     position.add(current);
     position.add(temp);
   
-    vn.juggler.tween(temp, args['dur']/2, TransitionFunction.easeInQuadratic)
+    vn.juggler.tween(temp, opts['dur']/2, VN.ease[opts['ease']])
         ..animate.alpha.to(1.0)
         ..onComplete = () => current.alpha = 1;
   
-    vn.juggler.tween(temp, args['dur']/2, TransitionFunction.easeInQuadratic)
+    vn.juggler.tween(temp, opts['dur']/2, VN.ease[opts['ease']])
       ..animate.alpha.to(0.0)
-      ..delay = args['dur']/2
+      ..delay = opts['dur']/2
       ..onComplete = _after;
     
-    vn.juggler.delayCall(()=> position.removeChild(temp), args['dur']);
+    vn.juggler.delayCall(()=> position.removeChild(temp), opts['dur']);
   }
 
 
@@ -89,7 +89,7 @@ class VNTransition extends Option {
     var pathWidthHeight = [current.width*fadePortion,current.height];
     bool horizontal = true;
     var startStop = [-current.width*fadePortion, current.width];
-    switch(args['dir']) {
+    switch(opts['dir']) {
       case 'left':
         stops = new List.from(stops.reversed);
         startStop = [current.width,-current.width*fadePortion];
@@ -125,9 +125,9 @@ class VNTransition extends Option {
         ..applyCache(startStop[0].toInt(),startStop[1].toInt(),fade.width.toInt(),fade.height.toInt());
     position.add(temp);
     position.add(current);
-    vn.juggler.transition(startStop[0], startStop[1], args['dur'], TransitionFunction.easeOutQuadratic, (value) {
+    vn.juggler.transition(startStop[0], startStop[1], opts['dur'], VN.ease[opts['ease']], (value) {
       temp.applyCache(horizontal?value.toInt():0, horizontal?0:value.toInt(), fade.width.toInt(),fade.height.toInt());
-      switch(args['dir']) {
+      switch(opts['dir']) {
         case 'right': current.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),current.width.toInt()), current.height.toInt());
         break;
         case 'left': current.clipRectangle = new Rectangle(max(value-startStop[1]-1,0), 0, max(startStop[0]-value+startStop[1],0), current.height.toInt());
@@ -138,7 +138,7 @@ class VNTransition extends Option {
         break;
       }
     }).onComplete = _after;    
-    vn.juggler.delayCall(()=> position.removeChild(temp), args['dur']);
+    vn.juggler.delayCall(()=> position.removeChild(temp), opts['dur']);
   }
   
 
@@ -152,10 +152,10 @@ class VNTransition extends Option {
     var start = { 'right': -current.width,
                   'left':   stage.width,
                   'up':     stage.height,
-                  'down':  -current.height}[args['dir']];
-    var horizontal = ['right','left'].contains(args['dir']);    
+                  'down':  -current.height}[opts['dir']];
+    var horizontal = ['right','left'].contains(opts['dir']);    
     
-    tween = vn.juggler.transition(start, horizontal?current.x:current.y, args['dur'], TransitionFunction.easeOutQuadratic, (value) {
+    tween = vn.juggler.transition(start, horizontal?current.x:current.y, opts['dur'], VN.ease[opts['ease']], (value) {
       if(horizontal) current.x = value;
       else current.y = value;
 

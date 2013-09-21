@@ -1,8 +1,8 @@
 options:
   name: DartVN Sample
   stage_id: vnStage #id of the canvas containing div
-  scale: SHOW_ALL #SHOW_ALL, NO_SCALE, NO_BORDER, EXACT_FIT
-  align: NONE #NONE, LEFT, RIGHT, TOP, TOP_LEFT, TOP_RIGHT, BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT
+  scale: showAll #showAll, noScale, noBorder, exactFit
+  align: none #none, left, right, top, topLeft, topRight, bottom, bottomLeft, bottomRight
   width: 1920
   height: 1080
   #hardcoded defaults
@@ -10,6 +10,7 @@ options:
     dur: 1 
     dir: right
     trans: fade
+    ease: easeInQuadratic
     wait: 1
     text_format: dialog
   #layers are ordered as they appear below, back to front
@@ -26,36 +27,23 @@ options:
   text_formats:
     #name: ['font, stack', size, color, bold, italic]
     title: ['"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', 60, 0xFFFFFFFF, true, false]
-    dialog: ['"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', 30, 0xFF000000, false, false]
+    dialog: ['"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', 34, 0xFFFFFFFF, false, false]
 assets:
   image_path: ../assets/image/
   images:
-    naturebg: naturebg.jpg
-    oceanbg: oceanbg.jpg
-    treebg: treebg.jpg
-    treesbg: treesbg.jpg
-    link: link.png
-    zelda: zelda.png
+    town: town.jpg
+    #anything ending in .json will be loaded as a TextureAtlas, comments below just for reference
+    #image assets with . in the name are assumed to come from an atlas, so don't use them in other asset names
+    link: link.json #boomerang, bow, calm, fairy, flute, jump, map, sword, whip
+    zelda: zelda.json #hand, open, shield, spirit
   shapes:
     text_bubble: {shape: rect, fill_color: 0xEEFEEBAD, width: 820, height: 220, corner_radius: 20, stroke_color: 0xEEFFFFFF, stroke_width: 10}
     text_box: {shape: rect, fill_color: 0xDDFFFFFF, width: 1920, height: 400}
 characters:
-  gumshoe:
-    name: Gum Shoe
-    emotions:
-      laughing:
-        src: ../assets/image/gumshoe/gumshoe.laughing.png
-        atlas: ../assets/image/gumshoe/gumshoe.laughing.json
-        frames: 8
-        width: 180
-        height: 200
-        timing: [2,.2]
-      tired:
-        src: ../assets/image/gumshoe/tired7.png
-        frames: 7
-        width: 180
-        height: 200
-        timing: [.4,.4,.4,.5,2,.6]
+  link:
+    shorthand: l
+    image: link.calm
+    position: stage_left
 script:
   # verbs and their arguments
   # general structure [primary verb, sub-verb, value, {options}]
@@ -66,18 +54,21 @@ script:
   #   [set, layer, position, atlas/image/color, {options}]
   #   [set, bg, bg, 0xFF000000, {trans: fade}]
   #   [set, mg, stage_left, asset_name, {trans: fadethru, color: 0xFF000000}]
-  - [set, bg, tl, 0xFF000000]  
-  - [set, mg, center_middle, "DartVN Sample - for Testing", {text_format: title, trans: fadeacross, dur: 2}]
-  - [set, mg, center_middle, "", {wait: none, dur: 2}]
-  - [set, bg, tl, naturebg, {trans: slide, dur: 2}]
-  - [set, bg, tl, oceanbg, {trans: fadeacross, dur: 2, dir: up}]
-  - [set, mg, stage_left, link, {trans: slide, dir: up, dur: 1, wait: 1}]
-  - [set, mg, stage_right, zelda, {trans: fadethru, color: 0xFFFFFFFF, dur: .75}]
-  - [set, fg, bl, "text_box", {wait: 0, dur: 1}]
-  - [set, fg, center_bottom, "String that isn't asset, therefore print text", {text_format: dialog, trans: fadeacross, mode: add, wait: 3}]
+  # label "create a placemark to go back to"
+  # goto "take script to labelled point"
+  - [label, start]  
+  - [set, bg, tl, town, {trans: fade, dur: 2}]
+  - [set, mg, center_middle, "DartVN Sample - Zelda Convo", {text_format: title, trans: fadeacross, dur: 2}]
+  - [set, mg, center_middle, "", {dur: 2}]
+  #- [say, link.stand, "How's everything going?",
+  #    "That good?  I'm glad to hear it.",
+  #    "Should this work this way, or what?"]
+  - [set, mg, stage_left, link.calm, {trans: fade, dur: .75, wait: 1}]
+  - [set, mg, stage_right, zelda.hand, {trans: fadethru, color: 0xFFFFFFFF, dur: .75}]
+  - [set, fg, center_middle, "text_bubble", {wait: 0, dur: 1}]
+  - [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, wait: 3}]
   - [set, fg] #clear a position by passsing nothing
   - [set, mg] #clear a layer by passing nothing
-  - [set, bg, tl, treebg, {trans: fadethru, color: 0xFF000000, dur: 2}]
-  - [set, bg, tl, treesbg, {trans: fadeacross, dur: 2, dir: down}]
-  - [set, bg, tl, naturebg, {trans: fadethru, dur: 2, color: 0xFFFFFFFF}]
+  - [set, bg, tl, 0xFF000000]
+  - [goto, start]
   

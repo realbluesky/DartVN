@@ -171,9 +171,91 @@ $$.Closure$main = [G, {"": "Closure;call$0,$name"}];
 
 $$.Closure$linear = [Z, {"": "Closure;call$1,$name"}];
 
+$$.Closure$sine = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$cosine = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$random = [Z, {"": "Closure;call$1,$name"}];
+
 $$.Closure$easeInQuadratic = [Z, {"": "Closure;call$1,$name"}];
 
 $$.Closure$easeOutQuadratic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutQuadratic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInQuadratic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInCubic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutCubic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutCubic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInCubic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInQuartic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutQuartic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutQuartic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInQuartic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInQuintic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutQuintic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutQuintic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInQuintic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInCircular = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutCircular = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutCircular = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInCircular = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInSine = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutSine = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutSine = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInSine = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInExponential = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutExponential = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutExponential = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInExponential = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInBack = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutBack = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutBack = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInBack = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInElastic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutElastic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutElastic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInElastic = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInBounce = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutBounce = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeInOutBounce = [Z, {"": "Closure;call$1,$name"}];
+
+$$.Closure$easeOutInBounce = [Z, {"": "Closure;call$1,$name"}];
 
 (function (reflectionData) {
   function map(x){x={x:x};delete x.x;return x}
@@ -695,6 +777,14 @@ JSString: {"": "String/Interceptor;",
     if (typeof other !== "string")
       throw H.wrapException(new P.ArgumentError(other));
     return receiver + other;
+  },
+  endsWith$1: function(receiver, other) {
+    var otherLength, t1;
+    otherLength = other.length;
+    t1 = receiver.length;
+    if (otherLength > t1)
+      return false;
+    return other === this.substring$1(receiver, t1 - otherLength);
   },
   replaceAll$2: function(receiver, from, to) {
     if (typeof to !== "string")
@@ -6040,18 +6130,6 @@ _AsBroadcastStream: {"": "Stream;_liblib3$_source,_onListenHandler,_onCancelHand
     this._liblib3$_controller = null;
     t1.cancel$0();
   },
-  _pauseSubscription$1: function(resumeSignal) {
-    var t1 = this._subscription;
-    if (t1 == null)
-      return;
-    t1.pause$1(t1, resumeSignal);
-  },
-  _resumeSubscription$0: function() {
-    var t1 = this._subscription;
-    if (t1 == null)
-      return;
-    t1.resume$0();
-  },
   _AsBroadcastStream$3: function(_source, _onListenHandler, _onCancelHandler, $T) {
     var t1 = new P._AsBroadcastStreamController(null, this.get$_onListen(), this.get$_onCancel(), 0, null, null, null, null);
     H.setRuntimeTypeInfo(t1, [$T]);
@@ -6095,15 +6173,6 @@ _AsBroadcastStream__onListen_closure: {"": "Closure;this_0",
 },
 
 _BroadcastSubscriptionWrapper: {"": "Object;_stream",
-  pause$1: function(_, resumeSignal) {
-    this._stream._pauseSubscription$1(resumeSignal);
-  },
-  pause$0: function($receiver) {
-    return this.pause$1($receiver, null);
-  },
-  resume$0: function() {
-    this._stream._resumeSubscription$0();
-  },
   cancel$0: function() {
     this._stream._cancelSubscription$0();
   }
@@ -8604,7 +8673,7 @@ HttpRequest_request: function(url, method, mimeType, onProgress, requestHeaders,
   C.HttpRequest_methods.open$3$async(xhr, "GET", url, true);
   if (responseType != null)
     xhr.responseType = responseType;
-  t1 = C.EventStreamProvider_load0.forTarget$1(xhr);
+  t1 = C.EventStreamProvider_load.forTarget$1(xhr);
   t2 = new W._EventStreamSubscription0(0, t1._liblib5$_target, t1._liblib5$_eventType, new W.HttpRequest_request_closure(completer, xhr), t1._liblib5$_useCapture);
   H.setRuntimeTypeInfo(t2, [H.getRuntimeTypeArgument(t1, "_EventStream0", 0)]);
   t2._tryResume$0();
@@ -9518,6 +9587,9 @@ RectBase: {"": "Object;",
   },
   toInt$0: function(_) {
     return new W.Rect(J.toInt$0$nx(this.get$left(this)), J.toInt$0$nx(this.get$top(this)), J.toInt$0$nx(this.get$width(this)), J.toInt$0$nx(this.get$height(this)));
+  },
+  get$topLeft: function(_) {
+    return new W.Point(this.get$left(this), this.get$top(this));
   }
 },
 
@@ -9603,7 +9675,7 @@ BodyElement: {"": "HtmlElement;",
     return C.EventStreamProvider_error.forElement$1(receiver);
   },
   get$onLoad: function(receiver) {
-    return C.EventStreamProvider_load.forElement$1(receiver);
+    return C.EventStreamProvider_load0.forElement$1(receiver);
   }
 },
 
@@ -9775,11 +9847,14 @@ Element: {"": "Node0;_templateContent},_templateIsDecorated%,offsetTop=,style=",
       t1 = false;
     return t1;
   },
+  getBoundingClientRect$0: function(receiver) {
+    return receiver.getBoundingClientRect();
+  },
   get$onError: function(receiver) {
     return C.EventStreamProvider_error.forElement$1(receiver);
   },
   get$onLoad: function(receiver) {
-    return C.EventStreamProvider_load.forElement$1(receiver);
+    return C.EventStreamProvider_load0.forElement$1(receiver);
   },
   $isElement: true,
   $asElement: null
@@ -9913,8 +9988,28 @@ MetaElement: {"": "HtmlElement;content%,name="},
 MeterElement: {"": "HtmlElement;value="},
 
 MouseEvent0: {"": "UIEvent;altKey=,button=,ctrlKey=,shiftKey=",
+  get$offsetX: function(receiver) {
+    return this.get$offset(receiver).x;
+  },
+  get$offsetY: function(receiver) {
+    return this.get$offset(receiver).y;
+  },
   get$client: function(receiver) {
     return new W.Point(receiver.clientX, receiver.clientY);
+  },
+  get$offset: function(receiver) {
+    var t1, t2;
+    if (!!receiver.offsetX)
+      return new W.Point(receiver.offsetX, receiver.offsetY);
+    else {
+      t1 = W._convertNativeToDart_EventTarget(receiver.target);
+      t2 = J.getInterceptor(t1);
+      if (typeof t1 !== "object" || t1 === null || !t2.$isElement)
+        throw H.wrapException(new P.UnsupportedError("offsetX is only supported on elements"));
+      t1 = new W.Point(receiver.clientX, receiver.clientY);
+      t1 = t1.$sub(t1, J.get$topLeft$x(J.getBoundingClientRect$0$x(W._convertNativeToDart_EventTarget(receiver.target))));
+      return new W.Point(J.toInt$0$nx(t1.x), J.toInt$0$nx(t1.y));
+    }
   }
 },
 
@@ -10233,6 +10328,9 @@ _ClientRect: {"": "Interceptor;height=,left=,top=,width=",
   toInt$0: function(receiver) {
     return new W.Rect(J.toInt$0$nx(receiver.left), J.toInt$0$nx(receiver.top), J.toInt$0$nx(receiver.width), J.toInt$0$nx(receiver.height));
   },
+  get$topLeft: function(receiver) {
+    return new W.Point(receiver.left, receiver.top);
+  },
   $isRect: true,
   $asRect: null
 },
@@ -10453,7 +10551,9 @@ max$bailout: function(state0, a, b) {
   if (J.$eq(b, 0) === true && t1.get$isNegative(a))
     return b;
   return a;
-}}],
+},
+
+_Random: {"": "Object;"}}],
 ["dart.typed_data", "dart:typed_data", , P, {
 Endianness: {"": "Object;_littleEndian", static: {
 "": "Endianness_BIG_ENDIAN,Endianness_LITTLE_ENDIAN,Endianness_HOST_ENDIAN",
@@ -11059,8 +11159,6 @@ Uint8List: {"": "TypedData_ListMixin_FixedLengthListMixin7;",
   $isJavaScriptIndexingBehavior: true
 }}],
 ["dartvn", "../lib/vn.dart", , N, {
-Character: {"": "Sprite;id,name>,emotions,curEmotion,buttonMode,useHandCursor,hitArea,_graphics,_dropTarget,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams"},
-
 Config: {"": "Object;onConfig<,_config<,characters,_vn<",
   onConfig$1: function(arg0) {
     return this.onConfig.call$1(arg0);
@@ -11069,7 +11167,7 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
     return this._config;
   },
   configure$1: function(response) {
-    var defaults, opt, t1, t2, assets, imagePath;
+    var defaults, opt, t1, t2, t3, assets, imagePath;
     this._config = O.loadYaml(response);
     defaults = H.makeLiteralMap(["dur", 1, "dir", "right", "trans", "fade", "width", 1920, "height", 1080, "layers", ["bg"]]);
     defaults.forEach$1(defaults, new N.Config_configure_closure(this));
@@ -11078,14 +11176,18 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
     t1 = J.getInterceptor$asx(opt);
     t2 = "#" + H.S(t1.$index(opt, "stage_id"));
     $.stage = Z.Stage$("vnStage", document.querySelector(t2), t1.$index(opt, "width"), t1.$index(opt, "height"), null);
-    t1 = $.stage;
-    t1.set$scaleMode;
-    t1._stageScaleMode = "showAll";
-    t1._updateCanvasSize$0();
-    t1 = $.stage;
-    t1.set$align;
-    t1._stageAlign = "";
-    t1._updateCanvasSize$0();
+    t2 = $.stage;
+    t3 = $.get$VN_scaleMode();
+    t3 = t3.$index(t3, t1.$index(opt, "scale"));
+    t2.set$scaleMode;
+    t2._stageScaleMode = t3;
+    t2._updateCanvasSize$0();
+    t2 = $.stage;
+    t3 = $.get$VN_align();
+    t3 = t3.$index(t3, t1.$index(opt, "align"));
+    t2.set$align;
+    t2._stageAlign = t3;
+    t2._updateCanvasSize$0();
     Z.RenderLoop$().addStage$1($.stage);
     if (this._config.containsKey$1("assets") === true) {
       assets = J.$index$asx(this._config, "assets");
@@ -11095,18 +11197,15 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
       if (assets.containsKey$1("sounds") === true)
         J.forEach$1$ax(J.$index$asx(assets, "sounds"), new N.Config_configure_closure2(imagePath));
     }
-    J.forEach$1$ax(J.$index$asx(this._config, "characters"), new N.Config_configure_closure3());
+    this._vn._mask = new Z._RectangleMask(new Z.Rectangle(0, 0, t1.$index(opt, "width"), t1.$index(opt, "height")), null, false, 4278190080, 1, null);
     $.stage.addChild$1(this._vn);
     t1 = $.stage;
     t1.get$juggler;
     t1 = t1._liblib4$_juggler;
     t1.add$1(t1, this._vn);
-    t1 = new N.Script(null, null);
-    t1._script = J.$index$asx(this._config, "script");
-    t1.currentLine = -1;
-    $.script = t1;
+    $.script = N.Script$(J.$index$asx(this._config, "script"));
     t1 = $.resourceManager;
-    t1.load$0(t1).then$1(new N.Config_configure_closure4(this));
+    t1.load$0(t1).then$1(new N.Config_configure_closure3(this));
   },
   get$configure: function() {
     return new T.BoundClosure$1(this, "configure$1", null);
@@ -11126,12 +11225,12 @@ Config$: function(configYaml, vn) {
 
 Config_configure_closure: {"": "Closure;this_0",
   call$2: function(k, v) {
-    J.$index$asx(this.this_0.get$_config(), "options").putIfAbsent$2(k, new N.Config_configure__closure0(v));
+    J.$index$asx(this.this_0.get$_config(), "options").putIfAbsent$2(k, new N.Config_configure__closure(v));
   },
   "+call:2:0": 0
 },
 
-Config_configure__closure0: {"": "Closure;v_1",
+Config_configure__closure: {"": "Closure;v_1",
   call$0: function() {
     return this.v_1;
   },
@@ -11155,12 +11254,19 @@ Config_configure_closure0: {"": "Closure;this_2",
 
 Config_configure_closure1: {"": "Closure;imagePath_3",
   call$2: function($name, url) {
-    var t1, t2;
-    t1 = $.resourceManager;
-    t2 = J.$add$ns(this.imagePath_3, url);
-    t1.addBitmapData$3;
-    t1._addResource$4("BitmapData", $name, t2, Z.BitmapData_load(t2, null, 1));
-    return;
+    var t1, t2, t3;
+    t1 = J.endsWith$1$s(url, ".json");
+    t2 = $.resourceManager;
+    t3 = this.imagePath_3;
+    if (t1) {
+      t1 = J.$add$ns(t3, url);
+      t2.addTextureAtlas$3;
+      t2._addResource$4("TextureAtlas", $name, t1, Z.TextureAtlas_load(t1, "jsonarray"));
+    } else {
+      t1 = J.$add$ns(t3, url);
+      t2.addBitmapData$3;
+      t2._addResource$4("BitmapData", $name, t1, Z.BitmapData_load(t1, null, 1));
+    }
   },
   "+call:2:0": 0
 },
@@ -11177,55 +11283,9 @@ Config_configure_closure2: {"": "Closure;imagePath_4",
   "+call:2:0": 0
 },
 
-Config_configure_closure3: {"": "Closure;",
-  call$2: function(charid, charmap) {
-    var t1, t2, t3, t4, t5, $char;
-    t1 = J.getInterceptor$asx(charmap);
-    t2 = t1.$index(charmap, "name");
-    t3 = H.makeLiteralMap([]);
-    H.makeLiteralMap([]);
-    t4 = P.List_List(null, Z.DisplayObject);
-    H.setRuntimeTypeInfo(t4, [Z.DisplayObject]);
-    t5 = $.DisplayObject__nextID;
-    $.DisplayObject__nextID = t5 + 1;
-    $char = new N.Character(charid, t2, t3, null, false, false, null, null, null, t4, true, true, false, true, true, 0, t5, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-    J.forEach$1$ax(t1.$index(charmap, "emotions"), new N.Config_configure__closure(charid, $char));
-    t1 = $char.emotions;
-    t5 = t1.get$keys();
-    $char.curEmotion = t1.$index(t1, t5.get$first(t5));
-  },
-  "+call:2:0": 0
-},
-
-Config_configure__closure: {"": "Closure;charid_5,char_6",
-  call$2: function(emoid, emomap) {
-    var t1, t2, t3, t4;
-    t1 = J.getInterceptor$asx(emomap);
-    if (t1.$index(emomap, "atlas") != null) {
-      t2 = $.resourceManager;
-      t3 = J.$add$ns(J.$add$ns(this.charid_5, "."), emoid);
-      t4 = t1.$index(emomap, "atlas");
-      t2.addTextureAtlas$3;
-      t2._addResource$4("TextureAtlas", t3, t4, Z.TextureAtlas_load(t4, "jsonarray"));
-    }
-    t2 = $.resourceManager;
-    t3 = J.$add$ns(J.$add$ns(this.charid_5, "."), emoid);
-    t1 = t1.$index(emomap, "src");
-    t2.addBitmapData$3;
-    t2._addResource$4("BitmapData", t3, t1, Z.BitmapData_load(t1, null, 1));
-    t1 = this.char_6.emotions;
-    t3 = P.List_List(null, Z.DisplayObject);
-    H.setRuntimeTypeInfo(t3, [Z.DisplayObject]);
-    t2 = $.DisplayObject__nextID;
-    $.DisplayObject__nextID = t2 + 1;
-    t1.$indexSet(t1, emoid, new Z.Sprite(false, false, null, null, null, t3, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null));
-  },
-  "+call:2:0": 0
-},
-
-Config_configure_closure4: {"": "Closure;this_7",
+Config_configure_closure3: {"": "Closure;this_5",
   call$1: function(rm) {
-    var t1 = this.this_7;
+    var t1 = this.this_5;
     if (t1.get$onConfig() != null)
       t1.onConfig$1(t1);
   },
@@ -11236,9 +11296,9 @@ Option: {"": "Object;"},
 
 Layer: {"": "DisplayObjectContainer;_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams"},
 
-Position: {"": "DisplayObjectContainer;args<,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
+Position: {"": "DisplayObjectContainer;args,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   add$1: function(_, child) {
-    var t1, t2, width, height, sw, sh;
+    var t1, t2, width, height, sw;
     t1 = {};
     t1.hor_0 = false;
     t1.vert_1 = false;
@@ -11250,8 +11310,7 @@ Position: {"": "DisplayObjectContainer;args<,_children,_mouseChildren,_tabChildr
     sw = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width;
     t2 = $.stage;
     t2.get$height;
-    sh = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._height;
-    J.forEach$1$ax(this.args, new N.Position_add_closure(t1, child, width, height, sw, sh));
+    J.forEach$1$ax(this.args, new N.Position_add_closure(t1, child, width, height, sw, t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._height));
     this.addChild$1(child);
   }
 },
@@ -11297,9 +11356,9 @@ Position_add_closure: {"": "Closure;box_0,child_1,width_2,height_3,sw_4,sh_5",
   "+call:2:0": 0
 },
 
-VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,tween",
+VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,tween",
   _before$0: function() {
-    if (J.$eq(J.$index$asx(this.args, "mode"), "add") !== true && J.$gt$n(this.position.get$numChildren(), 0))
+    if (J.$eq(J.$index$asx(this.opts, "mode"), "add") !== true && this.position.get$numChildren() > 0)
       this.prior = this.position.getChildAt$1(0);
   },
   _after$0: function() {
@@ -11309,37 +11368,41 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     t1 = this.current;
     t1.set$alpha;
     t1._alpha = 1;
-    if (J.$eq(J.$index$asx(this.args, "wait"), "user") === true)
+    if (J.$eq(J.$index$asx(this.opts, "wait"), "user") === true)
       this.vn.set$prevNext([true, true]);
     else {
-      t1 = J.$index$asx(this.args, "wait");
+      t1 = J.$index$asx(this.opts, "wait");
       if (typeof t1 === "number")
-        this.vn.get$juggler().delayCall$2(new N.VNTransition__after_closure(), J.$index$asx(this.args, "wait"));
+        this.vn.get$juggler().delayCall$2(new N.VNTransition__after_closure(), J.$index$asx(this.opts, "wait"));
     }
   },
   get$_after: function() {
     return new P.BoundClosure$0(this, "_after$0", null);
   },
   fadeTransition$0: function() {
-    var t1, t2;
+    var t1, t2, t3, t4;
     this.name = "fade";
     this._before$0();
     t1 = this.current;
     t1.set$alpha;
     t1._alpha = 0;
     J.add$1$ax(this.position, this.current);
-    this.tween = this.vn.get$juggler().tween$3(this.current, J.$index$asx(this.args, "dur"), Z.TransitionFunction_easeInQuadratic$closure);
-    t1 = this.tween;
-    t2 = t1.get$animate();
-    t2.get$alpha;
-    t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t1.set$onComplete(t1, this.get$_after());
+    t1 = this.vn.get$juggler();
+    t2 = this.current;
+    t3 = J.$index$asx(this.opts, "dur");
+    t4 = $.get$VN_ease();
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+    t4 = this.tween;
+    t3 = t4.get$animate();
+    t3.get$alpha;
+    t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
+    t4.set$onComplete(t4, this.get$_after());
   },
   get$fadeTransition: function() {
     return new P.BoundClosure$0(this, "fadeTransition$0", null);
   },
   fadeThruTransition$0: function() {
-    var t1, t2, t3;
+    var t1, t2, t3, t4;
     this.name = "fadethru";
     this._before$0();
     t1 = this.current;
@@ -11359,7 +11422,7 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     t1 = this.current;
     t1 = J.toInt$0$nx(t1.get$width(t1));
     t2 = this.current;
-    t2 = Z.BitmapData$(t1, J.toInt$0$nx(t2.get$height(t2)), false, J.$index$asx(this.args, "color"), 1);
+    t2 = Z.BitmapData$(t1, J.toInt$0$nx(t2.get$height(t2)), false, J.$index$asx(this.opts, "color"), 1);
     t1 = $.DisplayObject__nextID;
     $.DisplayObject__nextID = t1 + 1;
     t1 = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
@@ -11378,24 +11441,32 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     t1._alpha = 0;
     J.add$1$ax(this.position, this.current);
     J.add$1$ax(this.position, this.temp);
-    t1 = this.vn.get$juggler().tween$3(this.temp, J.$div$n(J.$index$asx(this.args, "dur"), 2), Z.TransitionFunction_easeInQuadratic$closure);
-    t2 = t1._tweenPropertyFactory;
-    t2.get$alpha;
-    t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t1._onComplete = new N.VNTransition_fadeThruTransition_closure(this);
-    t1 = this.vn.get$juggler().tween$3(this.temp, J.$div$n(J.$index$asx(this.args, "dur"), 2), Z.TransitionFunction_easeInQuadratic$closure);
+    t1 = this.vn.get$juggler();
+    t2 = this.temp;
+    t3 = J.$div$n(J.$index$asx(this.opts, "dur"), 2);
+    t4 = $.get$VN_ease();
+    t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+    t3 = t4._tweenPropertyFactory;
+    t3.get$alpha;
+    t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
+    t4._onComplete = new N.VNTransition_fadeThruTransition_closure(this);
+    t4 = this.vn.get$juggler();
+    t3 = this.temp;
+    t2 = J.$div$n(J.$index$asx(this.opts, "dur"), 2);
+    t1 = $.get$VN_ease();
+    t1 = t4.tween$3(t3, t2, t1.$index(t1, J.$index$asx(this.opts, "ease")));
     t2 = t1._tweenPropertyFactory;
     t2.get$alpha;
     t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-    t1.set$delay(J.$div$n(J.$index$asx(this.args, "dur"), 2));
+    t1.set$delay(J.$div$n(J.$index$asx(this.opts, "dur"), 2));
     t1._onComplete = this.get$_after();
-    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeThruTransition_closure0(this), J.$index$asx(this.args, "dur"));
+    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeThruTransition_closure0(this), J.$index$asx(this.opts, "dur"));
   },
   get$fadeThruTransition: function() {
     return new P.BoundClosure$0(this, "fadeThruTransition$0", null);
   },
   fadeAcrossTransition$0: function() {
-    var t1, t2, t3, stops, gradientWidthHeight, pathWidthHeight, fade, gradient, t4, t5, alphaMask;
+    var t1, t2, t3, stops, gradientWidthHeight, pathWidthHeight, fade, gradient, t4, t5, alphaMask, t6;
     t1 = {};
     this.name = "fadeacross";
     this._before$0();
@@ -11426,7 +11497,7 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     t3 = J.$mul$n(J.$negate$n(t3.get$width(t3)), 0.2);
     t2 = this.current;
     t1.startStop_1 = [t3, t2.get$width(t2)];
-    switch (J.$index$asx(this.args, "dir")) {
+    switch (J.$index$asx(this.opts, "dir")) {
       case "left":
         t2 = new H.ReversedListIterable(stops);
         H.setRuntimeTypeInfo(t2, [null]);
@@ -11537,8 +11608,11 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     t4 = t5[0];
     if (1 >= t3)
       throw H.ioore(1);
-    t2.transition$5(t2, t4, t5[1], J.$index$asx(this.args, "dur"), Z.TransitionFunction_easeOutQuadratic$closure, new N.VNTransition_fadeAcrossTransition_closure(t1, this, fade))._onComplete = this.get$_after();
-    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeAcrossTransition_closure0(this), J.$index$asx(this.args, "dur"));
+    t5 = t5[1];
+    t3 = J.$index$asx(this.opts, "dur");
+    t6 = $.get$VN_ease();
+    t2.transition$5(t2, t4, t5, t3, t6.$index(t6, J.$index$asx(this.opts, "ease")), new N.VNTransition_fadeAcrossTransition_closure(t1, this, fade))._onComplete = this.get$_after();
+    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeAcrossTransition_closure0(this), J.$index$asx(this.opts, "dur"));
   },
   get$fadeAcrossTransition: function() {
     return new P.BoundClosure$0(this, "fadeAcrossTransition$0", null);
@@ -11561,8 +11635,8 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     t3 = t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height;
     t4 = this.current;
     t4 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3, "down", J.$negate$n(t4.get$height(t4))]);
-    start = t4.$index(t4, J.$index$asx(this.args, "dir"));
-    horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.args, "dir"));
+    start = t4.$index(t4, J.$index$asx(this.opts, "dir"));
+    horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.opts, "dir"));
     t4 = this.vn.get$juggler();
     t1 = this.current;
     if (horizontal)
@@ -11571,10 +11645,12 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
       t1.get$y;
       t1 = t1._y;
     }
-    this.tween = t4.transition$5(t4, start, t1, J.$index$asx(this.args, "dur"), Z.TransitionFunction_easeOutQuadratic$closure, new N.VNTransition_slideTransition_closure(this, horizontal));
-    t1 = this.tween;
-    t1.set$onStart(new N.VNTransition_slideTransition_closure0(this));
-    t1.set$onComplete(t1, this.get$_after());
+    t2 = J.$index$asx(this.opts, "dur");
+    t3 = $.get$VN_ease();
+    this.tween = t4.transition$5(t4, start, t1, t2, t3.$index(t3, J.$index$asx(this.opts, "ease")), new N.VNTransition_slideTransition_closure(this, horizontal));
+    t3 = this.tween;
+    t3.set$onStart(new N.VNTransition_slideTransition_closure0(this));
+    t3.set$onComplete(t3, this.get$_after());
   },
   get$slideTransition: function() {
     return new P.BoundClosure$0(this, "slideTransition$0", null);
@@ -11583,7 +11659,7 @@ VNTransition: {"": "Option;name>,position>,current<,args<,vn,layer,prior,temp<,t
     this.vn = $.stage.getChildByName$1("vn");
     this.position = position;
     this.current = current;
-    this.args = args;
+    this.opts = args;
   },
   static: {
 VNTransition$: function(position, current, args) {
@@ -11629,7 +11705,7 @@ VNTransition_fadeAcrossTransition_closure: {"": "Closure;box_0,this_1,fade_2",
     t5 = t3.horizontal_0 ? 0 : J.toInt$0$nx(value);
     t6 = this.fade_2;
     t2.applyCache$4(t4, t5, J.toInt$0$nx(t6.getBoundsTransformed$1(t6.get$_transformationMatrix())._width), J.toInt$0$nx(t6.getBoundsTransformed$1(t6.get$_transformationMatrix())._height));
-    switch (J.$index$asx(t1.get$args(), "dir")) {
+    switch (J.$index$asx(t1.get$opts(), "dir")) {
       case "right":
         t1.get$current().set$clipRectangle(new Z.Rectangle(0, 0, P.min(P.max(0, J.$add$ns(value, 1)), J.toInt$0$nx(J.get$width$x(t1.get$current()))), J.toInt$0$nx(J.get$height$x(t1.get$current()))));
         break;
@@ -11703,13 +11779,10 @@ VNTransition_slideTransition_closure0: {"": "Closure;this_2",
   "+call:0:0": 0
 },
 
-Script: {"": "Object;_script,currentLine",
-  get$numChildren: function() {
-    return J.get$length$asx(this._script);
-  },
+Script: {"": "Object;_script,_labels,_currentLine",
   next$0: function() {
-    if (J.$gt$n(J.get$length$asx(this._script), this.currentLine + 1)) {
-      this.currentLine = this.currentLine + 1;
+    if (J.$gt$n(J.get$length$asx(this._script), J.$add$ns(this._currentLine, 1))) {
+      this._currentLine = J.$add$ns(this._currentLine, 1);
       return this.exec$0();
     } else
       return false;
@@ -11718,17 +11791,23 @@ Script: {"": "Object;_script,currentLine",
     return new P.BoundClosure$0(this, "next$0", null);
   },
   prev$0: function() {
-    var t1 = this.currentLine;
-    if (t1 > 0) {
-      this.currentLine = t1 - 1;
+    if (J.$gt$n(this._currentLine, 0)) {
+      this._currentLine = J.$sub$n(this._currentLine, 1);
       return this.exec$0();
     } else
       return false;
   },
+  goto$1: function(label) {
+    var t1 = this._labels;
+    if (t1.containsKey$1(label) === true) {
+      this._currentLine = t1.$index(t1, label);
+      return this.exec$0();
+    }
+  },
   exec$0: function() {
     var line, t1, verb, args;
     H.makeLiteralMap([]);
-    line = J.$index$asx(this._script, this.currentLine);
+    line = J.$index$asx(this._script, this._currentLine);
     t1 = J.getInterceptor$asx(line);
     verb = t1.$index(line, 0);
     args = t1.sublist$1(line, 1);
@@ -11736,18 +11815,51 @@ Script: {"": "Object;_script,currentLine",
       case "set":
         N.Set$(args);
         break;
+      case "label":
+        this.next$0();
+        break;
+      case "goto":
+        if (0 >= args.length)
+          throw H.ioore(0);
+        this.goto$1(args[0]);
+        break;
       default:
         H.Primitives_printString("Unrecognized verb, " + H.S(verb));
+        this.next$0();
         break;
     }
-  }
+  },
+  Script$1: function(script) {
+    var t1, i, t2;
+    this._script = script;
+    this._currentLine = -1;
+    t1 = this._labels;
+    i = 0;
+    while (true) {
+      t2 = J.get$length$asx(this._script);
+      if (typeof t2 !== "number")
+        throw H.iae(t2);
+      if (!(i < t2))
+        break;
+      if (J.$eq(J.$index$asx(J.$index$asx(this._script, i), 0), "label") === true)
+        t1.$indexSet(t1, J.$index$asx(J.$index$asx(this._script, i), 1), i);
+      ++i;
+    }
+  },
+  static: {
+Script$: function(script) {
+  var t1 = new N.Script(null, H.makeLiteralMap([]), null);
+  t1.Script$1(script);
+  return t1;
+}}
+
 },
 
 Verb: {"": "Object;"},
 
 Set: {"": "Verb;",
   Set$1: function(args, box_0) {
-    var vn, layer, t1, posName, value, posArgs, t2, priorObject, newName, newObject, sa, sw, shape, t3, t4, drawn, stroke, tf, vnt, transMap;
+    var vn, layer, t1, posName, value, posArgs, t2, priorObject, newName, t3, t4, newObject, sa, sw, shape, drawn, stroke, tf, vnt, transMap;
     box_0.position_0 = null;
     vn = $.stage.getChildByName$1("vn");
     box_0.opts_1 = H.makeLiteralMap([]);
@@ -11784,7 +11896,7 @@ Set: {"": "Verb;",
         layer.addChild$1(t2);
       }
       box_0.position_0 = layer.getChildByName$1(posName);
-      priorObject = J.$eq(J.$index$asx(box_0.opts_1, "mode"), "add") !== true && J.$gt$n(box_0.position_0.get$numChildren(), 0) ? box_0.position_0.getChildAt$1(0) : null;
+      priorObject = J.$eq(J.$index$asx(box_0.opts_1, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
       newName = posName;
     } else {
       t1 = J.getInterceptor(posName);
@@ -11799,16 +11911,43 @@ Set: {"": "Verb;",
         layer.addChild$1(t2);
         newName = t1.toString$0(value);
       } else {
-        t1 = vn.get$juggler().tween$3(layer, J.$index$asx(box_0.opts_1, "dur"), Z.TransitionFunction_easeInQuadratic$closure);
-        t2 = t1._tweenPropertyFactory;
+        t1 = vn.get$juggler();
+        t2 = J.$index$asx(box_0.opts_1, "dur");
+        t3 = $.get$VN_ease();
+        t3 = t1.tween$3(layer, t2, t3.$index(t3, J.$index$asx(box_0.opts_1, "ease")));
+        t2 = t3._tweenPropertyFactory;
         t2.get$alpha;
         t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-        t1._onComplete = new N.Set_closure0(box_0, vn, layer);
+        t3._onComplete = new N.Set_closure0(box_0, vn, layer);
         return;
       }
       priorObject = null;
     }
-    if (typeof value === "number") {
+    if (value == null)
+      if (priorObject != null) {
+        if (box_0.position_0 != null) {
+          t1 = vn.get$juggler();
+          t2 = box_0.position_0;
+          t3 = J.$index$asx(box_0.opts_1, "dur");
+          t4 = $.get$VN_ease();
+          t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(box_0.opts_1, "ease")));
+          t3 = t4._tweenPropertyFactory;
+          t3.get$alpha;
+          t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+          t4._onComplete = new N.Set_closure1(box_0, vn, layer);
+          if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
+            $.script.next$0();
+          return;
+        }
+        t1 = $.DisplayObject__nextID;
+        $.DisplayObject__nextID = t1 + 1;
+        newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+        newObject.set$bitmapData(null);
+        newObject._pixelSnapping = "auto";
+        newObject._clipRectangle = null;
+      } else
+        newObject = null;
+    else if (typeof value === "number") {
       t1 = $.stage;
       t1.get$width;
       t1 = J.toInt$0$nx(t1.getBoundsTransformed$1(t1.get$_transformationMatrix())._width);
@@ -11821,130 +11960,139 @@ Set: {"": "Verb;",
       newObject.set$bitmapData(t2);
       newObject._pixelSnapping = "auto";
       newObject._clipRectangle = null;
-    } else if (J.$index$asx(vn.get$assets(), "images").containsKey$1(value) === true) {
-      t1 = $.resourceManager.getBitmapData$1(value);
-      t2 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t2 + 1;
-      newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      newObject.set$bitmapData(t1);
-      newObject._pixelSnapping = "auto";
-      newObject._clipRectangle = null;
-    } else if (J.$index$asx(vn.get$assets(), "shapes").containsKey$1(value) === true) {
-      sa = J.$index$asx(J.$index$asx(vn.get$assets(), "shapes"), value);
-      if (sa.containsKey$1("stroke_color") === true)
-        sw = sa.containsKey$1("stroke_width") === true ? J.$index$asx(sa, "stroke_width") : 1;
-      else
-        sw = 0;
-      t1 = P.List_List(null, Z._GraphicsCommand);
-      H.setRuntimeTypeInfo(t1, [Z._GraphicsCommand]);
-      t2 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t2 + 1;
-      shape = new Z.Shape(new Z.Graphics(t1, new Z.Rectangle(0, 0, 0, 0), true), t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      t2 = shape._graphics;
-      t2._commands.push(new Z._GraphicsCommandBeginPath());
-      t2._identityRectangleRefresh = true;
-      t1 = J.getInterceptor$asx(sa);
-      switch (t1.$index(sa, "shape")) {
-        case "rect":
-          t2 = sa.containsKey$1("corner_radius");
-          t3 = shape._graphics;
-          t4 = J.getInterceptor$n(sw);
-          if (t2 === true)
-            t3.rectRound$6(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), sw));
-          else {
-            t3._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2))));
-            t3._identityRectangleRefresh = true;
-          }
-          break;
-        case "ellipse":
-          t2 = J.getInterceptor$n(sw);
-          shape._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), t2.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t2.$mul(sw, 2)));
-          break;
-        default:
-      }
-      t2 = shape._graphics;
-      t2._commands.push(new Z._GraphicsCommandClosePath());
-      t2._identityRectangleRefresh = true;
-      if (sa.containsKey$1("fill_color") === true) {
+    } else {
+      t1 = J.$index$asx(vn.get$assets(), "images");
+      t2 = J.getInterceptor$s(value);
+      t3 = t2.split$1(value, ".");
+      if (0 >= t3.length)
+        throw H.ioore(0);
+      if (t1.containsKey$1(t3[0]) === true) {
+        t1 = t2.contains$1(value, ".");
+        t3 = $.resourceManager;
+        if (t1 === true) {
+          t1 = t2.split$1(value, ".");
+          if (0 >= t1.length)
+            throw H.ioore(0);
+          t1 = t3.getTextureAtlas$1(t1[0]);
+          t2 = t2.split$1(value, ".");
+          if (1 >= t2.length)
+            throw H.ioore(1);
+          t2 = t1.getBitmapData$1(t2[1]);
+          t1 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t1 + 1;
+          newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          newObject.set$bitmapData(t2);
+          newObject._pixelSnapping = "auto";
+          newObject._clipRectangle = null;
+        } else {
+          t1 = t3.getBitmapData$1(value);
+          t2 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t2 + 1;
+          newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          newObject.set$bitmapData(t1);
+          newObject._pixelSnapping = "auto";
+          newObject._clipRectangle = null;
+        }
+      } else if (J.$index$asx(vn.get$assets(), "shapes").containsKey$1(value) === true) {
+        sa = J.$index$asx(J.$index$asx(vn.get$assets(), "shapes"), value);
+        if (sa.containsKey$1("stroke_color") === true)
+          sw = sa.containsKey$1("stroke_width") === true ? J.$index$asx(sa, "stroke_width") : 1;
+        else
+          sw = 0;
+        t1 = P.List_List(null, Z._GraphicsCommand);
+        H.setRuntimeTypeInfo(t1, [Z._GraphicsCommand]);
+        t2 = $.DisplayObject__nextID;
+        $.DisplayObject__nextID = t2 + 1;
+        shape = new Z.Shape(new Z.Graphics(t1, new Z.Rectangle(0, 0, 0, 0), true), t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
         t2 = shape._graphics;
-        t3 = new Z._GraphicsCommandFillColor(null);
-        t3._color = Z._color2rgba(t1.$index(sa, "fill_color"));
-        t2._commands.push(t3);
+        t2._commands.push(new Z._GraphicsCommandBeginPath());
         t2._identityRectangleRefresh = true;
-      }
-      drawn = Z.BitmapData$(t1.$index(sa, "width"), t1.$index(sa, "height"), true, 0, 1);
-      drawn.draw$1(shape);
-      if (sa.containsKey$1("stroke_color") === true) {
-        t2 = P.List_List(null, Z._GraphicsCommand);
-        H.setRuntimeTypeInfo(t2, [Z._GraphicsCommand]);
-        t3 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t3 + 1;
-        stroke = new Z.Shape(new Z.Graphics(t2, new Z.Rectangle(0, 0, 0, 0), true), t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        t3 = stroke._graphics;
-        t3._commands.push(new Z._GraphicsCommandBeginPath());
-        t3._identityRectangleRefresh = true;
+        t1 = J.getInterceptor$asx(sa);
         switch (t1.$index(sa, "shape")) {
           case "rect":
             t2 = sa.containsKey$1("corner_radius");
-            t3 = J.getInterceptor$n(sw);
-            t4 = stroke._graphics;
+            t3 = shape._graphics;
+            t4 = J.getInterceptor$n(sw);
             if (t2 === true)
-              t4.rectRound$6(t3.$div(sw, 2), t3.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t3.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t3.$div(sw, 2)));
+              t3.rectRound$6(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), sw));
             else {
-              t4._commands.push(Z._GraphicsCommandRect$(t3.$div(sw, 2), t3.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
-              t4._identityRectangleRefresh = true;
+              t3._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2))));
+              t3._identityRectangleRefresh = true;
             }
             break;
           case "ellipse":
-            stroke._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw));
+            t2 = J.getInterceptor$n(sw);
+            shape._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), t2.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t2.$mul(sw, 2)));
             break;
           default:
         }
-        t2 = stroke._graphics;
+        t2 = shape._graphics;
         t2._commands.push(new Z._GraphicsCommandClosePath());
         t2._identityRectangleRefresh = true;
-        t2 = stroke._graphics;
-        t1 = Z._color2rgba(t1.$index(sa, "stroke_color"));
-        t3 = new Z._GraphicsCommandStrokeColor(null, null, null, null);
-        t3._lineWidth = J.toDouble$0$n(sw);
-        t3._lineJoin = "round";
-        t3._lineCap = "round";
-        t3._color = t1;
-        t2._commands.push(t3);
-        t2._identityRectangleRefresh = true;
-        drawn.draw$1(stroke);
-      }
-      t1 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t1 + 1;
-      newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      newObject.set$bitmapData(drawn);
-      newObject._pixelSnapping = "auto";
-      newObject._clipRectangle = null;
-    } else if (typeof value === "string") {
-      tf = J.$index$asx(J.$index$asx(J.get$options$x(vn), "text_formats"), J.$index$asx(box_0.opts_1, "text_format"));
-      t1 = J.getInterceptor$asx(tf);
-      newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, 0), t1.$index(tf, 1), t1.$index(tf, 2), t1.$index(tf, 3), t1.$index(tf, 4), false, "left", 0, 0, 0, 0, 0, 0));
-      newObject._autoSize = "left";
-      newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
-    } else if (priorObject != null) {
-      if (box_0.position_0 != null) {
-        t1 = vn.get$juggler().tween$3(box_0.position_0, J.$index$asx(box_0.opts_1, "dur"), Z.TransitionFunction_easeInQuadratic$closure);
-        t2 = t1._tweenPropertyFactory;
-        t2.get$alpha;
-        t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-        t1._onComplete = new N.Set_closure1(box_0, vn, layer);
-        if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
-          $.script.next$0();
-        return;
-      }
-      t1 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t1 + 1;
-      newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      newObject.set$bitmapData(null);
-      newObject._pixelSnapping = "auto";
-      newObject._clipRectangle = null;
-    } else
-      newObject = null;
+        if (sa.containsKey$1("fill_color") === true) {
+          t2 = shape._graphics;
+          t3 = new Z._GraphicsCommandFillColor(null);
+          t3._color = Z._color2rgba(t1.$index(sa, "fill_color"));
+          t2._commands.push(t3);
+          t2._identityRectangleRefresh = true;
+        }
+        drawn = Z.BitmapData$(t1.$index(sa, "width"), t1.$index(sa, "height"), true, 0, 1);
+        drawn.draw$1(shape);
+        if (sa.containsKey$1("stroke_color") === true) {
+          t2 = P.List_List(null, Z._GraphicsCommand);
+          H.setRuntimeTypeInfo(t2, [Z._GraphicsCommand]);
+          t3 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t3 + 1;
+          stroke = new Z.Shape(new Z.Graphics(t2, new Z.Rectangle(0, 0, 0, 0), true), t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          t3 = stroke._graphics;
+          t3._commands.push(new Z._GraphicsCommandBeginPath());
+          t3._identityRectangleRefresh = true;
+          switch (t1.$index(sa, "shape")) {
+            case "rect":
+              t2 = sa.containsKey$1("corner_radius");
+              t3 = J.getInterceptor$n(sw);
+              t4 = stroke._graphics;
+              if (t2 === true)
+                t4.rectRound$6(t3.$div(sw, 2), t3.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t3.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t3.$div(sw, 2)));
+              else {
+                t4._commands.push(Z._GraphicsCommandRect$(t3.$div(sw, 2), t3.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
+                t4._identityRectangleRefresh = true;
+              }
+              break;
+            case "ellipse":
+              stroke._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw));
+              break;
+            default:
+          }
+          t2 = stroke._graphics;
+          t2._commands.push(new Z._GraphicsCommandClosePath());
+          t2._identityRectangleRefresh = true;
+          t2 = stroke._graphics;
+          t1 = Z._color2rgba(t1.$index(sa, "stroke_color"));
+          t3 = new Z._GraphicsCommandStrokeColor(null, null, null, null);
+          t3._lineWidth = J.toDouble$0$n(sw);
+          t3._lineJoin = "round";
+          t3._lineCap = "round";
+          t3._color = t1;
+          t2._commands.push(t3);
+          t2._identityRectangleRefresh = true;
+          drawn.draw$1(stroke);
+        }
+        t1 = $.DisplayObject__nextID;
+        $.DisplayObject__nextID = t1 + 1;
+        newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+        newObject.set$bitmapData(drawn);
+        newObject._pixelSnapping = "auto";
+        newObject._clipRectangle = null;
+      } else if (typeof value === "string") {
+        tf = J.$index$asx(J.$index$asx(J.get$options$x(vn), "text_formats"), J.$index$asx(box_0.opts_1, "text_format"));
+        t1 = J.getInterceptor$asx(tf);
+        newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, 0), t1.$index(tf, 1), t1.$index(tf, 2), t1.$index(tf, 3), t1.$index(tf, 4), false, "left", 0, 0, 0, 0, 0, 0));
+        newObject._autoSize = "left";
+        newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+      } else
+        newObject = null;
+    }
     newObject.set$name;
     newObject._name = newName;
     vn.set$prevNext([false, false]);
@@ -11990,7 +12138,7 @@ Set_closure0: {"": "Closure;box_0,vn_2,layer_3",
   call$0: function() {
     var t1, t2;
     t1 = this.layer_3;
-    if (J.$gt$n(t1.get$numChildren(), 0))
+    if (t1.get$numChildren() > 0)
       t1.removeChildren$0();
     J.set$alpha$x(t1, 1);
     t1 = this.box_0;
@@ -12094,6 +12242,7 @@ VN: {"": "DisplayObjectContainer;_juggler,_glassPlate@,prevNext?,options*,assets
   },
   $isAnimatable: true,
   static: {
+"": "VN_scaleMode,VN_align,VN_ease",
 VN$: function(configYaml) {
   var t1, t2;
   t1 = P.List_List(null, Z.DisplayObject);
@@ -16856,6 +17005,31 @@ TransitionFunction_linear: function(ratio) {
   return ratio;
 },
 
+TransitionFunction_sine: function(ratio) {
+  var t1 = J.$mul$n(J.$mul$n(ratio, 2), 3.141592653589793);
+  if (typeof t1 !== "number")
+    H.throwExpression(new P.ArgumentError(t1));
+  return 0.5 - 0.5 * Math.cos(t1);
+},
+
+TransitionFunction_cosine: function(ratio) {
+  var t1 = J.$mul$n(J.$mul$n(ratio, 2), 3.141592653589793);
+  if (typeof t1 !== "number")
+    H.throwExpression(new P.ArgumentError(t1));
+  return 0.5 + 0.5 * Math.cos(t1);
+},
+
+TransitionFunction_random: function(ratio) {
+  var t1;
+  if ($.TransitionFunction__random == null)
+    $.TransitionFunction__random = C.C__Random;
+  t1 = J.getInterceptor(ratio);
+  if (t1.$eq(ratio, 0) === true || t1.$eq(ratio, 1) === true)
+    return ratio;
+  $.TransitionFunction__random.nextDouble$0;
+  return Math.random();
+},
+
 TransitionFunction_easeInQuadratic: function(ratio) {
   return J.$mul$n(ratio, ratio);
 },
@@ -16865,6 +17039,451 @@ TransitionFunction_easeOutQuadratic: function(ratio) {
     throw H.iae(ratio);
   ratio = 1 - ratio;
   return 1 - ratio * ratio;
+},
+
+TransitionFunction_easeInOutQuadratic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = t1.$mul(ratio, ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else
+    t1 = 0.5 * Z.TransitionFunction_easeOutQuadratic(t1.$sub(ratio, 1)) + 0.5;
+  return t1;
+},
+
+TransitionFunction_easeOutInQuadratic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1))
+    t1 = 0.5 * Z.TransitionFunction_easeOutQuadratic(ratio);
+  else {
+    t1 = t1.$sub(ratio, 1);
+    t1 = J.$mul$n(t1, t1);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInCubic: function(ratio) {
+  return J.$mul$n(J.$mul$n(ratio, ratio), ratio);
+},
+
+TransitionFunction_easeOutCubic: function(ratio) {
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  ratio = 1 - ratio;
+  return 1 - ratio * ratio * ratio;
+},
+
+TransitionFunction_easeInOutCubic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = J.$mul$n(t1.$mul(ratio, ratio), ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else
+    t1 = 0.5 * Z.TransitionFunction_easeOutCubic(t1.$sub(ratio, 1)) + 0.5;
+  return t1;
+},
+
+TransitionFunction_easeOutInCubic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1))
+    t1 = 0.5 * Z.TransitionFunction_easeOutCubic(ratio);
+  else {
+    t1 = t1.$sub(ratio, 1);
+    t1 = J.$mul$n(J.$mul$n(t1, t1), t1);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInQuartic: function(ratio) {
+  return J.$mul$n(J.$mul$n(J.$mul$n(ratio, ratio), ratio), ratio);
+},
+
+TransitionFunction_easeOutQuartic: function(ratio) {
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  ratio = 1 - ratio;
+  return 1 - ratio * ratio * ratio * ratio;
+},
+
+TransitionFunction_easeInOutQuartic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = J.$mul$n(J.$mul$n(t1.$mul(ratio, ratio), ratio), ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else
+    t1 = 0.5 * Z.TransitionFunction_easeOutQuartic(t1.$sub(ratio, 1)) + 0.5;
+  return t1;
+},
+
+TransitionFunction_easeOutInQuartic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1))
+    t1 = 0.5 * Z.TransitionFunction_easeOutQuartic(ratio);
+  else {
+    t1 = t1.$sub(ratio, 1);
+    t1 = J.$mul$n(J.$mul$n(J.$mul$n(t1, t1), t1), t1);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInQuintic: function(ratio) {
+  return J.$mul$n(J.$mul$n(J.$mul$n(J.$mul$n(ratio, ratio), ratio), ratio), ratio);
+},
+
+TransitionFunction_easeOutQuintic: function(ratio) {
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  ratio = 1 - ratio;
+  return 1 - ratio * ratio * ratio * ratio * ratio;
+},
+
+TransitionFunction_easeInOutQuintic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = Z.TransitionFunction_easeInQuintic(ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else
+    t1 = 0.5 * Z.TransitionFunction_easeOutQuintic(t1.$sub(ratio, 1)) + 0.5;
+  return t1;
+},
+
+TransitionFunction_easeOutInQuintic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1))
+    t1 = 0.5 * Z.TransitionFunction_easeOutQuintic(ratio);
+  else {
+    t1 = Z.TransitionFunction_easeInQuintic(t1.$sub(ratio, 1));
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInCircular: function(ratio) {
+  var t1 = J.$mul$n(ratio, ratio);
+  if (typeof t1 !== "number")
+    throw H.iae(t1);
+  return 1 - Math.sqrt(1 - t1);
+},
+
+TransitionFunction_easeOutCircular: function(ratio) {
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  ratio = 1 - ratio;
+  return Math.sqrt(1 - ratio * ratio);
+},
+
+TransitionFunction_easeInOutCircular: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = t1.$mul(ratio, ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * (1 - Math.sqrt(1 - t1));
+  } else
+    t1 = 0.5 * Z.TransitionFunction_easeOutCircular(t1.$sub(ratio, 1)) + 0.5;
+  return t1;
+},
+
+TransitionFunction_easeOutInCircular: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1))
+    t1 = 0.5 * Z.TransitionFunction_easeOutCircular(ratio);
+  else {
+    t1 = t1.$sub(ratio, 1);
+    t1 = J.$mul$n(t1, t1);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * (1 - Math.sqrt(1 - t1)) + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInSine: function(ratio) {
+  var t1 = J.$mul$n(ratio, 1.5707963267948966);
+  if (typeof t1 !== "number")
+    H.throwExpression(new P.ArgumentError(t1));
+  return 1 - Math.cos(t1);
+},
+
+TransitionFunction_easeOutSine: function(ratio) {
+  var t1 = J.$mul$n(ratio, 1.5707963267948966);
+  if (typeof t1 !== "number")
+    H.throwExpression(new P.ArgumentError(t1));
+  return Math.sin(t1);
+},
+
+TransitionFunction_easeInOutSine: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = t1.$mul(ratio, 1.5707963267948966);
+    if (typeof t1 !== "number")
+      H.throwExpression(new P.ArgumentError(t1));
+    t1 = 0.5 * (1 - Math.cos(t1));
+  } else {
+    t1 = J.$mul$n(t1.$sub(ratio, 1), 1.5707963267948966);
+    if (typeof t1 !== "number")
+      H.throwExpression(new P.ArgumentError(t1));
+    t1 = 0.5 * Math.sin(t1) + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeOutInSine: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = t1.$mul(ratio, 1.5707963267948966);
+    if (typeof t1 !== "number")
+      H.throwExpression(new P.ArgumentError(t1));
+    t1 = 0.5 * Math.sin(t1);
+  } else {
+    t1 = J.$mul$n(t1.$sub(ratio, 1), 1.5707963267948966);
+    if (typeof t1 !== "number")
+      H.throwExpression(new P.ArgumentError(t1));
+    t1 = 0.5 * (1 - Math.cos(t1)) + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInExponential: function(ratio) {
+  var t1 = J.getInterceptor(ratio);
+  if (t1.$eq(ratio, 0) === true)
+    return 0;
+  t1 = t1.$sub(ratio, 1);
+  if (typeof t1 !== "number")
+    throw H.iae(t1);
+  return Math.pow(2, 10 * t1);
+},
+
+TransitionFunction_easeOutExponential: function(ratio) {
+  if (J.$eq(ratio, 1) === true)
+    return 1;
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  return 1 - Math.pow(2, -10 * ratio);
+},
+
+TransitionFunction_easeInOutExponential: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  return t1.$lt(ratio, 1) ? 0.5 * Z.TransitionFunction_easeInExponential(ratio) : 0.5 * Z.TransitionFunction_easeOutExponential(t1.$sub(ratio, 1)) + 0.5;
+},
+
+TransitionFunction_easeOutInExponential: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  return t1.$lt(ratio, 1) ? 0.5 * Z.TransitionFunction_easeOutExponential(ratio) : 0.5 * Z.TransitionFunction_easeInExponential(t1.$sub(ratio, 1)) + 0.5;
+},
+
+TransitionFunction_easeInBack: function(ratio) {
+  var t1 = J.$mul$n(ratio, ratio);
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  return J.$mul$n(t1, 2.70158 * ratio - 1.70158);
+},
+
+TransitionFunction_easeOutBack: function(ratio) {
+  var t1;
+  ratio = J.$sub$n(ratio, 1);
+  t1 = J.$mul$n(ratio, ratio);
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  return J.$add$ns(J.$mul$n(t1, 2.70158 * ratio + 1.70158), 1);
+},
+
+TransitionFunction_easeInOutBack: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = Z.TransitionFunction_easeInBack(ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else {
+    t1 = Z.TransitionFunction_easeOutBack(t1.$sub(ratio, 1));
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeOutInBack: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = Z.TransitionFunction_easeOutBack(ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else {
+    t1 = Z.TransitionFunction_easeInBack(t1.$sub(ratio, 1));
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInElastic: function(ratio) {
+  var t1 = J.getInterceptor(ratio);
+  if (t1.$eq(ratio, 0) === true || t1.$eq(ratio, 1) === true)
+    return ratio;
+  ratio = t1.$sub(ratio, 1);
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  t1 = Math.pow(2, 10 * ratio);
+  return -t1 * Math.sin((ratio - 0.075) * 6.283185307179586 / 0.3);
+},
+
+TransitionFunction_easeOutElastic: function(ratio) {
+  var t1 = J.getInterceptor(ratio);
+  if (t1.$eq(ratio, 0) === true || t1.$eq(ratio, 1) === true)
+    return ratio;
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  t1 = Math.pow(2, -10 * ratio);
+  return t1 * Math.sin((ratio - 0.075) * 6.283185307179586 / 0.3) + 1;
+},
+
+TransitionFunction_easeInOutElastic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = Z.TransitionFunction_easeInElastic(ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else {
+    t1 = Z.TransitionFunction_easeOutElastic(t1.$sub(ratio, 1));
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeOutInElastic: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    t1 = Z.TransitionFunction_easeOutElastic(ratio);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1;
+  } else {
+    t1 = Z.TransitionFunction_easeInElastic(t1.$sub(ratio, 1));
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * t1 + 0.5;
+  }
+  return t1;
+},
+
+TransitionFunction_easeInBounce: function(ratio) {
+  if (typeof ratio !== "number")
+    throw H.iae(ratio);
+  return 1 - Z.TransitionFunction_easeOutBounce(1 - ratio);
+},
+
+TransitionFunction_easeOutBounce: function(ratio) {
+  var t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 0.36363636363636365)) {
+    if (typeof ratio !== "number")
+      throw H.iae(ratio);
+    return 7.5625 * ratio * ratio;
+  } else if (t1.$lt(ratio, 0.7272727272727273)) {
+    ratio = t1.$sub(ratio, 0.5454545454545454);
+    if (typeof ratio !== "number")
+      throw H.iae(ratio);
+    return 7.5625 * ratio * ratio + 0.75;
+  } else if (t1.$lt(ratio, 0.9090909090909091)) {
+    ratio = t1.$sub(ratio, 0.8181818181818182);
+    if (typeof ratio !== "number")
+      throw H.iae(ratio);
+    return 7.5625 * ratio * ratio + 0.9375;
+  } else {
+    ratio = t1.$sub(ratio, 0.9545454545454546);
+    if (typeof ratio !== "number")
+      throw H.iae(ratio);
+    return 7.5625 * ratio * ratio + 0.984375;
+  }
+},
+
+TransitionFunction_easeInOutBounce: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1)) {
+    if (typeof ratio !== "number")
+      throw H.iae(ratio);
+    t1 = 0.5 * (1 - Z.TransitionFunction_easeOutBounce(1 - ratio));
+  } else
+    t1 = 0.5 * Z.TransitionFunction_easeOutBounce(t1.$sub(ratio, 1)) + 0.5;
+  return t1;
+},
+
+TransitionFunction_easeOutInBounce: function(ratio) {
+  var t1;
+  ratio = J.$mul$n(ratio, 2);
+  t1 = J.getInterceptor$n(ratio);
+  if (t1.$lt(ratio, 1))
+    t1 = 0.5 * Z.TransitionFunction_easeOutBounce(ratio);
+  else {
+    t1 = t1.$sub(ratio, 1);
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t1 = 0.5 * (1 - Z.TransitionFunction_easeOutBounce(1 - t1)) + 0.5;
+  }
+  return t1;
 },
 
 Sound_load: function(url, soundLoadOptions) {
@@ -17195,7 +17814,7 @@ Juggler: {"": "Object;_firstAnimatableLink,_lastAnimatableLink,_elapsedTime",
     return false;
   },
   tween$3: function(displayObject, time, transitionFunction) {
-    var tween = Z.Tween$(displayObject, time, transitionFunction);
+    var tween = transitionFunction != null ? Z.Tween$(displayObject, time, transitionFunction) : Z.Tween$(displayObject, time, Z.TransitionFunction_linear$closure);
     this.add$1(this, tween);
     return tween;
   },
@@ -17396,7 +18015,8 @@ Transition: {"": "Animatable;_startValue,_targetValue,_transitionFunction,_curre
   },
   static: {
 Transition$: function(startValue, targetValue, time, transitionFunction) {
-  var t1 = new Z.Transition(startValue, targetValue, transitionFunction, null, null, null, null, null, null, null, null, null);
+  var t1 = transitionFunction != null ? transitionFunction : Z.TransitionFunction_linear$closure;
+  t1 = new Z.Transition(startValue, targetValue, t1, null, null, null, null, null, null, null, null, null);
   t1.Transition$4(startValue, targetValue, time, transitionFunction);
   return t1;
 }}
@@ -17785,7 +18405,7 @@ Bitmap: {"": "DisplayObject;_bitmapData,_pixelSnapping,_clipRectangle,_liblib4$_
   $isBitmap: true
 },
 
-BitmapData: {"": "Object;_width,_height,_transparent,_pixelRatio,_pixelRatioSource,_renderMode,_destinationWidth,_destinationHeight,_destinationX,_destinationY,_sourceX,_sourceY,_sourceWidth,_sourceHeight,_liblib4$_source,_context",
+BitmapData: {"": "Object;_width,_height,_transparent,_pixelRatio<,_pixelRatioSource<,_renderMode,_destinationWidth,_destinationHeight,_destinationX,_destinationY,_sourceX,_sourceY,_sourceWidth,_sourceHeight,_liblib4$_source<,_context",
   get$width: function(_) {
     return this._width;
   },
@@ -17969,6 +18589,26 @@ BitmapData: {"": "Object;_width,_height,_transparent,_pixelRatio,_pixelRatioSour
     t1.fillStyle = this._transparent ? Z._color2rgba(fillColor) : Z._color2rgb(fillColor);
     this._context.fillRect(0, 0, this._sourceWidth, this._sourceHeight);
   },
+  BitmapData$fromTextureAtlasFrame$1: function(textureAtlasFrame) {
+    var bitmapData, t1;
+    bitmapData = textureAtlasFrame.get$textureAtlas()._bitmapData;
+    this._width = C.JSInt_methods.toInt$0(textureAtlasFrame.get$originalWidth());
+    this._height = C.JSInt_methods.toInt$0(textureAtlasFrame.get$originalHeight());
+    this._transparent = true;
+    this._pixelRatio = bitmapData.get$_pixelRatio();
+    this._pixelRatioSource = bitmapData.get$_pixelRatioSource();
+    this._renderMode = textureAtlasFrame.get$rotated() ? 3 : 2;
+    t1 = J.getInterceptor$x(textureAtlasFrame);
+    this._destinationX = t1.get$offsetX(textureAtlasFrame);
+    this._destinationY = t1.get$offsetY(textureAtlasFrame);
+    this._destinationWidth = textureAtlasFrame.get$frameWidth();
+    this._destinationHeight = textureAtlasFrame.get$frameHeight();
+    this._sourceX = C.JSNumber_methods.toInt$0(Math.floor(textureAtlasFrame.get$frameX() * this._pixelRatioSource));
+    this._sourceY = C.JSNumber_methods.toInt$0(Math.floor(textureAtlasFrame.get$frameY() * this._pixelRatioSource));
+    this._sourceWidth = C.JSNumber_methods.toInt$0(Math.ceil(textureAtlasFrame.get$frameWidth() * this._pixelRatioSource));
+    this._sourceHeight = C.JSNumber_methods.toInt$0(Math.ceil(textureAtlasFrame.get$frameHeight() * this._pixelRatioSource));
+    this._liblib4$_source = bitmapData.get$_liblib4$_source();
+  },
   $isBitmapData: true,
   static: {
 "": "BitmapData_defaultLoadOptions",
@@ -17981,6 +18621,12 @@ BitmapData$: function(width, height, transparent, fillColor, pixelRatio) {
 BitmapData$fromImageElement: function(imageElement, pixelRatio) {
   var t1 = new Z.BitmapData(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   t1.BitmapData$fromImageElement$2(imageElement, pixelRatio);
+  return t1;
+},
+
+BitmapData$fromTextureAtlasFrame: function(textureAtlasFrame) {
+  var t1 = new Z.BitmapData(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  t1.BitmapData$fromTextureAtlasFrame$1(textureAtlasFrame);
   return t1;
 },
 
@@ -21987,6 +22633,14 @@ ResourceManager: {"": "EventDispatcher;_resources,_eventStreams,_captureEventStr
       throw H.wrapException("dart2js_hint");
     return value;
   },
+  getTextureAtlas$1: function($name) {
+    var value, t1;
+    value = this._getResourceValue$2("TextureAtlas", $name);
+    t1 = J.getInterceptor(value);
+    if (typeof value !== "object" || value === null || !t1.$isTextureAtlas)
+      throw H.wrapException("dart2js_hint");
+    return value;
+  },
   static: {
 "": "ResourceManager_progressEvent",
 }
@@ -22097,7 +22751,18 @@ ResourceManagerResource_closure1: {"": "Closure;this_2",
   "+call:0:0": 0
 },
 
-TextureAtlas: {"": "Object;_frames,_bitmapData", static: {
+TextureAtlas: {"": "Object;_frames,_bitmapData",
+  getBitmapData$1: function($name) {
+    var t1, i, frame;
+    for (t1 = this._frames, i = 0; i < t1.length; ++i) {
+      frame = t1[i];
+      if (J.$eq(frame.get$name(frame), $name) === true)
+        return Z.BitmapData$fromTextureAtlasFrame(frame);
+    }
+    throw H.wrapException(new P.ArgumentError("TextureAtlasFrame not found: '" + H.S($name) + "'"));
+  },
+  $isTextureAtlas: true,
+  static: {
 TextureAtlas_load: function(url, textureAtlasFormat) {
   var t1, completer;
   t1 = Z.TextureAtlas;
@@ -22114,6 +22779,7 @@ TextureAtlas_load: function(url, textureAtlasFormat) {
   }
   return completer.future;
 }}
+
 },
 
 TextureAtlas_load_closure: {"": "Closure;url_0,completer_1,textureAtlas_2",
@@ -22189,8 +22855,38 @@ TextureAtlas_load_closure0: {"": "Closure;completer_6",
 },
 
 TextureAtlasFrame: {"": "Object;_textureAtlas,_name,_rotated,_originalWidth,_originalHeight,_offsetX,_offsetY,_frameX,_frameY,_frameWidth,_frameHeight",
+  get$textureAtlas: function() {
+    return this._textureAtlas;
+  },
   get$name: function(_) {
     return this._name;
+  },
+  get$rotated: function() {
+    return this._rotated;
+  },
+  get$frameX: function() {
+    return this._frameX;
+  },
+  get$frameY: function() {
+    return this._frameY;
+  },
+  get$frameWidth: function() {
+    return this._frameWidth;
+  },
+  get$frameHeight: function() {
+    return this._frameHeight;
+  },
+  get$offsetX: function(_) {
+    return this._offsetX;
+  },
+  get$offsetY: function(_) {
+    return this._offsetY;
+  },
+  get$originalWidth: function() {
+    return this._originalWidth;
+  },
+  get$originalHeight: function() {
+    return this._originalHeight;
   },
   static: {
 TextureAtlasFrame$fromJson: function(textureAtlas, $name, frame) {
@@ -22509,8 +23205,49 @@ init.globalFunctions.identical$closure = P.identical$closure = new P.Closure$ide
 init.globalFunctions.Element__determineMouseWheelEventType$closure = W.Element__determineMouseWheelEventType$closure = new W.Closure$_determineMouseWheelEventType(W.Element__determineMouseWheelEventType, "Element__determineMouseWheelEventType$closure");
 init.globalFunctions.main$closure = G.main$closure = new G.Closure$main(G.main, "main$closure");
 init.globalFunctions.TransitionFunction_linear$closure = Z.TransitionFunction_linear$closure = new Z.Closure$linear(Z.TransitionFunction_linear, "TransitionFunction_linear$closure");
+init.globalFunctions.TransitionFunction_sine$closure = Z.TransitionFunction_sine$closure = new Z.Closure$sine(Z.TransitionFunction_sine, "TransitionFunction_sine$closure");
+init.globalFunctions.TransitionFunction_cosine$closure = Z.TransitionFunction_cosine$closure = new Z.Closure$cosine(Z.TransitionFunction_cosine, "TransitionFunction_cosine$closure");
+init.globalFunctions.TransitionFunction_random$closure = Z.TransitionFunction_random$closure = new Z.Closure$random(Z.TransitionFunction_random, "TransitionFunction_random$closure");
 init.globalFunctions.TransitionFunction_easeInQuadratic$closure = Z.TransitionFunction_easeInQuadratic$closure = new Z.Closure$easeInQuadratic(Z.TransitionFunction_easeInQuadratic, "TransitionFunction_easeInQuadratic$closure");
 init.globalFunctions.TransitionFunction_easeOutQuadratic$closure = Z.TransitionFunction_easeOutQuadratic$closure = new Z.Closure$easeOutQuadratic(Z.TransitionFunction_easeOutQuadratic, "TransitionFunction_easeOutQuadratic$closure");
+init.globalFunctions.TransitionFunction_easeInOutQuadratic$closure = Z.TransitionFunction_easeInOutQuadratic$closure = new Z.Closure$easeInOutQuadratic(Z.TransitionFunction_easeInOutQuadratic, "TransitionFunction_easeInOutQuadratic$closure");
+init.globalFunctions.TransitionFunction_easeOutInQuadratic$closure = Z.TransitionFunction_easeOutInQuadratic$closure = new Z.Closure$easeOutInQuadratic(Z.TransitionFunction_easeOutInQuadratic, "TransitionFunction_easeOutInQuadratic$closure");
+init.globalFunctions.TransitionFunction_easeInCubic$closure = Z.TransitionFunction_easeInCubic$closure = new Z.Closure$easeInCubic(Z.TransitionFunction_easeInCubic, "TransitionFunction_easeInCubic$closure");
+init.globalFunctions.TransitionFunction_easeOutCubic$closure = Z.TransitionFunction_easeOutCubic$closure = new Z.Closure$easeOutCubic(Z.TransitionFunction_easeOutCubic, "TransitionFunction_easeOutCubic$closure");
+init.globalFunctions.TransitionFunction_easeInOutCubic$closure = Z.TransitionFunction_easeInOutCubic$closure = new Z.Closure$easeInOutCubic(Z.TransitionFunction_easeInOutCubic, "TransitionFunction_easeInOutCubic$closure");
+init.globalFunctions.TransitionFunction_easeOutInCubic$closure = Z.TransitionFunction_easeOutInCubic$closure = new Z.Closure$easeOutInCubic(Z.TransitionFunction_easeOutInCubic, "TransitionFunction_easeOutInCubic$closure");
+init.globalFunctions.TransitionFunction_easeInQuartic$closure = Z.TransitionFunction_easeInQuartic$closure = new Z.Closure$easeInQuartic(Z.TransitionFunction_easeInQuartic, "TransitionFunction_easeInQuartic$closure");
+init.globalFunctions.TransitionFunction_easeOutQuartic$closure = Z.TransitionFunction_easeOutQuartic$closure = new Z.Closure$easeOutQuartic(Z.TransitionFunction_easeOutQuartic, "TransitionFunction_easeOutQuartic$closure");
+init.globalFunctions.TransitionFunction_easeInOutQuartic$closure = Z.TransitionFunction_easeInOutQuartic$closure = new Z.Closure$easeInOutQuartic(Z.TransitionFunction_easeInOutQuartic, "TransitionFunction_easeInOutQuartic$closure");
+init.globalFunctions.TransitionFunction_easeOutInQuartic$closure = Z.TransitionFunction_easeOutInQuartic$closure = new Z.Closure$easeOutInQuartic(Z.TransitionFunction_easeOutInQuartic, "TransitionFunction_easeOutInQuartic$closure");
+init.globalFunctions.TransitionFunction_easeInQuintic$closure = Z.TransitionFunction_easeInQuintic$closure = new Z.Closure$easeInQuintic(Z.TransitionFunction_easeInQuintic, "TransitionFunction_easeInQuintic$closure");
+init.globalFunctions.TransitionFunction_easeOutQuintic$closure = Z.TransitionFunction_easeOutQuintic$closure = new Z.Closure$easeOutQuintic(Z.TransitionFunction_easeOutQuintic, "TransitionFunction_easeOutQuintic$closure");
+init.globalFunctions.TransitionFunction_easeInOutQuintic$closure = Z.TransitionFunction_easeInOutQuintic$closure = new Z.Closure$easeInOutQuintic(Z.TransitionFunction_easeInOutQuintic, "TransitionFunction_easeInOutQuintic$closure");
+init.globalFunctions.TransitionFunction_easeOutInQuintic$closure = Z.TransitionFunction_easeOutInQuintic$closure = new Z.Closure$easeOutInQuintic(Z.TransitionFunction_easeOutInQuintic, "TransitionFunction_easeOutInQuintic$closure");
+init.globalFunctions.TransitionFunction_easeInCircular$closure = Z.TransitionFunction_easeInCircular$closure = new Z.Closure$easeInCircular(Z.TransitionFunction_easeInCircular, "TransitionFunction_easeInCircular$closure");
+init.globalFunctions.TransitionFunction_easeOutCircular$closure = Z.TransitionFunction_easeOutCircular$closure = new Z.Closure$easeOutCircular(Z.TransitionFunction_easeOutCircular, "TransitionFunction_easeOutCircular$closure");
+init.globalFunctions.TransitionFunction_easeInOutCircular$closure = Z.TransitionFunction_easeInOutCircular$closure = new Z.Closure$easeInOutCircular(Z.TransitionFunction_easeInOutCircular, "TransitionFunction_easeInOutCircular$closure");
+init.globalFunctions.TransitionFunction_easeOutInCircular$closure = Z.TransitionFunction_easeOutInCircular$closure = new Z.Closure$easeOutInCircular(Z.TransitionFunction_easeOutInCircular, "TransitionFunction_easeOutInCircular$closure");
+init.globalFunctions.TransitionFunction_easeInSine$closure = Z.TransitionFunction_easeInSine$closure = new Z.Closure$easeInSine(Z.TransitionFunction_easeInSine, "TransitionFunction_easeInSine$closure");
+init.globalFunctions.TransitionFunction_easeOutSine$closure = Z.TransitionFunction_easeOutSine$closure = new Z.Closure$easeOutSine(Z.TransitionFunction_easeOutSine, "TransitionFunction_easeOutSine$closure");
+init.globalFunctions.TransitionFunction_easeInOutSine$closure = Z.TransitionFunction_easeInOutSine$closure = new Z.Closure$easeInOutSine(Z.TransitionFunction_easeInOutSine, "TransitionFunction_easeInOutSine$closure");
+init.globalFunctions.TransitionFunction_easeOutInSine$closure = Z.TransitionFunction_easeOutInSine$closure = new Z.Closure$easeOutInSine(Z.TransitionFunction_easeOutInSine, "TransitionFunction_easeOutInSine$closure");
+init.globalFunctions.TransitionFunction_easeInExponential$closure = Z.TransitionFunction_easeInExponential$closure = new Z.Closure$easeInExponential(Z.TransitionFunction_easeInExponential, "TransitionFunction_easeInExponential$closure");
+init.globalFunctions.TransitionFunction_easeOutExponential$closure = Z.TransitionFunction_easeOutExponential$closure = new Z.Closure$easeOutExponential(Z.TransitionFunction_easeOutExponential, "TransitionFunction_easeOutExponential$closure");
+init.globalFunctions.TransitionFunction_easeInOutExponential$closure = Z.TransitionFunction_easeInOutExponential$closure = new Z.Closure$easeInOutExponential(Z.TransitionFunction_easeInOutExponential, "TransitionFunction_easeInOutExponential$closure");
+init.globalFunctions.TransitionFunction_easeOutInExponential$closure = Z.TransitionFunction_easeOutInExponential$closure = new Z.Closure$easeOutInExponential(Z.TransitionFunction_easeOutInExponential, "TransitionFunction_easeOutInExponential$closure");
+init.globalFunctions.TransitionFunction_easeInBack$closure = Z.TransitionFunction_easeInBack$closure = new Z.Closure$easeInBack(Z.TransitionFunction_easeInBack, "TransitionFunction_easeInBack$closure");
+init.globalFunctions.TransitionFunction_easeOutBack$closure = Z.TransitionFunction_easeOutBack$closure = new Z.Closure$easeOutBack(Z.TransitionFunction_easeOutBack, "TransitionFunction_easeOutBack$closure");
+init.globalFunctions.TransitionFunction_easeInOutBack$closure = Z.TransitionFunction_easeInOutBack$closure = new Z.Closure$easeInOutBack(Z.TransitionFunction_easeInOutBack, "TransitionFunction_easeInOutBack$closure");
+init.globalFunctions.TransitionFunction_easeOutInBack$closure = Z.TransitionFunction_easeOutInBack$closure = new Z.Closure$easeOutInBack(Z.TransitionFunction_easeOutInBack, "TransitionFunction_easeOutInBack$closure");
+init.globalFunctions.TransitionFunction_easeInElastic$closure = Z.TransitionFunction_easeInElastic$closure = new Z.Closure$easeInElastic(Z.TransitionFunction_easeInElastic, "TransitionFunction_easeInElastic$closure");
+init.globalFunctions.TransitionFunction_easeOutElastic$closure = Z.TransitionFunction_easeOutElastic$closure = new Z.Closure$easeOutElastic(Z.TransitionFunction_easeOutElastic, "TransitionFunction_easeOutElastic$closure");
+init.globalFunctions.TransitionFunction_easeInOutElastic$closure = Z.TransitionFunction_easeInOutElastic$closure = new Z.Closure$easeInOutElastic(Z.TransitionFunction_easeInOutElastic, "TransitionFunction_easeInOutElastic$closure");
+init.globalFunctions.TransitionFunction_easeOutInElastic$closure = Z.TransitionFunction_easeOutInElastic$closure = new Z.Closure$easeOutInElastic(Z.TransitionFunction_easeOutInElastic, "TransitionFunction_easeOutInElastic$closure");
+init.globalFunctions.TransitionFunction_easeInBounce$closure = Z.TransitionFunction_easeInBounce$closure = new Z.Closure$easeInBounce(Z.TransitionFunction_easeInBounce, "TransitionFunction_easeInBounce$closure");
+init.globalFunctions.TransitionFunction_easeOutBounce$closure = Z.TransitionFunction_easeOutBounce$closure = new Z.Closure$easeOutBounce(Z.TransitionFunction_easeOutBounce, "TransitionFunction_easeOutBounce$closure");
+init.globalFunctions.TransitionFunction_easeInOutBounce$closure = Z.TransitionFunction_easeInOutBounce$closure = new Z.Closure$easeInOutBounce(Z.TransitionFunction_easeInOutBounce, "TransitionFunction_easeInOutBounce$closure");
+init.globalFunctions.TransitionFunction_easeOutInBounce$closure = Z.TransitionFunction_easeOutInBounce$closure = new Z.Closure$easeOutInBounce(Z.TransitionFunction_easeOutInBounce, "TransitionFunction_easeOutInBounce$closure");
 // Runtime type support
 Z.DisplayObject.$isDisplayObject = true;
 Z.Stage.$isDisplayObject = true;
@@ -22624,6 +23361,7 @@ C.C_CloseToken = new H.CloseToken();
 C.C_JsonCodec = new P.JsonCodec();
 C.C_UnknownJavaScriptObject = new J.UnknownJavaScriptObject();
 C.C__DelayedDone = new P._DelayedDone();
+C.C__Random = new P._Random();
 C.Duration_0 = new P.Duration(0);
 C.EventStreamProvider_canplaythrough = new W.EventStreamProvider("canplaythrough");
 C.EventStreamProvider_click = new Z.EventStreamProvider0("click");
@@ -22688,6 +23426,7 @@ $.stage = null;
 $.script = null;
 $.Device__isOpera = null;
 $.Device__isWebKit = null;
+$.TransitionFunction__random = null;
 $.DisplayObject__nextID = 0;
 $._Touch__globalTouchPointID = 0;
 $.SoundMixer__engine = null;
@@ -22823,6 +23562,9 @@ J.dispatchEvent$1$x = function(receiver, a0) {
 J.elementAt$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).elementAt$1(receiver, a0);
 };
+J.endsWith$1$s = function(receiver, a0) {
+  return J.getInterceptor$s(receiver).endsWith$1(receiver, a0);
+};
 J.forEach$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).forEach$1(receiver, a0);
 };
@@ -22907,6 +23649,9 @@ J.get$target$x = function(receiver) {
 J.get$text$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$text(receiver);
 };
+J.get$topLeft$x = function(receiver) {
+  return J.getInterceptor$x(receiver).get$topLeft(receiver);
+};
 J.get$value$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$value(receiver);
 };
@@ -22921,6 +23666,9 @@ J.get$x$x = function(receiver) {
 };
 J.get$y$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$y(receiver);
+};
+J.getBoundingClientRect$0$x = function(receiver) {
+  return J.getInterceptor$x(receiver).getBoundingClientRect$0(receiver);
 };
 J.getPropertyValue$1$x = function(receiver, a0) {
   return J.getInterceptor$x(receiver).getPropertyValue$1(receiver, a0);
@@ -23134,6 +23882,15 @@ Isolate.$lazy($, "_allTemplatesSelectors", "TemplateElement__allTemplatesSelecto
   var t1 = C.Map_Ai46y.get$keys();
   t1 = t1.map$1(t1, new W.closure0());
   return "template, option[template], optgroup[template], " + t1.join$1(t1, ", ");
+});
+Isolate.$lazy($, "scaleMode", "VN_scaleMode", "get$VN_scaleMode", function() {
+  return H.makeLiteralMap(["exactFit", "exactFit", "noBorder", "noBorder", "noScale", "noScale", "showAll", "showAll"]);
+});
+Isolate.$lazy($, "align", "VN_align", "get$VN_align", function() {
+  return H.makeLiteralMap(["bottom", "B", "bottomLeft", "BL", "bottomRight", "BR", "top", "T", "topLeft", "TL", "topRight", "TR", "left", "L", "right", "R", "none", ""]);
+});
+Isolate.$lazy($, "ease", "VN_ease", "get$VN_ease", function() {
+  return H.makeLiteralMap(["linear", Z.TransitionFunction_linear$closure, "sine", Z.TransitionFunction_sine$closure, "cosine", Z.TransitionFunction_cosine$closure, "random", Z.TransitionFunction_random$closure, "easeInQuadratic", Z.TransitionFunction_easeInQuadratic$closure, "easeOutQuadratic", Z.TransitionFunction_easeOutQuadratic$closure, "easeInOutQuadratic", Z.TransitionFunction_easeInOutQuadratic$closure, "easeOutInQuadratic", Z.TransitionFunction_easeOutInQuadratic$closure, "easeInCubic", Z.TransitionFunction_easeInCubic$closure, "easeOutCubic", Z.TransitionFunction_easeOutCubic$closure, "easeInOutCubic", Z.TransitionFunction_easeInOutCubic$closure, "easeOutInCubic", Z.TransitionFunction_easeOutInCubic$closure, "easeInQuartic", Z.TransitionFunction_easeInQuartic$closure, "easeOutQuartic", Z.TransitionFunction_easeOutQuartic$closure, "easeInOutQuartic", Z.TransitionFunction_easeInOutQuartic$closure, "easeOutInQuartic", Z.TransitionFunction_easeOutInQuartic$closure, "easeInQuintic", Z.TransitionFunction_easeInQuintic$closure, "easeOutQuintic", Z.TransitionFunction_easeOutQuintic$closure, "easeInOutQuintic", Z.TransitionFunction_easeInOutQuintic$closure, "easeOutInQuintic", Z.TransitionFunction_easeOutInQuintic$closure, "easeInCircular", Z.TransitionFunction_easeInCircular$closure, "easeOutCircular", Z.TransitionFunction_easeOutCircular$closure, "easeInOutCircular", Z.TransitionFunction_easeInOutCircular$closure, "easeOutInCircular", Z.TransitionFunction_easeOutInCircular$closure, "easeInSine", Z.TransitionFunction_easeInSine$closure, "easeOutSine", Z.TransitionFunction_easeOutSine$closure, "easeInOutSine", Z.TransitionFunction_easeInOutSine$closure, "easeOutInSine", Z.TransitionFunction_easeOutInSine$closure, "easeInExponential", Z.TransitionFunction_easeInExponential$closure, "easeOutExponential", Z.TransitionFunction_easeOutExponential$closure, "easeInOutExponential", Z.TransitionFunction_easeInOutExponential$closure, "easeOutInExponential", Z.TransitionFunction_easeOutInExponential$closure, "easeInBack", Z.TransitionFunction_easeInBack$closure, "easeOutBack", Z.TransitionFunction_easeOutBack$closure, "easeInOutBack", Z.TransitionFunction_easeInOutBack$closure, "easeOutInBack", Z.TransitionFunction_easeOutInBack$closure, "easeInElastic", Z.TransitionFunction_easeInElastic$closure, "easeOutElastic", Z.TransitionFunction_easeOutElastic$closure, "easeInOutElastic", Z.TransitionFunction_easeInOutElastic$closure, "easeOutInElastic", Z.TransitionFunction_easeOutInElastic$closure, "easeInBounce", Z.TransitionFunction_easeInBounce$closure, "easeOutBounce", Z.TransitionFunction_easeOutBounce$closure, "easeInOutBounce", Z.TransitionFunction_easeInOutBounce$closure, "easeOutInBounce", Z.TransitionFunction_easeOutInBounce$closure]);
 });
 Isolate.$lazy($, "defaultLoadOptions", "BitmapData_defaultLoadOptions", "get$BitmapData_defaultLoadOptions", function() {
   return new Z.BitmapDataLoadOptions(true, true, false, true);
