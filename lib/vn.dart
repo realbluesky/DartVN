@@ -9,10 +9,12 @@ part 'src/config.dart';
 part 'src/character.dart';
 part 'src/script.dart';
 part 'src/option.dart';
+part 'src/option/channel.dart';
 part 'src/option/layer.dart';
 part 'src/option/position.dart';
 part 'src/option/vntransition.dart';
 part 'src/verb.dart';
+part 'src/verb/play.dart';
 part 'src/verb/set.dart';
 
 ResourceManager resourceManager;
@@ -27,6 +29,7 @@ class VN extends DisplayObjectContainer implements Animatable {
   List<bool> prevNext = [false,true];
   Map options;
   Map assets;
+  Map<String, Channel> channels = {};
   
   VN(String configYaml) {
     resourceManager = new ResourceManager();

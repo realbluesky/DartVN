@@ -1,11 +1,13 @@
 file:///C:/Users/agann/GitHub/dartvn/lib/src/character.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/config.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option.dart
+file:///C:/Users/agann/GitHub/dartvn/lib/src/option/channel.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option/layer.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option/position.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/option/vntransition.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/script.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/verb.dart
+file:///C:/Users/agann/GitHub/dartvn/lib/src/verb/play.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/src/verb/set.dart
 file:///C:/Users/agann/GitHub/dartvn/lib/vn.dart
 file:///C:/Users/agann/GitHub/dartvn/web/dartvn.dart

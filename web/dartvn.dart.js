@@ -6130,6 +6130,12 @@ _AsBroadcastStream: {"": "Stream;_liblib3$_source,_onListenHandler,_onCancelHand
     this._liblib3$_controller = null;
     t1.cancel$0();
   },
+  _pauseSubscription$1: function(resumeSignal) {
+    var t1 = this._subscription;
+    if (t1 == null)
+      return;
+    t1.pause$1(t1, resumeSignal);
+  },
   _AsBroadcastStream$3: function(_source, _onListenHandler, _onCancelHandler, $T) {
     var t1 = new P._AsBroadcastStreamController(null, this.get$_onListen(), this.get$_onCancel(), 0, null, null, null, null);
     H.setRuntimeTypeInfo(t1, [$T]);
@@ -6173,6 +6179,12 @@ _AsBroadcastStream__onListen_closure: {"": "Closure;this_0",
 },
 
 _BroadcastSubscriptionWrapper: {"": "Object;_stream",
+  pause$1: function(_, resumeSignal) {
+    this._stream._pauseSubscription$1(resumeSignal);
+  },
+  pause$0: function($receiver) {
+    return this.pause$1($receiver, null);
+  },
   cancel$0: function() {
     this._stream._cancelSubscription$0();
   }
@@ -9981,7 +9993,19 @@ LinkElement: {"": "HtmlElement;type="},
 
 MapElement: {"": "HtmlElement;name="},
 
-MediaElement: {"": "HtmlElement;duration=,error=,src}"},
+MediaElement: {"": "HtmlElement;currentTime%,duration=,ended=,error=,loop},src},volume}",
+  pause$0: function(receiver) {
+    return receiver.pause();
+  },
+  play$0: function(receiver) {
+    return receiver.play();
+  },
+  get$onEnded: function(receiver) {
+    return C.EventStreamProvider_ended.forElement$1(receiver);
+  }
+},
+
+MediaStream: {"": "EventTarget;ended="},
 
 MetaElement: {"": "HtmlElement;content%,name="},
 
@@ -10467,7 +10491,28 @@ AudioContext_decodeAudioData_closure0: {"": "Closure;completer_1",
 
 AudioBuffer: {"": "Interceptor;duration=,length="},
 
-AudioContext: {"": "EventTarget;",
+AudioBufferSourceNode: {"": "AudioSourceNode;loop}",
+  start$3: function(receiver, when, grainOffset, grainDuration) {
+    if (!!receiver.start)
+      if (grainDuration != null)
+        receiver.start(when, grainOffset, grainDuration);
+      else if (grainOffset != null)
+        receiver.start(when, grainOffset);
+      else
+        receiver.start(when);
+    else if (grainDuration != null)
+      receiver.noteOn(when, grainOffset, grainDuration);
+    else if (grainOffset != null)
+      receiver.noteOn(when, grainOffset);
+    else
+      receiver.noteOn(when);
+  },
+  start$1: function($receiver, when) {
+    return this.start$3($receiver, when, null, null);
+  }
+},
+
+AudioContext: {"": "EventTarget;currentTime=",
   _decodeAudioData$3: function(receiver, audioData, successCallback, errorCallback) {
     return receiver.decodeAudioData(audioData, H.convertDartClosureToJS(successCallback, 1), H.convertDartClosureToJS(errorCallback, 1));
   },
@@ -10485,7 +10530,13 @@ AudioContext: {"": "EventTarget;",
     else
       return receiver.createGainNode();
   }
-}}],
+},
+
+AudioNode: {"": "EventTarget;"},
+
+AudioParam: {"": "Interceptor;name=,value="},
+
+AudioSourceNode: {"": "AudioNode;"}}],
 ["dart.isolate", "dart:isolate", , P, {
 _Isolate_port: function() {
   if ($.lazyPort == null)
@@ -11167,11 +11218,13 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
     return this._config;
   },
   configure$1: function(response) {
-    var defaults, opt, t1, t2, t3, assets, imagePath;
+    var defaults, opt, t1, t2, t3, assets, imagePath, soundPath;
     this._config = O.loadYaml(response);
     defaults = H.makeLiteralMap(["dur", 1, "dir", "right", "trans", "fade", "width", 1920, "height", 1080, "layers", ["bg"]]);
     defaults.forEach$1(defaults, new N.Config_configure_closure(this));
-    J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "layers"), new N.Config_configure_closure0(this));
+    if (J.$index$asx(this._config, "options").containsKey$1("channels") === true)
+      J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "channels"), new N.Config_configure_closure0(this));
+    J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "layers"), new N.Config_configure_closure1(this));
     opt = J.$index$asx(this._config, "options");
     t1 = J.getInterceptor$asx(opt);
     t2 = "#" + H.S(t1.$index(opt, "stage_id"));
@@ -11193,9 +11246,10 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
       assets = J.$index$asx(this._config, "assets");
       imagePath = assets.containsKey$1("image_path") === true ? J.$index$asx(assets, "image_path") : "";
       if (assets.containsKey$1("images") === true)
-        J.forEach$1$ax(J.$index$asx(assets, "images"), new N.Config_configure_closure1(imagePath));
+        J.forEach$1$ax(J.$index$asx(assets, "images"), new N.Config_configure_closure2(imagePath));
+      soundPath = assets.containsKey$1("sound_path") === true ? J.$index$asx(assets, "sound_path") : "";
       if (assets.containsKey$1("sounds") === true)
-        J.forEach$1$ax(J.$index$asx(assets, "sounds"), new N.Config_configure_closure2(imagePath));
+        J.forEach$1$ax(J.$index$asx(assets, "sounds"), new N.Config_configure_closure3(soundPath));
     }
     this._vn._mask = new Z._RectangleMask(new Z.Rectangle(0, 0, t1.$index(opt, "width"), t1.$index(opt, "height")), null, false, 4278190080, 1, null);
     $.stage.addChild$1(this._vn);
@@ -11205,7 +11259,7 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
     t1.add$1(t1, this._vn);
     $.script = N.Script$(J.$index$asx(this._config, "script"));
     t1 = $.resourceManager;
-    t1.load$0(t1).then$1(new N.Config_configure_closure3(this));
+    t1.load$0(t1).then$1(new N.Config_configure_closure4(this));
   },
   get$configure: function() {
     return new T.BoundClosure$1(this, "configure$1", null);
@@ -11239,8 +11293,19 @@ Config_configure__closure: {"": "Closure;v_1",
 
 Config_configure_closure0: {"": "Closure;this_2",
   call$1: function(v) {
+    var t1, t2;
+    t1 = this.this_2.get$_vn().channels;
+    t2 = new N.Channel(v, [], null);
+    t1.$indexSet(t1, v, t2);
+    return t2;
+  },
+  "+call:1:0": 0
+},
+
+Config_configure_closure1: {"": "Closure;this_3",
+  call$1: function(v) {
     var t1, t2, t3;
-    t1 = this.this_2.get$_vn();
+    t1 = this.this_3.get$_vn();
     t2 = P.List_List(null, Z.DisplayObject);
     H.setRuntimeTypeInfo(t2, [Z.DisplayObject]);
     t3 = $.DisplayObject__nextID;
@@ -11252,12 +11317,12 @@ Config_configure_closure0: {"": "Closure;this_2",
   "+call:1:0": 0
 },
 
-Config_configure_closure1: {"": "Closure;imagePath_3",
+Config_configure_closure2: {"": "Closure;imagePath_4",
   call$2: function($name, url) {
     var t1, t2, t3;
     t1 = J.endsWith$1$s(url, ".json");
     t2 = $.resourceManager;
-    t3 = this.imagePath_3;
+    t3 = this.imagePath_4;
     if (t1) {
       t1 = J.$add$ns(t3, url);
       t2.addTextureAtlas$3;
@@ -11271,11 +11336,11 @@ Config_configure_closure1: {"": "Closure;imagePath_3",
   "+call:2:0": 0
 },
 
-Config_configure_closure2: {"": "Closure;imagePath_4",
+Config_configure_closure3: {"": "Closure;soundPath_5",
   call$2: function($name, url) {
     var t1, t2;
     t1 = $.resourceManager;
-    t2 = J.$add$ns(this.imagePath_4, url);
+    t2 = J.$add$ns(this.soundPath_5, url);
     t1.addSound$3;
     t1._addResource$4("Sound", $name, t2, Z.Sound_load(t2, null));
     return;
@@ -11283,34 +11348,40 @@ Config_configure_closure2: {"": "Closure;imagePath_4",
   "+call:2:0": 0
 },
 
-Config_configure_closure3: {"": "Closure;this_5",
+Config_configure_closure4: {"": "Closure;this_6",
   call$1: function(rm) {
-    var t1 = this.this_5;
+    var t1 = this.this_6;
     if (t1.get$onConfig() != null)
       t1.onConfig$1(t1);
   },
   "+call:1:0": 0
 },
 
-Option: {"": "Object;"},
+Option: {"": "Object;name>"},
+
+Channel: {"": "Option;name>,plays,lib9$Option$name",
+  add$1: function(_, sound) {
+    this.plays.push(sound);
+    return sound;
+  }
+},
 
 Layer: {"": "DisplayObjectContainer;_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams"},
 
 Position: {"": "DisplayObjectContainer;args,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   add$1: function(_, child) {
-    var t1, t2, width, height, sw;
+    var t1, t2, width, height, vn, sw, sh;
     t1 = {};
     t1.hor_0 = false;
     t1.vert_1 = false;
     t2 = J.getInterceptor$x(child);
     width = t2.get$width(child);
     height = t2.get$height(child);
-    t2 = $.stage;
-    t2.get$width;
-    sw = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width;
-    t2 = $.stage;
-    t2.get$height;
-    J.forEach$1$ax(this.args, new N.Position_add_closure(t1, child, width, height, sw, t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._height));
+    vn = $.stage.getChildByName$1("vn");
+    t2 = J.getInterceptor$x(vn);
+    sw = J.$index$asx(t2.get$options(vn), "width");
+    sh = J.$index$asx(t2.get$options(vn), "height");
+    J.forEach$1$ax(this.args, new N.Position_add_closure(t1, child, width, height, sw, sh));
     this.addChild$1(child);
   }
 },
@@ -11356,18 +11427,16 @@ Position_add_closure: {"": "Closure;box_0,child_1,width_2,height_3,sw_4,sh_5",
   "+call:2:0": 0
 },
 
-VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,tween",
+VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior,temp<,tween,lib9$Option$name",
   _before$0: function() {
     if (J.$eq(J.$index$asx(this.opts, "mode"), "add") !== true && this.position.get$numChildren() > 0)
       this.prior = this.position.getChildAt$1(0);
   },
   _after$0: function() {
     var t1 = this.prior;
-    if (t1 != null)
-      this.position.removeChild$1(t1);
-    t1 = this.current;
-    t1.set$alpha;
-    t1._alpha = 1;
+    if (t1 != null && J.$eq(t1, this.current) !== true && this.position.getChildByName$1(J.get$name$x(this.prior)) != null)
+      this.position.removeChild$1(this.prior);
+    J.set$alpha$x(this.current, 1);
     if (J.$eq(J.$index$asx(this.opts, "wait"), "user") === true)
       this.vn.set$prevNext([true, true]);
     else {
@@ -11383,9 +11452,7 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,t
     var t1, t2, t3, t4;
     this.name = "fade";
     this._before$0();
-    t1 = this.current;
-    t1.set$alpha;
-    t1._alpha = 0;
+    J.set$alpha$x(this.current, 0);
     J.add$1$ax(this.position, this.current);
     t1 = this.vn.get$juggler();
     t2 = this.current;
@@ -11393,52 +11460,69 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,t
     t4 = $.get$VN_ease();
     this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
     t4 = this.tween;
-    t3 = t4.get$animate();
+    t4.get$animate;
+    t3 = t4._tweenPropertyFactory;
     t3.get$alpha;
     t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t4.set$onComplete(t4, this.get$_after());
+    t3 = this.get$_after();
+    t4.set$onComplete;
+    t4._onComplete = t3;
   },
   get$fadeTransition: function() {
     return new P.BoundClosure$0(this, "fadeTransition$0", null);
+  },
+  fadeOutTransition$0: function() {
+    var t1, t2, t3, t4;
+    this.name = "fadeout";
+    if (J.$index$asx(this.opts, "mod") == null) {
+      this._before$0();
+      J.add$1$ax(this.position, this.current);
+    }
+    t1 = this.vn.get$juggler();
+    t2 = this.current;
+    t3 = J.$index$asx(this.opts, "dur");
+    t4 = $.get$VN_ease();
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+    t4 = this.tween;
+    t4.get$animate;
+    t3 = t4._tweenPropertyFactory;
+    t3.get$alpha;
+    t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+    t4.set$onComplete;
+    t4._onComplete = new N.VNTransition_fadeOutTransition_closure(this);
+  },
+  get$fadeOutTransition: function() {
+    return new P.BoundClosure$0(this, "fadeOutTransition$0", null);
   },
   fadeThruTransition$0: function() {
     var t1, t2, t3, t4;
     this.name = "fadethru";
     this._before$0();
     t1 = this.current;
-    if (typeof t1 !== "object" || t1 === null || !t1.$isBitmap) {
-      t1 = J.toInt$0$nx(t1.get$width(t1));
-      t2 = this.current;
-      t2 = Z.BitmapData$(t1, J.toInt$0$nx(t2.get$height(t2)), true, 0, 1);
-      t2.draw$1(this.current);
-      t1 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t1 + 1;
-      t1 = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      t1.set$bitmapData(t2);
-      t1._pixelSnapping = "auto";
-      t1._clipRectangle = null;
-      this.current = t1;
+    t2 = J.getInterceptor$x(t1);
+    if (typeof t1 !== "object" || t1 === null || !t2.$isBitmap) {
+      t1 = Z.BitmapData$(J.toInt$0$nx(t2.get$width(t1)), J.toInt$0$nx(J.get$height$x(this.current)), true, 0, 1);
+      t1.draw$1(this.current);
+      t2 = $.DisplayObject__nextID;
+      $.DisplayObject__nextID = t2 + 1;
+      t2 = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+      t2.set$bitmapData(t1);
+      t2._pixelSnapping = "auto";
+      t2._clipRectangle = null;
+      this.current = t2;
     }
-    t1 = this.current;
-    t1 = J.toInt$0$nx(t1.get$width(t1));
-    t2 = this.current;
-    t2 = Z.BitmapData$(t1, J.toInt$0$nx(t2.get$height(t2)), false, J.$index$asx(this.opts, "color"), 1);
-    t1 = $.DisplayObject__nextID;
-    $.DisplayObject__nextID = t1 + 1;
-    t1 = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-    t1.set$bitmapData(t2);
-    t1._pixelSnapping = "auto";
-    t1._clipRectangle = null;
-    t1._alpha = 0;
-    t1._filters = [Z.AlphaMaskFilter$(this.current.get$bitmapData(), null)];
-    t2 = this.current;
-    t2 = J.toInt$0$nx(t2.get$width(t2));
-    t3 = this.current;
-    t1.applyCache$4(0, 0, t2, J.toInt$0$nx(t3.get$height(t3)));
-    this.temp = t1;
-    t1 = this.current;
-    t1.set$alpha;
-    t1._alpha = 0;
+    t1 = Z.BitmapData$(J.toInt$0$nx(J.get$width$x(this.current)), J.toInt$0$nx(J.get$height$x(this.current)), false, J.$index$asx(this.opts, "color"), 1);
+    t2 = $.DisplayObject__nextID;
+    $.DisplayObject__nextID = t2 + 1;
+    t2 = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+    t2.set$bitmapData(t1);
+    t2._pixelSnapping = "auto";
+    t2._clipRectangle = null;
+    t2._alpha = 0;
+    t2._filters = [Z.AlphaMaskFilter$(this.current.get$bitmapData(), null)];
+    t2.applyCache$4(0, 0, J.toInt$0$nx(J.get$width$x(this.current)), J.toInt$0$nx(J.get$height$x(this.current)));
+    this.temp = t2;
+    J.set$alpha$x(this.current, 0);
     J.add$1$ax(this.position, this.current);
     J.add$1$ax(this.position, this.temp);
     t1 = this.vn.get$juggler();
@@ -11471,70 +11555,45 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,t
     this.name = "fadeacross";
     this._before$0();
     t2 = this.current;
-    if (typeof t2 !== "object" || t2 === null || !t2.$isBitmap) {
-      t2 = J.toInt$0$nx(t2.get$width(t2));
-      t3 = this.current;
-      t3 = Z.BitmapData$(t2, J.toInt$0$nx(t3.get$height(t3)), true, 0, 1);
-      t3.draw$1(this.current);
-      t2 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t2 + 1;
-      t2 = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      t2.set$bitmapData(t3);
-      t2._pixelSnapping = "auto";
-      t2._clipRectangle = null;
-      this.current = t2;
+    t3 = J.getInterceptor$x(t2);
+    if (typeof t2 !== "object" || t2 === null || !t3.$isBitmap) {
+      t2 = Z.BitmapData$(J.toInt$0$nx(t3.get$width(t2)), J.toInt$0$nx(J.get$height$x(this.current)), true, 0, 1);
+      t2.draw$1(this.current);
+      t3 = $.DisplayObject__nextID;
+      $.DisplayObject__nextID = t3 + 1;
+      t3 = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+      t3.set$bitmapData(t2);
+      t3._pixelSnapping = "auto";
+      t3._clipRectangle = null;
+      this.current = t3;
     }
     this.current.set$clipRectangle(new Z.Rectangle(0, 0, 0, 0));
     stops = [0, 1];
-    t2 = this.current;
-    gradientWidthHeight = [J.$mul$n(t2.get$width(t2), 0.2), 0];
-    t2 = this.current;
-    t2 = J.$mul$n(t2.get$width(t2), 0.2);
-    t3 = this.current;
-    pathWidthHeight = [t2, t3.get$height(t3)];
+    gradientWidthHeight = [J.$mul$n(J.get$width$x(this.current), 0.2), 0];
+    pathWidthHeight = [J.$mul$n(J.get$width$x(this.current), 0.2), J.get$height$x(this.current)];
     t1.horizontal_0 = true;
-    t3 = this.current;
-    t3 = J.$mul$n(J.$negate$n(t3.get$width(t3)), 0.2);
-    t2 = this.current;
-    t1.startStop_1 = [t3, t2.get$width(t2)];
+    t1.startStop_1 = [J.$mul$n(J.$negate$n(J.get$width$x(this.current)), 0.2), J.get$width$x(this.current)];
     switch (J.$index$asx(this.opts, "dir")) {
       case "left":
         t2 = new H.ReversedListIterable(stops);
         H.setRuntimeTypeInfo(t2, [null]);
         stops = P.List_List$from(t2, true, null);
-        t2 = this.current;
-        t2 = t2.get$width(t2);
-        t3 = this.current;
-        t1.startStop_1 = [t2, J.$mul$n(J.$negate$n(t3.get$width(t3)), 0.2)];
+        t1.startStop_1 = [J.get$width$x(this.current), J.$mul$n(J.$negate$n(J.get$width$x(this.current)), 0.2)];
         break;
       case "down":
-        t2 = this.current;
-        gradientWidthHeight = [0, J.$mul$n(t2.get$height(t2), 0.2)];
-        t2 = this.current;
-        t2 = t2.get$width(t2);
-        t3 = this.current;
-        pathWidthHeight = [t2, J.$mul$n(t3.get$height(t3), 0.2)];
+        gradientWidthHeight = [0, J.$mul$n(J.get$height$x(this.current), 0.2)];
+        pathWidthHeight = [J.get$width$x(this.current), J.$mul$n(J.get$height$x(this.current), 0.2)];
         t1.horizontal_0 = false;
-        t3 = this.current;
-        t3 = J.$mul$n(J.$negate$n(t3.get$height(t3)), 0.2);
-        t2 = this.current;
-        t1.startStop_1 = [t3, t2.get$height(t2)];
+        t1.startStop_1 = [J.$mul$n(J.$negate$n(J.get$height$x(this.current)), 0.2), J.get$height$x(this.current)];
         break;
       case "up":
         t2 = new H.ReversedListIterable(stops);
         H.setRuntimeTypeInfo(t2, [null]);
         stops = P.List_List$from(t2, true, null);
-        t2 = this.current;
-        gradientWidthHeight = [0, J.$mul$n(t2.get$height(t2), 0.2)];
-        t2 = this.current;
-        t2 = t2.get$width(t2);
-        t3 = this.current;
-        pathWidthHeight = [t2, J.$mul$n(t3.get$height(t3), 0.2)];
+        gradientWidthHeight = [0, J.$mul$n(J.get$height$x(this.current), 0.2)];
+        pathWidthHeight = [J.get$width$x(this.current), J.$mul$n(J.get$height$x(this.current), 0.2)];
         t1.horizontal_0 = false;
-        t3 = this.current;
-        t3 = t3.get$height(t3);
-        t2 = this.current;
-        t1.startStop_1 = [t3, J.$mul$n(J.$negate$n(t2.get$height(t2)), 0.2)];
+        t1.startStop_1 = [J.get$height$x(this.current), J.$mul$n(J.$negate$n(J.get$height$x(this.current)), 0.2)];
         break;
       default:
     }
@@ -11618,42 +11677,95 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,t
     return new P.BoundClosure$0(this, "fadeAcrossTransition$0", null);
   },
   slideTransition$0: function() {
-    var t1, t2, t3, t4, start, horizontal;
+    var t1, t2, t3, start, horizontal, t4, trans;
     this.name = "slide";
     this._before$0();
-    t1 = this.current;
-    t1.set$alpha;
-    t1._alpha = 0;
+    J.set$alpha$x(this.current, 0);
     J.add$1$ax(this.position, this.current);
-    t1 = this.current;
-    t1 = J.$negate$n(t1.get$width(t1));
+    t1 = J.$negate$n(J.get$width$x(this.current));
     t2 = $.stage;
     t2.get$width;
     t2 = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width;
     t3 = $.stage;
     t3.get$height;
-    t3 = t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height;
-    t4 = this.current;
-    t4 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3, "down", J.$negate$n(t4.get$height(t4))]);
-    start = t4.$index(t4, J.$index$asx(this.opts, "dir"));
+    t3 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height, "down", J.$negate$n(J.get$height$x(this.current))]);
+    start = t3.$index(t3, J.$index$asx(this.opts, "dir"));
     horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.opts, "dir"));
-    t4 = this.vn.get$juggler();
+    t3 = this.vn.get$juggler();
     t1 = this.current;
-    if (horizontal)
-      t1 = t1.get$x(t1);
-    else {
-      t1.get$y;
-      t1 = t1._y;
-    }
+    t1 = horizontal ? J.get$x$x(t1) : J.get$y$x(t1);
     t2 = J.$index$asx(this.opts, "dur");
-    t3 = $.get$VN_ease();
-    this.tween = t4.transition$5(t4, start, t1, t2, t3.$index(t3, J.$index$asx(this.opts, "ease")), new N.VNTransition_slideTransition_closure(this, horizontal));
-    t3 = this.tween;
-    t3.set$onStart(new N.VNTransition_slideTransition_closure0(this));
-    t3.set$onComplete(t3, this.get$_after());
+    t4 = $.get$VN_ease();
+    trans = t3.transition$5(t3, start, t1, t2, t4.$index(t4, J.$index$asx(this.opts, "ease")), new N.VNTransition_slideTransition_closure(this, horizontal));
+    trans._onStart = new N.VNTransition_slideTransition_closure0(this);
+    trans._onComplete = this.get$_after();
   },
   get$slideTransition: function() {
     return new P.BoundClosure$0(this, "slideTransition$0", null);
+  },
+  scaleTransition$0: function() {
+    var t1, t2, t3, start, horizontal, t4, trans;
+    this.name = "scale";
+    this._before$0();
+    J.add$1$ax(this.position, this.current);
+    t1 = J.$negate$n(J.get$width$x(this.current));
+    t2 = $.stage;
+    t2.get$width;
+    t2 = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width;
+    t3 = $.stage;
+    t3.get$height;
+    t3 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height, "down", J.$negate$n(J.get$height$x(this.current))]);
+    start = t3.$index(t3, J.$index$asx(this.opts, "dir"));
+    horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.opts, "dir"));
+    t3 = this.vn.get$juggler();
+    t1 = this.current;
+    t1 = horizontal ? J.get$x$x(t1) : J.get$y$x(t1);
+    t2 = J.$index$asx(this.opts, "dur");
+    t4 = $.get$VN_ease();
+    trans = t3.transition$5(t3, start, t1, t2, t4.$index(t4, J.$index$asx(this.opts, "ease")), new N.VNTransition_scaleTransition_closure(this, horizontal));
+    trans._onStart = new N.VNTransition_scaleTransition_closure0(this);
+    trans._onComplete = this.get$_after();
+  },
+  get$scaleTransition: function() {
+    return new P.BoundClosure$0(this, "scaleTransition$0", null);
+  },
+  panTransition$0: function() {
+    var nx, ny, t1, t2, t3, t4;
+    this.name = "pan";
+    if (J.$index$asx(this.opts, "mod") == null) {
+      this._before$0();
+      J.add$1$ax(this.position, this.current);
+    }
+    nx = J.$add$ns(J.get$x$x(this.current), J.$index$asx(J.$index$asx(this.opts, "dist"), 0));
+    ny = J.$add$ns(J.get$y$x(this.current), J.$index$asx(J.$index$asx(this.opts, "dist"), 1));
+    t1 = this.vn.get$juggler();
+    t2 = this.current;
+    t3 = J.$index$asx(this.opts, "dur");
+    t4 = $.get$VN_ease();
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+    t1 = J.getInterceptor(nx);
+    if (t1.$eq(nx, J.get$x$x(this.current)) !== true) {
+      t2 = this.tween;
+      t2.get$animate;
+      t2 = t2._tweenPropertyFactory;
+      t2.get$x;
+      t2._addTweenProperty$1("x").targetValue = t1.toDouble$0(nx);
+    }
+    t1 = J.getInterceptor(ny);
+    if (t1.$eq(ny, J.get$y$x(this.current)) !== true) {
+      t2 = this.tween;
+      t2.get$animate;
+      t2 = t2._tweenPropertyFactory;
+      t2.get$y;
+      t2._addTweenProperty$1("y").targetValue = t1.toDouble$0(ny);
+    }
+    t1 = this.tween;
+    t2 = this.get$_after();
+    t1.set$onComplete;
+    t1._onComplete = t2;
+  },
+  get$panTransition: function() {
+    return new P.BoundClosure$0(this, "panTransition$0", null);
   },
   VNTransition$3: function(position, current, args) {
     this.vn = $.stage.getChildByName$1("vn");
@@ -11663,7 +11775,7 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn,layer,prior,temp<,t
   },
   static: {
 VNTransition$: function(position, current, args) {
-  var t1 = new N.VNTransition(null, null, null, null, null, null, null, null, null);
+  var t1 = new N.VNTransition(null, null, null, null, null, null, null, null, null, null);
   t1.VNTransition$3(position, current, args);
   return t1;
 }}
@@ -11677,11 +11789,32 @@ VNTransition__after_closure: {"": "Closure;",
   "+call:0:0": 0
 },
 
+VNTransition_fadeOutTransition_closure: {"": "Closure;this_0",
+  call$0: function() {
+    var t1, t2;
+    t1 = this.this_0;
+    J.get$position$x(t1).removeChild$1(t1.get$current());
+    if (J.$eq(J.$index$asx(t1.get$opts(), "wait"), "user") === true)
+      t1.get$vn().set$prevNext([true, true]);
+    else {
+      t2 = J.$index$asx(t1.get$opts(), "wait");
+      if (typeof t2 === "number")
+        t1.get$vn().get$juggler().delayCall$2(new N.VNTransition_fadeOutTransition__closure(), J.$index$asx(t1.get$opts(), "wait"));
+    }
+  },
+  "+call:0:0": 0
+},
+
+VNTransition_fadeOutTransition__closure: {"": "Closure;",
+  call$0: function() {
+    return $.script.next$0();
+  },
+  "+call:0:0": 0
+},
+
 VNTransition_fadeThruTransition_closure: {"": "Closure;this_0",
   call$0: function() {
-    var t1 = this.this_0.get$current();
-    t1.set$alpha;
-    t1.set$_alpha(1);
+    J.set$alpha$x(this.this_0.get$current(), 1);
     return 1;
   },
   "+call:0:0": 0
@@ -11771,9 +11904,26 @@ VNTransition_slideTransition_closure: {"": "Closure;this_0,horizontal_1",
 
 VNTransition_slideTransition_closure0: {"": "Closure;this_2",
   call$0: function() {
-    var t1 = this.this_2.get$current();
-    t1.set$alpha;
-    t1.set$_alpha(1);
+    J.set$alpha$x(this.this_2.get$current(), 1);
+    return 1;
+  },
+  "+call:0:0": 0
+},
+
+VNTransition_scaleTransition_closure: {"": "Closure;this_0,horizontal_1",
+  call$1: function(value) {
+    var t1 = this.this_0;
+    if (this.horizontal_1)
+      J.set$x$x(t1.get$current(), value);
+    else
+      J.set$y$x(t1.get$current(), value);
+  },
+  "+call:1:0": 0
+},
+
+VNTransition_scaleTransition_closure0: {"": "Closure;this_2",
+  call$0: function() {
+    J.set$alpha$x(this.this_2.get$current(), 1);
     return 1;
   },
   "+call:0:0": 0
@@ -11812,8 +11962,14 @@ Script: {"": "Object;_script,_labels,_currentLine",
     verb = t1.$index(line, 0);
     args = t1.sublist$1(line, 1);
     switch (verb) {
+      case "play":
+        N.Play$(args);
+        break;
       case "set":
-        N.Set$(args);
+        N.Set$(args, false);
+        break;
+      case "mod":
+        N.Set$(args, true);
         break;
       case "label":
         this.next$0();
@@ -11857,18 +12013,54 @@ Script$: function(script) {
 
 Verb: {"": "Object;"},
 
-Set: {"": "Verb;",
-  Set$1: function(args, box_0) {
-    var vn, layer, t1, posName, value, posArgs, t2, priorObject, newName, t3, t4, newObject, sa, sw, shape, drawn, stroke, tf, vnt, transMap;
+Play: {"": "Verb;channel,sound",
+  Play$1: function(args) {
+    var vn, t1, channelName, soundName;
+    vn = $.stage.getChildByName$1("vn");
+    t1 = args.length;
+    if (0 >= t1)
+      throw H.ioore(0);
+    channelName = args[0];
+    if (1 >= t1)
+      throw H.ioore(1);
+    soundName = args[1];
+    t1 = vn.get$channels();
+    this.channel = t1.$index(t1, channelName);
+    this.sound = $.resourceManager.getSound$1(soundName);
+    J.add$1$ax(this.channel, this);
+    t1 = this.sound;
+    t1.play$0(t1);
+    $.script.next$0();
+  },
+  static: {
+Play$: function(args) {
+  var t1 = new N.Play(null, null);
+  t1.Play$1(args);
+  return t1;
+}}
+
+},
+
+Set: {"": "Verb;args,mod",
+  Set$2$mod: function(args, mod, box_0) {
+    var vn, layer, posName, value, t1, posArgs, t2, priorObject, t3, t4, newObject, sa, sw, shape, t5, drawn, stroke, tf, vnt, transMap;
     box_0.position_0 = null;
     vn = $.stage.getChildByName$1("vn");
     box_0.opts_1 = H.makeLiteralMap([]);
     if (0 >= args.length)
       throw H.ioore(0);
     layer = vn.getChildByName$1(args[0]);
-    t1 = args.length;
-    posName = t1 > 1 ? args[1] : null;
-    if (t1 > 2)
+    if (args.length > 1)
+      if (J.$eq(args[1], "") === true)
+        posName = null;
+      else {
+        if (1 >= args.length)
+          throw H.ioore(1);
+        posName = args[1];
+      }
+    else
+      posName = null;
+    if (args.length > 2)
       if (J.$eq(args[2], "") === true)
         value = null;
       else {
@@ -11884,220 +12076,243 @@ Set: {"": "Verb;",
       J.forEach$1$ax(J.$index$asx(t1.get$options(vn), "defaults"), new N.Set_closure(box_0));
     } else
       box_0.opts_1 = J.$index$asx(t1.get$options(vn), "defaults");
-    if (typeof posName === "string") {
-      posArgs = J.$index$asx(J.$index$asx(J.get$options$x(vn), "positions"), posName);
-      if (layer.getChildByName$1(posName) == null) {
-        t1 = P.List_List(null, Z.DisplayObject);
-        H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
-        t2 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t2 + 1;
-        t2 = new N.Position(posArgs, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        t2._name = posName;
-        layer.addChild$1(t2);
-      }
-      box_0.position_0 = layer.getChildByName$1(posName);
-      priorObject = J.$eq(J.$index$asx(box_0.opts_1, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
-      newName = posName;
-    } else {
-      t1 = J.getInterceptor(posName);
-      if (typeof posName === "object" && posName !== null && !!t1.$isMap) {
-        t1 = P.List_List(null, Z.DisplayObject);
-        H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
-        t2 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t2 + 1;
-        t2 = new N.Position(posName, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        t1 = J.getInterceptor(value);
-        t2._name = t1.toString$0(value);
-        layer.addChild$1(t2);
-        newName = t1.toString$0(value);
+    if (!this.mod) {
+      if (typeof posName === "string") {
+        posArgs = J.$index$asx(J.$index$asx(J.get$options$x(vn), "positions"), posName);
+        if (layer.getChildByName$1(posName) == null) {
+          t1 = P.List_List(null, Z.DisplayObject);
+          H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
+          t2 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t2 + 1;
+          t2 = new N.Position(null, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          t2.args = posArgs;
+          t2._name = posName;
+          layer.addChild$1(t2);
+        }
+        box_0.position_0 = layer.getChildByName$1(posName);
+        priorObject = J.$eq(J.$index$asx(box_0.opts_1, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
       } else {
-        t1 = vn.get$juggler();
-        t2 = J.$index$asx(box_0.opts_1, "dur");
-        t3 = $.get$VN_ease();
-        t3 = t1.tween$3(layer, t2, t3.$index(t3, J.$index$asx(box_0.opts_1, "ease")));
-        t2 = t3._tweenPropertyFactory;
-        t2.get$alpha;
-        t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-        t3._onComplete = new N.Set_closure0(box_0, vn, layer);
-        return;
-      }
-      priorObject = null;
-    }
-    if (value == null)
-      if (priorObject != null) {
-        if (box_0.position_0 != null) {
+        t1 = J.getInterceptor(posName);
+        if (typeof posName === "object" && posName !== null && !!t1.$isMap) {
+          t1 = P.List_List(null, Z.DisplayObject);
+          H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
+          t2 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t2 + 1;
+          t2 = new N.Position(null, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          t2.args = posName;
+          t1 = J.getInterceptor(value);
+          t2._name = t1.toString$0(value);
+          layer.addChild$1(t2);
+          t1.toString$0(value);
+        } else {
           t1 = vn.get$juggler();
-          t2 = box_0.position_0;
-          t3 = J.$index$asx(box_0.opts_1, "dur");
-          t4 = $.get$VN_ease();
-          t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(box_0.opts_1, "ease")));
-          t3 = t4._tweenPropertyFactory;
-          t3.get$alpha;
-          t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-          t4._onComplete = new N.Set_closure1(box_0, vn, layer);
-          if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
-            $.script.next$0();
+          t2 = J.$index$asx(box_0.opts_1, "dur");
+          t3 = $.get$VN_ease();
+          t3 = t1.tween$3(layer, t2, t3.$index(t3, J.$index$asx(box_0.opts_1, "ease")));
+          t2 = t3._tweenPropertyFactory;
+          t2.get$alpha;
+          t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+          t3._onComplete = new N.Set_closure0(box_0, vn, layer);
           return;
         }
-        t1 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t1 + 1;
-        newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        newObject.set$bitmapData(null);
-        newObject._pixelSnapping = "auto";
-        newObject._clipRectangle = null;
-      } else
-        newObject = null;
-    else if (typeof value === "number") {
-      t1 = $.stage;
-      t1.get$width;
-      t1 = J.toInt$0$nx(t1.getBoundsTransformed$1(t1.get$_transformationMatrix())._width);
-      t2 = $.stage;
-      t2.get$height;
-      t2 = Z.BitmapData$(t1, J.toInt$0$nx(t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._height), false, value, 1);
-      t1 = $.DisplayObject__nextID;
-      $.DisplayObject__nextID = t1 + 1;
-      newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-      newObject.set$bitmapData(t2);
-      newObject._pixelSnapping = "auto";
-      newObject._clipRectangle = null;
-    } else {
-      t1 = J.$index$asx(vn.get$assets(), "images");
-      t2 = J.getInterceptor$s(value);
-      t3 = t2.split$1(value, ".");
-      if (0 >= t3.length)
-        throw H.ioore(0);
-      if (t1.containsKey$1(t3[0]) === true) {
-        t1 = t2.contains$1(value, ".");
-        t3 = $.resourceManager;
-        if (t1 === true) {
-          t1 = t2.split$1(value, ".");
-          if (0 >= t1.length)
-            throw H.ioore(0);
-          t1 = t3.getTextureAtlas$1(t1[0]);
-          t2 = t2.split$1(value, ".");
-          if (1 >= t2.length)
-            throw H.ioore(1);
-          t2 = t1.getBitmapData$1(t2[1]);
-          t1 = $.DisplayObject__nextID;
-          $.DisplayObject__nextID = t1 + 1;
-          newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-          newObject.set$bitmapData(t2);
-          newObject._pixelSnapping = "auto";
-          newObject._clipRectangle = null;
-        } else {
-          t1 = t3.getBitmapData$1(value);
+        priorObject = null;
+      }
+      t1 = value == null;
+      if (t1)
+        if (priorObject != null) {
+          if (box_0.position_0 != null) {
+            t1 = vn.get$juggler();
+            t2 = box_0.position_0;
+            t3 = J.$index$asx(box_0.opts_1, "dur");
+            t4 = $.get$VN_ease();
+            t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(box_0.opts_1, "ease")));
+            t3 = t4._tweenPropertyFactory;
+            t3.get$alpha;
+            t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+            t4._onComplete = new N.Set_closure1(box_0, vn, layer);
+            if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
+              $.script.next$0();
+            return;
+          }
           t2 = $.DisplayObject__nextID;
           $.DisplayObject__nextID = t2 + 1;
           newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-          newObject.set$bitmapData(t1);
+          newObject.set$bitmapData(null);
           newObject._pixelSnapping = "auto";
           newObject._clipRectangle = null;
-        }
-      } else if (J.$index$asx(vn.get$assets(), "shapes").containsKey$1(value) === true) {
-        sa = J.$index$asx(J.$index$asx(vn.get$assets(), "shapes"), value);
-        if (sa.containsKey$1("stroke_color") === true)
-          sw = sa.containsKey$1("stroke_width") === true ? J.$index$asx(sa, "stroke_width") : 1;
-        else
-          sw = 0;
-        t1 = P.List_List(null, Z._GraphicsCommand);
-        H.setRuntimeTypeInfo(t1, [Z._GraphicsCommand]);
+        } else
+          newObject = null;
+      else if (typeof value === "number") {
+        t2 = $.stage;
+        t2.get$width;
+        t2 = J.toInt$0$nx(t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width);
+        t3 = $.stage;
+        t3.get$height;
+        t3 = Z.BitmapData$(t2, J.toInt$0$nx(t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height), false, value, 1);
         t2 = $.DisplayObject__nextID;
         $.DisplayObject__nextID = t2 + 1;
-        shape = new Z.Shape(new Z.Graphics(t1, new Z.Rectangle(0, 0, 0, 0), true), t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        t2 = shape._graphics;
-        t2._commands.push(new Z._GraphicsCommandBeginPath());
-        t2._identityRectangleRefresh = true;
-        t1 = J.getInterceptor$asx(sa);
-        switch (t1.$index(sa, "shape")) {
-          case "rect":
-            t2 = sa.containsKey$1("corner_radius");
-            t3 = shape._graphics;
-            t4 = J.getInterceptor$n(sw);
-            if (t2 === true)
-              t3.rectRound$6(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), sw));
-            else {
-              t3._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2))));
-              t3._identityRectangleRefresh = true;
-            }
-            break;
-          case "ellipse":
-            t2 = J.getInterceptor$n(sw);
-            shape._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), t2.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t2.$mul(sw, 2)));
-            break;
-          default:
-        }
-        t2 = shape._graphics;
-        t2._commands.push(new Z._GraphicsCommandClosePath());
-        t2._identityRectangleRefresh = true;
-        if (sa.containsKey$1("fill_color") === true) {
-          t2 = shape._graphics;
-          t3 = new Z._GraphicsCommandFillColor(null);
-          t3._color = Z._color2rgba(t1.$index(sa, "fill_color"));
-          t2._commands.push(t3);
-          t2._identityRectangleRefresh = true;
-        }
-        drawn = Z.BitmapData$(t1.$index(sa, "width"), t1.$index(sa, "height"), true, 0, 1);
-        drawn.draw$1(shape);
-        if (sa.containsKey$1("stroke_color") === true) {
+        newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+        newObject.set$bitmapData(t3);
+        newObject._pixelSnapping = "auto";
+        newObject._clipRectangle = null;
+      } else {
+        t2 = J.$index$asx(vn.get$assets(), "images");
+        t3 = J.getInterceptor$s(value);
+        t4 = t3.split$1(value, ".");
+        if (0 >= t4.length)
+          throw H.ioore(0);
+        if (t2.containsKey$1(t4[0]) === true) {
+          t2 = t3.contains$1(value, ".");
+          t4 = $.resourceManager;
+          if (t2 === true) {
+            t2 = t3.split$1(value, ".");
+            if (0 >= t2.length)
+              throw H.ioore(0);
+            t2 = t4.getTextureAtlas$1(t2[0]);
+            t3 = t3.split$1(value, ".");
+            if (1 >= t3.length)
+              throw H.ioore(1);
+            t3 = t2.getBitmapData$1(t3[1]);
+            t2 = $.DisplayObject__nextID;
+            $.DisplayObject__nextID = t2 + 1;
+            newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+            newObject.set$bitmapData(t3);
+            newObject._pixelSnapping = "auto";
+            newObject._clipRectangle = null;
+          } else {
+            t2 = t4.getBitmapData$1(value);
+            t3 = $.DisplayObject__nextID;
+            $.DisplayObject__nextID = t3 + 1;
+            newObject = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+            newObject.set$bitmapData(t2);
+            newObject._pixelSnapping = "auto";
+            newObject._clipRectangle = null;
+          }
+        } else if (J.$index$asx(vn.get$assets(), "shapes").containsKey$1(value) === true) {
+          sa = J.$index$asx(J.$index$asx(vn.get$assets(), "shapes"), value);
+          if (sa.containsKey$1("stroke_color") === true)
+            sw = sa.containsKey$1("stroke_width") === true ? J.$index$asx(sa, "stroke_width") : 1;
+          else
+            sw = 0;
           t2 = P.List_List(null, Z._GraphicsCommand);
           H.setRuntimeTypeInfo(t2, [Z._GraphicsCommand]);
           t3 = $.DisplayObject__nextID;
           $.DisplayObject__nextID = t3 + 1;
-          stroke = new Z.Shape(new Z.Graphics(t2, new Z.Rectangle(0, 0, 0, 0), true), t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-          t3 = stroke._graphics;
+          shape = new Z.Shape(new Z.Graphics(t2, new Z.Rectangle(0, 0, 0, 0), true), t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          t3 = shape._graphics;
           t3._commands.push(new Z._GraphicsCommandBeginPath());
           t3._identityRectangleRefresh = true;
-          switch (t1.$index(sa, "shape")) {
+          t2 = J.getInterceptor$asx(sa);
+          switch (t2.$index(sa, "shape")) {
             case "rect":
-              t2 = sa.containsKey$1("corner_radius");
-              t3 = J.getInterceptor$n(sw);
-              t4 = stroke._graphics;
-              if (t2 === true)
-                t4.rectRound$6(t3.$div(sw, 2), t3.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t3.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t3.$div(sw, 2)));
+              t3 = sa.containsKey$1("corner_radius");
+              t4 = shape._graphics;
+              t5 = J.getInterceptor$n(sw);
+              if (t3 === true)
+                t4.rectRound$6(sw, sw, J.$sub$n(t2.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "height"), t5.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "corner_radius"), sw), J.$sub$n(t2.$index(sa, "corner_radius"), sw));
               else {
-                t4._commands.push(Z._GraphicsCommandRect$(t3.$div(sw, 2), t3.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
+                t4._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t2.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "height"), t5.$mul(sw, 2))));
                 t4._identityRectangleRefresh = true;
               }
               break;
             case "ellipse":
-              stroke._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw));
+              t3 = J.getInterceptor$n(sw);
+              shape._graphics.ellipse$4(J.$div$n(t2.$index(sa, "width"), 2), J.$div$n(t2.$index(sa, "height"), 2), J.$sub$n(t2.$index(sa, "width"), t3.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "height"), t3.$mul(sw, 2)));
               break;
             default:
           }
-          t2 = stroke._graphics;
-          t2._commands.push(new Z._GraphicsCommandClosePath());
-          t2._identityRectangleRefresh = true;
-          t2 = stroke._graphics;
-          t1 = Z._color2rgba(t1.$index(sa, "stroke_color"));
-          t3 = new Z._GraphicsCommandStrokeColor(null, null, null, null);
-          t3._lineWidth = J.toDouble$0$n(sw);
-          t3._lineJoin = "round";
-          t3._lineCap = "round";
-          t3._color = t1;
-          t2._commands.push(t3);
-          t2._identityRectangleRefresh = true;
-          drawn.draw$1(stroke);
-        }
-        t1 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t1 + 1;
-        newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        newObject.set$bitmapData(drawn);
-        newObject._pixelSnapping = "auto";
-        newObject._clipRectangle = null;
-      } else if (typeof value === "string") {
-        tf = J.$index$asx(J.$index$asx(J.get$options$x(vn), "text_formats"), J.$index$asx(box_0.opts_1, "text_format"));
-        t1 = J.getInterceptor$asx(tf);
-        newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, 0), t1.$index(tf, 1), t1.$index(tf, 2), t1.$index(tf, 3), t1.$index(tf, 4), false, "left", 0, 0, 0, 0, 0, 0));
-        newObject._autoSize = "left";
-        newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
-      } else
-        newObject = null;
+          t3 = shape._graphics;
+          t3._commands.push(new Z._GraphicsCommandClosePath());
+          t3._identityRectangleRefresh = true;
+          if (sa.containsKey$1("fill_color") === true) {
+            t3 = shape._graphics;
+            t4 = new Z._GraphicsCommandFillColor(null);
+            t4._color = Z._color2rgba(t2.$index(sa, "fill_color"));
+            t3._commands.push(t4);
+            t3._identityRectangleRefresh = true;
+          }
+          drawn = Z.BitmapData$(t2.$index(sa, "width"), t2.$index(sa, "height"), true, 0, 1);
+          drawn.draw$1(shape);
+          if (sa.containsKey$1("stroke_color") === true) {
+            t3 = P.List_List(null, Z._GraphicsCommand);
+            H.setRuntimeTypeInfo(t3, [Z._GraphicsCommand]);
+            t4 = $.DisplayObject__nextID;
+            $.DisplayObject__nextID = t4 + 1;
+            stroke = new Z.Shape(new Z.Graphics(t3, new Z.Rectangle(0, 0, 0, 0), true), t4, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+            t4 = stroke._graphics;
+            t4._commands.push(new Z._GraphicsCommandBeginPath());
+            t4._identityRectangleRefresh = true;
+            switch (t2.$index(sa, "shape")) {
+              case "rect":
+                t3 = sa.containsKey$1("corner_radius");
+                t4 = stroke._graphics;
+                t5 = J.getInterceptor$n(sw);
+                if (t3 === true)
+                  t4.rectRound$6(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t2.$index(sa, "width"), sw), J.$sub$n(t2.$index(sa, "height"), sw), J.$sub$n(t2.$index(sa, "corner_radius"), t5.$div(sw, 2)), J.$sub$n(t2.$index(sa, "corner_radius"), t5.$div(sw, 2)));
+                else {
+                  t4._commands.push(Z._GraphicsCommandRect$(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t2.$index(sa, "width"), sw), J.$sub$n(t2.$index(sa, "height"), sw)));
+                  t4._identityRectangleRefresh = true;
+                }
+                break;
+              case "ellipse":
+                stroke._graphics.ellipse$4(J.$div$n(t2.$index(sa, "width"), 2), J.$div$n(t2.$index(sa, "height"), 2), J.$sub$n(t2.$index(sa, "width"), sw), J.$sub$n(t2.$index(sa, "height"), sw));
+                break;
+              default:
+            }
+            t3 = stroke._graphics;
+            t3._commands.push(new Z._GraphicsCommandClosePath());
+            t3._identityRectangleRefresh = true;
+            t3 = stroke._graphics;
+            t2 = Z._color2rgba(t2.$index(sa, "stroke_color"));
+            t4 = new Z._GraphicsCommandStrokeColor(null, null, null, null);
+            t4._lineWidth = J.toDouble$0$n(sw);
+            t4._lineJoin = "round";
+            t4._lineCap = "round";
+            t4._color = t2;
+            t3._commands.push(t4);
+            t3._identityRectangleRefresh = true;
+            drawn.draw$1(stroke);
+          }
+          t2 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t2 + 1;
+          newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          newObject.set$bitmapData(drawn);
+          newObject._pixelSnapping = "auto";
+          newObject._clipRectangle = null;
+        } else if (typeof value === "string") {
+          tf = J.$index$asx(J.$index$asx(J.get$options$x(vn), "text_formats"), J.$index$asx(box_0.opts_1, "text_format"));
+          t2 = J.getInterceptor$asx(tf);
+          newObject = Z.TextField$(value, new Z.TextFormat(t2.$index(tf, "font"), t2.$index(tf, "size"), t2.$index(tf, "color"), false, false, false, "left", 0, 0, 0, 0, 0, 0));
+          if (tf.containsKey$1("width") === true) {
+            newObject._width = J.toDouble$0$n(t2.$index(tf, "width"));
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+            newObject._multiline = true;
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+            newObject._wordWrap = true;
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+          } else {
+            newObject._autoSize = "left";
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+          }
+          if (tf.containsKey$1("height") === true) {
+            newObject._height = J.toDouble$0$n(t2.$index(tf, "height"));
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+          }
+        } else
+          newObject = null;
+      }
+      t1 = t1 ? "" : J.toString$0(value);
+      newObject.set$name;
+      newObject._name = t1;
+    } else {
+      box_0.position_0 = layer.getChildByName$1(posName);
+      newObject = box_0.position_0.getChildByName$1(value);
+      J.$indexSet$ax(box_0.opts_1, "mod", true);
+      priorObject = null;
     }
-    newObject.set$name;
-    newObject._name = newName;
     vn.set$prevNext([false, false]);
     vnt = N.VNTransition$(box_0.position_0, newObject, box_0.opts_1);
-    transMap = H.makeLiteralMap(["fade", vnt.get$fadeTransition(), "fadethru", vnt.get$fadeThruTransition(), "fadeacross", vnt.get$fadeAcrossTransition(), "slide", vnt.get$slideTransition()]);
+    transMap = H.makeLiteralMap(["fade", vnt.get$fadeTransition(), "fadeout", vnt.get$fadeOutTransition(), "fadethru", vnt.get$fadeThruTransition(), "fadeacross", vnt.get$fadeAcrossTransition(), "slide", vnt.get$slideTransition(), "scale", vnt.get$scaleTransition(), "pan", vnt.get$panTransition()]);
     if (transMap.containsKey$1(J.$index$asx(box_0.opts_1, "trans")) === true)
       transMap.$index(transMap, J.$index$asx(box_0.opts_1, "trans")).call$0();
     else {
@@ -12112,9 +12327,9 @@ Set: {"": "Verb;",
       $.script.next$0();
   },
   static: {
-Set$: function(args) {
-  var t1 = new N.Set();
-  t1.Set$1(args, {});
+Set$: function(args, mod) {
+  var t1 = new N.Set(null, mod);
+  t1.Set$2$mod(args, mod, {});
   return t1;
 }}
 
@@ -12182,7 +12397,7 @@ Set_closure2: {"": "Closure;",
   "+call:0:0": 0
 },
 
-VN: {"": "DisplayObjectContainer;_juggler,_glassPlate@,prevNext?,options*,assets@,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
+VN: {"": "DisplayObjectContainer;_juggler,_glassPlate@,prevNext?,options*,assets@,channels<,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   get$juggler: function() {
     return this._juggler;
   },
@@ -12244,14 +12459,15 @@ VN: {"": "DisplayObjectContainer;_juggler,_glassPlate@,prevNext?,options*,assets
   static: {
 "": "VN_scaleMode,VN_align,VN_ease",
 VN$: function(configYaml) {
-  var t1, t2;
-  t1 = P.List_List(null, Z.DisplayObject);
-  H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
-  t2 = $.DisplayObject__nextID;
-  $.DisplayObject__nextID = t2 + 1;
-  t2 = new N.VN(null, null, [false, true], null, null, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-  t2.VN$1(configYaml);
-  return t2;
+  var t1, t2, t3;
+  t1 = H.makeLiteralMap([]);
+  t2 = P.List_List(null, Z.DisplayObject);
+  H.setRuntimeTypeInfo(t2, [Z.DisplayObject]);
+  t3 = $.DisplayObject__nextID;
+  $.DisplayObject__nextID = t3 + 1;
+  t3 = new N.VN(null, null, [false, true], null, null, t1, t2, true, true, false, true, true, 0, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+  t3.VN$1(configYaml);
+  return t3;
 }}
 
 },
@@ -12285,7 +12501,9 @@ VN_closure: {"": "Closure;this_0",
 }}],
 ["dartvn.dart", "dartvn.dart", , G, {
 main: function() {
-  N.VN$("sample.yaml");
+  var t1 = document.querySelector("meta[name=vnscript]");
+  t1.get$attributes;
+  N.VN$(new W._ElementAttributeMap(t1)._element.getAttribute("content"));
 }},
 1],
 ["deep_equals", "package:yaml/src/deep_equals.dart", , G, {
@@ -17774,6 +17992,9 @@ DelayedCall: {"": "Object;_action,_currentTime,_totalTime,_repeatCount",
     this._currentTime = newTime;
     return this._repeatCount > 0;
   },
+  get$currentTime: function(_) {
+    return this._currentTime;
+  },
   $isAnimatable: true
 },
 
@@ -17999,11 +18220,8 @@ Transition: {"": "Animatable;_startValue,_targetValue,_transitionFunction,_curre
         return J.$lt$n(t1, t2);
     }
   },
-  set$onStart: function($function) {
-    this._onStart = $function;
-  },
-  set$onComplete: function(_, $function) {
-    this._onComplete = $function;
+  get$currentTime: function(_) {
+    return this._currentTime;
   },
   Transition$4: function(startValue, targetValue, time, transitionFunction) {
     this._currentValue = startValue;
@@ -18146,14 +18364,8 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
   _transitionFunction$1: function(arg0) {
     return this._transitionFunction.call$1(arg0);
   },
-  _onStart$0: function() {
-    return this._onStart.call$0();
-  },
   _onComplete$0: function() {
     return this._onComplete.call$0();
-  },
-  get$animate: function() {
-    return this._tweenPropertyFactory;
   },
   _addTweenProperty$1: function(tweenProperty) {
     if (this._displayObject != null && this._started === false)
@@ -18196,8 +18408,6 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
             tp = t1[i];
             tp.startValue = tp._getPropertyValue$1(tp, t2);
           }
-          if (this._onStart != null)
-            this._onStart$0();
         }
         t1 = this._currentTime;
         if (typeof t1 !== "number")
@@ -18276,8 +18486,6 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
                         tp = t1[i];
                         tp.startValue = tp._getPropertyValue$1(tp, t2);
                       }
-                      if (this._onStart != null)
-                        this._onStart$0();
                     }
                     t1 = this._currentTime;
                   case 8:
@@ -18318,16 +18526,13 @@ Tween: {"": "Object;_displayObject,_transitionFunction,_tweenPropertyList,_onSta
         return J.$lt$n(t1, t2);
     }
   },
+  get$currentTime: function(_) {
+    return this._currentTime;
+  },
   set$delay: function(value) {
     if (this._started === false)
       this._currentTime = J.$sub$n(J.$add$ns(this._currentTime, this._delay), value);
     this._delay = value;
-  },
-  set$onStart: function($function) {
-    this._onStart = $function;
-  },
-  set$onComplete: function(_, $function) {
-    this._onComplete = $function;
   },
   Tween$3: function(displayObject, time, transitionFunction) {
     this._tweenPropertyFactory = new Z.TweenPropertyFactory(this);
@@ -18729,7 +18934,7 @@ BitmapData_load_closure1: {"": "Closure;box_0,imageElement_4",
 
 BitmapDataLoadOptions: {"": "Object;png,jpg,webp,autoHiDpi"},
 
-DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha@,_mask<,_shadow<,_compositeOperation<,_parent<",
+DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeOperation<,_parent<",
   get$x: function(_) {
     return this._x;
   },
@@ -20898,6 +21103,9 @@ RenderState: {"": "Object;_context<,_currentTime,_deltaTime,_firstContextState,_
   get$context: function(_) {
     return this._context;
   },
+  get$currentTime: function(_) {
+    return this._currentTime;
+  },
   get$deltaTime: function() {
     return this._deltaTime;
   },
@@ -21733,23 +21941,75 @@ Vector: {"": "Object;_x<,_y<",
 
 },
 
-Sound: {"": "Object;"},
+Sound: {"": "Object;", $isSound: true},
 
 SoundChannel: {"": "EventDispatcher;"},
 
 SoundLoadOptions: {"": "Object;mp3,mp4,ogg,wav,ignoreErrors"},
 
-AudioElementMixer: {"": "Object;_soundChannels,_mixerVolume"},
+SoundTransform: {"": "Object;volume',pan"},
 
-AudioElementSound: {"": "Sound;_audio,_audioPool,_soundChannels",
+AudioElementMixer: {"": "Object;_soundChannels,_mixerVolume",
+  _updateSoundChannel$1: function(audioElementSoundChannel) {
+    var audio, channelVolume;
+    audio = audioElementSoundChannel.get$_audio();
+    channelVolume = audioElementSoundChannel.get$_soundTransform().volume;
+    if (audio != null)
+      J.set$volume$x(audio, this._mixerVolume * channelVolume);
+  }
+},
+
+AudioElementSound: {"": "Sound;_audio<,_audioPool,_soundChannels",
   get$length: function(_) {
     return this._audio.duration;
   },
+  play$2: function(_, loop, soundTransform) {
+    return Z.AudioElementSoundChannel$(this, loop, new Z.SoundTransform(1, 0));
+  },
+  play$0: function($receiver) {
+    return this.play$2($receiver, false, null);
+  },
+  _getAudioElement$1: function(soundChannel) {
+    var t1, audio, t2;
+    t1 = this._audioPool;
+    if (t1.length === 0) {
+      audio = this._audio.cloneNode(true);
+      t1 = J.get$onEnded$x(audio);
+      t2 = this.get$_onAudioEnded();
+      t2 = new W._EventStreamSubscription0(0, t1._liblib5$_target, t1._liblib5$_eventType, t2, t1._liblib5$_useCapture);
+      H.setRuntimeTypeInfo(t2, [H.getRuntimeTypeArgument(t1, "_EventStream0", 0)]);
+      t2._tryResume$0();
+    } else
+      audio = J.removeAt$1$ax(t1, 0);
+    t1 = $.SoundMixer__audioElementMixer;
+    t1._addSoundChannel$1;
+    t1._soundChannels.push(soundChannel);
+    this._soundChannels.push(soundChannel);
+    return audio;
+  },
+  _releaseAudioElement$1: function(soundChannel) {
+    var t1, audio;
+    t1 = $.SoundMixer__audioElementMixer;
+    t1._removeSoundChannel$1;
+    C.JSArray_methods.remove$1(t1._soundChannels, soundChannel);
+    C.JSArray_methods.remove$1(this._soundChannels, soundChannel);
+    audio = soundChannel._audio;
+    this._audioPool.push(audio);
+    t1 = J.getInterceptor$x(audio);
+    if (J.$gt$n(t1.get$currentTime(audio), 0) && t1.get$ended(audio) === false)
+      t1.set$currentTime(audio, 0);
+  },
   _onAudioEnded$1: function($event) {
-    var t1, t2, i;
-    J.get$target$x($event);
-    for (t1 = this._soundChannels, t2 = t1.length, i = 0; i < t2; ++i)
-      t1[i].get$_audio();
+    var audio, t1, t2, i, t3, t4;
+    audio = J.get$target$x($event);
+    for (t1 = this._soundChannels, t2 = t1.length, i = 0; i < t2; ++i) {
+      t3 = t1[i];
+      t4 = t3._audio;
+      if (t4 == null ? audio == null : t4 === audio) {
+        t3.stop$0(t3);
+        break;
+      }
+    }
   },
   get$_onAudioEnded: function() {
     return new T.BoundClosure$1(this, "_onAudioEnded$1", null);
@@ -21865,17 +22125,64 @@ AudioElementSound_load_onError_closure: {"": "Closure;loadCompleter_7",
   "+call:1:0": 0
 },
 
-AudioElementSoundChannel: {"": "SoundChannel;"},
+AudioElementSoundChannel: {"": "SoundChannel;_audioElementSound,_audio<,_loop,_soundTransform<,_eventStreams,_captureEventStreams",
+  stop$0: function(_) {
+    var t1, t2;
+    t1 = this._audio;
+    if (t1 != null) {
+      t2 = J.getInterceptor$x(t1);
+      if (t2.get$ended(t1) === false)
+        t2.pause$0(t1);
+      this._audioElementSound._releaseAudioElement$1(this);
+      this._audio = null;
+    }
+  },
+  AudioElementSoundChannel$3: function(audioElementSound, loop, soundTransform) {
+    this._audioElementSound = audioElementSound;
+    this._soundTransform = soundTransform != null ? soundTransform : new Z.SoundTransform(1, 0);
+    this._loop = loop;
+    this._audio = audioElementSound._getAudioElement$1(this);
+    $.SoundMixer__audioElementMixer._updateSoundChannel$1(this);
+    J.set$loop$x(this._audio, this._loop);
+    J.play$0$x(this._audio);
+  },
+  static: {
+AudioElementSoundChannel$: function(audioElementSound, loop, soundTransform) {
+  var t1 = new Z.AudioElementSoundChannel(null, null, null, null, null, null);
+  t1.AudioElementSoundChannel$3(audioElementSound, loop, soundTransform);
+  return t1;
+}}
+
+},
 
 MockSound: {"": "Sound;",
   get$length: function(_) {
     return 0 / 0;
+  },
+  play$2: function(_, loop, soundTransform) {
+    var t1;
+    soundTransform = new Z.SoundTransform(1, 0);
+    t1 = new Z.MockSoundChannel(null, null, null, null);
+    t1._loop = loop;
+    t1._soundTransform = soundTransform;
+    return t1;
+  },
+  play$0: function($receiver) {
+    return this.play$2($receiver, false, null);
   }
 },
 
+MockSoundChannel: {"": "SoundChannel;_loop,_soundTransform<,_eventStreams,_captureEventStreams"},
+
 WebAudioApiMixer: {"": "Object;_inputNode,_volumeNode",
+  applySoundTransform$1: function(soundTransform) {
+    var volume, t1;
+    volume = soundTransform.volume;
+    t1 = this._volumeNode.gain;
+    t1.value = Math.pow(volume, 2);
+  },
   WebAudioApiMixer$1: function(inputNode) {
-    this._inputNode = $.get$WebAudioApiMixer_audioContext().destination;
+    this._inputNode = inputNode != null ? inputNode : $.get$WebAudioApiMixer_audioContext().destination;
     this._volumeNode = J.createGain$0$x($.get$WebAudioApiMixer_audioContext());
     this._volumeNode.connect(this._inputNode, 0, 0);
   },
@@ -21892,6 +22199,12 @@ WebAudioApiMixer$: function(inputNode) {
 WebAudioApiSound: {"": "Sound;_buffer",
   get$length: function(_) {
     return J.get$duration$x(this._buffer);
+  },
+  play$2: function(_, loop, soundTransform) {
+    return Z.WebAudioApiSoundChannel$(this, loop, new Z.SoundTransform(1, 0));
+  },
+  play$0: function($receiver) {
+    return this.play$2($receiver, false, null);
   },
   static: {
 WebAudioApiSound_load: function(url, soundLoadOptions) {
@@ -21995,6 +22308,34 @@ WebAudioApiSound_load_audioRequestNext_closure: {"": "Closure;loadCompleter_14",
     return;
   },
   "+call:1:0": 0
+},
+
+WebAudioApiSoundChannel: {"": "SoundChannel;_soundTransform<,_loop,_sourceNode,_webAudioApiSound,_webAudioApiMixer,_eventStreams,_captureEventStreams",
+  WebAudioApiSoundChannel$3: function(webAudioApiSound, loop, soundTransform) {
+    var t1, t2;
+    this._webAudioApiSound = webAudioApiSound;
+    this._soundTransform = soundTransform != null ? soundTransform : new Z.SoundTransform(1, 0);
+    this._loop = loop;
+    t1 = $.SoundMixer__webAudioApiMixer;
+    t1.get$inputNode;
+    this._webAudioApiMixer = Z.WebAudioApiMixer$(t1._volumeNode);
+    this._webAudioApiMixer.applySoundTransform$1(this._soundTransform);
+    this._sourceNode = $.get$WebAudioApiMixer_audioContext().createBufferSource();
+    this._sourceNode.buffer = this._webAudioApiSound._buffer;
+    this._sourceNode.loop = loop;
+    t1 = this._sourceNode;
+    t2 = this._webAudioApiMixer._volumeNode;
+    t1.connectNode$3;
+    t1.connect(t2, 0, 0);
+    J.start$1$x(this._sourceNode, 0);
+  },
+  static: {
+WebAudioApiSoundChannel$: function(webAudioApiSound, loop, soundTransform) {
+  var t1 = new Z.WebAudioApiSoundChannel(null, null, null, null, null, null, null);
+  t1.WebAudioApiSoundChannel$3(webAudioApiSound, loop, soundTransform);
+  return t1;
+}}
+
 },
 
 _FontStyleMetrics: {"": "Object;fontStyle,ascent<,descent<,height>",
@@ -22105,7 +22446,7 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
     }
   },
   _refreshTextLineMetrics$0: function() {
-    var t1, textFormatSize, t2, textFormatLeftMargin, textFormatRightMargin, textFormatTopMargin, textFormatBottomMargin, textFormatAlign, availableWidth, fontStyle, fontStyleMetrics, fontStyleMetricsAscent, fontStyleMetricsDescent, canvasContext, t3, t4, startIndex, checkLine, validLine, lineWidth, paragraph, t5, word, t6, checkLine0, line, textLineMetrics, width, offsetX, textIndex, text, shiftX, shiftY, autoWidth, autoHeight;
+    var t1, textFormatSize, t2, textFormatLeftMargin, textFormatRightMargin, textFormatTopMargin, textFormatBottomMargin, textFormatAlign, availableWidth, fontStyle, fontStyleMetrics, fontStyleMetricsAscent, fontStyleMetricsDescent, canvasContext, startIndex, checkLine, validLine, lineWidth, paragraph, t3, word, t4, checkLine0, line, textLineMetrics, width, offsetX, textIndex, text, shiftX, t5, shiftY, autoWidth, autoHeight;
     t1 = this._refreshPending;
     if ((t1 & 1) === 0)
       return;
@@ -22130,43 +22471,43 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
     canvasContext.textAlign = "start";
     canvasContext.textBaseline = "alphabetic";
     canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-    for (t2 = J.split$1$s(this._text, "\n"), t2 = new H.ListIterator(t2, t2.length, 0, null), t3 = this._wordWrap, t4 = !t3, startIndex = 0, checkLine = "", validLine = "", lineWidth = 0; t2.moveNext$0();) {
+    for (t2 = J.split$1$s(this._text, "\n"), t2 = new H.ListIterator(t2, t2.length, 0, null), startIndex = 0, checkLine = "", validLine = "", lineWidth = 0; t2.moveNext$0();) {
       paragraph = t2._liblib$_current;
-      if (t4) {
+      if (!this._wordWrap) {
         t1.push(new Z.TextLineMetrics(paragraph, startIndex, 0, 0, 0, 0, 0, 0, 0));
-        t5 = J.$add$ns(J.get$length$asx(paragraph), 1);
-        if (typeof t5 !== "number")
-          throw H.iae(t5);
-        startIndex += t5;
+        t3 = J.$add$ns(J.get$length$asx(paragraph), 1);
+        if (typeof t3 !== "number")
+          throw H.iae(t3);
+        startIndex += t3;
       } else {
-        for (t5 = J.split$1$s(paragraph, " "), t5 = new H.ListIterator(t5, t5.length, 0, null), checkLine = null; t5.moveNext$0(); validLine = checkLine, checkLine = checkLine0) {
-          word = t5._liblib$_current;
-          t6 = checkLine == null;
-          checkLine0 = this._passwordEncoder$1(t6 ? word : H.S(checkLine) + " " + H.S(word));
+        for (t3 = J.split$1$s(paragraph, " "), t3 = new H.ListIterator(t3, t3.length, 0, null), checkLine = null; t3.moveNext$0(); validLine = checkLine, checkLine = checkLine0) {
+          word = t3._liblib$_current;
+          t4 = checkLine == null;
+          checkLine0 = this._passwordEncoder$1(t4 ? word : H.S(checkLine) + " " + H.S(word));
           lineWidth = J.toDouble$0$n(canvasContext.measureText(checkLine0).width);
           if (lineWidth >= availableWidth)
-            if (t6) {
+            if (t4) {
               t1.push(new Z.TextLineMetrics(checkLine0, startIndex, 0, 0, 0, 0, 0, 0, 0));
-              t6 = J.$add$ns(J.get$length$asx(checkLine0), 1);
-              if (typeof t6 !== "number")
-                throw H.iae(t6);
-              startIndex += t6;
+              t4 = J.$add$ns(J.get$length$asx(checkLine0), 1);
+              if (typeof t4 !== "number")
+                throw H.iae(t4);
+              startIndex += t4;
               checkLine0 = null;
             } else {
               t1.push(new Z.TextLineMetrics(checkLine, startIndex, 0, 0, 0, 0, 0, 0, 0));
-              t6 = J.$add$ns(J.get$length$asx(checkLine), 1);
-              if (typeof t6 !== "number")
-                throw H.iae(t6);
-              startIndex += t6;
+              t4 = J.$add$ns(J.get$length$asx(checkLine), 1);
+              if (typeof t4 !== "number")
+                throw H.iae(t4);
+              startIndex += t4;
               checkLine0 = this._passwordEncoder$1(word);
             }
         }
         if (checkLine != null) {
           t1.push(new Z.TextLineMetrics(checkLine, startIndex, 0, 0, 0, 0, 0, 0, 0));
-          t5 = J.$add$ns(J.get$length$asx(checkLine), 1);
-          if (typeof t5 !== "number")
-            throw H.iae(t5);
-          startIndex += t5;
+          t3 = J.$add$ns(J.get$length$asx(checkLine), 1);
+          if (typeof t3 !== "number")
+            throw H.iae(t3);
+          startIndex += t3;
         }
       }
     }
@@ -22218,13 +22559,13 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
           break;
         }
       }
-      for (t2 = this._caretX, t4 = this._width, t5 = t4 * 0.2, shiftX = 0; shiftX + t2 > t4;)
-        shiftX -= t5;
+      for (t2 = this._caretX, t3 = this._width, t4 = t3 * 0.2, shiftX = 0; shiftX + t2 > t3;)
+        shiftX -= t4;
       for (; shiftX + t2 < 0;)
-        shiftX += t5;
-      for (t4 = this._caretY, t5 = this._caretHeight, t6 = this._height, shiftY = 0; shiftY + t4 + t5 > t6;)
+        shiftX += t4;
+      for (t3 = this._caretY, t4 = this._caretHeight, t5 = this._height, shiftY = 0; shiftY + t3 + t4 > t5;)
         shiftY -= textFormatSize;
-      for (; shiftY + t4 < 0;)
+      for (; shiftY + t3 < 0;)
         shiftY += textFormatSize;
       this._caretX = t2 + shiftX;
       this._caretY = this._caretY + shiftY;
@@ -22234,14 +22575,14 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
         textLineMetrics._y = textLineMetrics._y + shiftY;
       }
     }
-    autoWidth = t3 ? this._width : J.ceil$0$nx(this._textWidth);
+    autoWidth = this._wordWrap ? this._width : J.ceil$0$nx(this._textWidth);
     autoHeight = C.JSNumber_methods.toInt$0(Math.ceil(this._textHeight));
     if (this._width !== autoWidth || this._height !== autoHeight)
       switch (this._autoSize) {
         case "left":
           this._width = J.toDouble$0$n(autoWidth);
           this._refreshPending = (this._refreshPending | 3) >>> 0;
-          this._height = autoHeight;
+          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
           this._refreshPending = (this._refreshPending | 3) >>> 0;
           break;
         case "right":
@@ -22254,7 +22595,7 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
           this.set$x(this, t1 - t3);
           this._width = t2.toDouble$0(autoWidth);
           this._refreshPending = (this._refreshPending | 3) >>> 0;
-          this._height = autoHeight;
+          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
           this._refreshPending = (this._refreshPending | 3) >>> 0;
           break;
         case "center":
@@ -22263,7 +22604,7 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
           this.set$x(this, Z.DisplayObject.prototype.get$x.call(this, this) - J.$div$n(t1.$sub(autoWidth, this._width), 2));
           this._width = t1.toDouble$0(autoWidth);
           this._refreshPending = (this._refreshPending | 3) >>> 0;
-          this._height = autoHeight;
+          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
           this._refreshPending = (this._refreshPending | 3) >>> 0;
           break;
         default:
@@ -22515,9 +22856,9 @@ TextFormat: {"": "Object;font,size,color,bold,italic,underline,align,topMargin,b
   },
   get$_cssFontStyle: function() {
     var fontStyle = H.S(this.size) + "px " + H.S(this.font) + ", sans-serif";
-    if (this.bold === true)
+    if (this.bold)
       fontStyle = "bold " + fontStyle;
-    return this.italic === true ? "italic " + fontStyle : fontStyle;
+    return this.italic ? "italic " + fontStyle : fontStyle;
   }
 },
 
@@ -22630,6 +22971,14 @@ ResourceManager: {"": "EventDispatcher;_resources,_eventStreams,_captureEventStr
     value = this._getResourceValue$2("BitmapData", $name);
     t1 = J.getInterceptor(value);
     if (typeof value !== "object" || value === null || !t1.$isBitmapData)
+      throw H.wrapException("dart2js_hint");
+    return value;
+  },
+  getSound$1: function($name) {
+    var value, t1;
+    value = this._getResourceValue$2("Sound", $name);
+    t1 = J.getInterceptor(value);
+    if (typeof value !== "object" || value === null || !t1.$isSound)
       throw H.wrapException("dart2js_hint");
     return value;
   },
@@ -23619,6 +23968,9 @@ J.get$name$x = function(receiver) {
 J.get$offsetTop$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$offsetTop(receiver);
 };
+J.get$onEnded$x = function(receiver) {
+  return J.getInterceptor$x(receiver).get$onEnded(receiver);
+};
 J.get$options$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$options(receiver);
 };
@@ -23691,6 +24043,9 @@ J.matchAsPrefix$2$s = function(receiver, a0, a1) {
 J.moveTo$2$x = function(receiver, a0, a1) {
   return J.getInterceptor$x(receiver).moveTo$2(receiver, a0, a1);
 };
+J.play$0$x = function(receiver) {
+  return J.getInterceptor$x(receiver).play$0(receiver);
+};
 J.putImageData$3$x = function(receiver, a0, a1, a2) {
   return J.getInterceptor$x(receiver).putImageData$3(receiver, a0, a1, a2);
 };
@@ -23705,6 +24060,9 @@ J.remove$0$ax = function(receiver) {
 };
 J.remove$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).remove$1(receiver, a0);
+};
+J.removeAt$1$ax = function(receiver, a0) {
+  return J.getInterceptor$ax(receiver).removeAt$1(receiver, a0);
 };
 J.removeLast$0$ax = function(receiver) {
   return J.getInterceptor$ax(receiver).removeLast$0(receiver);
@@ -23751,6 +24109,9 @@ J.set$lineJoin$x = function(receiver, value) {
 J.set$lineWidth$x = function(receiver, value) {
   return J.getInterceptor$x(receiver).set$lineWidth(receiver, value);
 };
+J.set$loop$x = function(receiver, value) {
+  return J.getInterceptor$x(receiver).set$loop(receiver, value);
+};
 J.set$outline$x = function(receiver, value) {
   return J.getInterceptor$x(receiver).set$outline(receiver, value);
 };
@@ -23766,6 +24127,9 @@ J.set$text$x = function(receiver, value) {
 J.set$verticalAlign$x = function(receiver, value) {
   return J.getInterceptor$x(receiver).set$verticalAlign(receiver, value);
 };
+J.set$volume$x = function(receiver, value) {
+  return J.getInterceptor$x(receiver).set$volume(receiver, value);
+};
 J.set$width$x = function(receiver, value) {
   return J.getInterceptor$x(receiver).set$width(receiver, value);
 };
@@ -23780,6 +24144,9 @@ J.setProperty$3$x = function(receiver, a0, a1, a2) {
 };
 J.split$1$s = function(receiver, a0) {
   return J.getInterceptor$s(receiver).split$1(receiver, a0);
+};
+J.start$1$x = function(receiver, a0) {
+  return J.getInterceptor$x(receiver).start$1(receiver, a0);
 };
 J.substring$1$s = function(receiver, a0) {
   return J.getInterceptor$s(receiver).substring$1(receiver, a0);
@@ -24035,7 +24402,7 @@ H.defineNativeMethods("AudioProcessingEvent|AutocompleteErrorEvent|BeforeLoadEve
 
 H.defineNativeMethodsNonleaf("Event", W.Event0);
 
-H.defineNativeMethods("AudioDestinationNode|AudioGainNode|AudioNode|GainNode|MediaStream", W.EventTarget);
+H.defineNativeMethods("DataChannel|RTCDataChannel", W.EventTarget);
 
 H.defineNativeMethodsNonleaf("EventTarget", W.EventTarget);
 
@@ -24074,6 +24441,8 @@ H.defineNativeMethods("HTMLMapElement", W.MapElement);
 H.defineNativeMethods("HTMLAudioElement", W.MediaElement);
 
 H.defineNativeMethodsNonleaf("HTMLMediaElement", W.MediaElement);
+
+H.defineNativeMethods("MediaStream", W.MediaStream);
 
 H.defineNativeMethods("HTMLMetaElement", W.MetaElement);
 
@@ -24227,7 +24596,17 @@ H.defineNativeMethods("SVGUseElement", P.UseElement);
 
 H.defineNativeMethods("AudioBuffer", P.AudioBuffer);
 
+H.defineNativeMethods("AudioBufferSourceNode", P.AudioBufferSourceNode);
+
 H.defineNativeMethods("AudioContext|OfflineAudioContext", P.AudioContext);
+
+H.defineNativeMethods("AudioDestinationNode|AudioGainNode|GainNode", P.AudioNode);
+
+H.defineNativeMethodsNonleaf("AudioNode", P.AudioNode);
+
+H.defineNativeMethods("AudioParam", P.AudioParam);
+
+H.defineNativeMethodsNonleaf("AudioSourceNode", P.AudioSourceNode);
 
 H.defineNativeMethods("DataView", P.TypedData);
 

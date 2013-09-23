@@ -24,6 +24,11 @@ class Config {
       _config['options'].putIfAbsent(k, ()=>v);  
     });
     
+    //add channels for audio, stored in vn object for later access
+    if(_config['options'].containsKey('channels')) {
+      _config['options']['channels'].forEach((v) => _vn.channels[v] = new Channel(v));
+    }
+    
     //add layers, glassplate added onConfig so it is always on top
     _config['options']['layers'].forEach((v) => _vn.addChild(new Layer()..name = v));
     
@@ -44,7 +49,8 @@ class Config {
         if(url.endsWith('.json')) resourceManager.addTextureAtlas(name, imagePath + url, TextureAtlasFormat.JSONARRAY);
         else resourceManager.addBitmapData(name, imagePath + url); 
       });
-      if(assets.containsKey('sounds')) assets['sounds'].forEach((name, url) => resourceManager.addSound(name, imagePath + url));
+      var soundPath = assets.containsKey('sound_path')?assets['sound_path']:'';
+      if(assets.containsKey('sounds')) assets['sounds'].forEach((name, url) => resourceManager.addSound(name, soundPath + url));
     }
     
     //add characters

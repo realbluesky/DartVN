@@ -46,7 +46,11 @@ class Script {
     List args = line.sublist(1);
     
     switch(verb) {
+      case 'play': new Play(args);
+        break;
       case 'set': new Set(args);
+        break;
+      case 'mod': new Set(args, mod: true);
         break;
       case 'label': next();
         break;

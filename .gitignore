@@ -24,4 +24,4 @@ pubspec.lock
 #TexturePacker
 *.tps
 #source images for sprite sheets
-*/image/*/*
+*/image/source/*
