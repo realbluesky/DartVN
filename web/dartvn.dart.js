@@ -446,8 +446,8 @@ JSArray: {"": "List/Interceptor;",
   },
   addAll$1: function(receiver, collection) {
     var t1;
-    for (t1 = new H.ListIterator(collection, collection.length, 0, null); t1.moveNext$0();)
-      this.add$1(receiver, t1._liblib$_current);
+    for (t1 = J.get$iterator$ax(collection); t1.moveNext$0();)
+      this.add$1(receiver, t1.get$current());
   },
   clear$0: function(receiver) {
     this.set$length(receiver, 0);
@@ -2525,17 +2525,6 @@ propertyTypeCast: function(value, property) {
   H.propertyTypeCastError(value, property);
 },
 
-interceptedTypeCast: function(value, property) {
-  var t1;
-  if (value != null)
-    t1 = typeof value === "object" && J.getInterceptor(value)[property];
-  else
-    t1 = true;
-  if (t1)
-    return value;
-  H.propertyTypeCastError(value, property);
-},
-
 throwCyclicInit: function(staticName) {
   throw H.wrapException(new P.CyclicInitializationError("Cyclic initialization for static " + H.S(staticName)));
 },
@@ -2950,6 +2939,12 @@ ConstantMap: {"": "Object;length>,_jsObject,_liblib0$_keys",
     return this._throwUnmodifiable$0();
   },
   remove$1: function(_, key) {
+    return this._throwUnmodifiable$0();
+  },
+  clear$0: function(_) {
+    return this._throwUnmodifiable$0();
+  },
+  addAll$1: function(_, other) {
     return this._throwUnmodifiable$0();
   },
   $isMap: true,
@@ -3706,28 +3701,22 @@ Constructor_visitMapping_closure: {"": "Closure;dartMap_0",
 ["dart._collection.dev", "dart:_collection-dev", , H, {
 Arrays_copy: function(src, srcStart, dst, dstStart, count) {
   var i, j, t1, t2, t3, t4;
-  if (srcStart !== (srcStart | 0))
+  if (typeof src !== "string" && (typeof src !== "object" || src === null || src.constructor !== Array && !H.isJsIndexable(src, src[init.dispatchPropertyName])))
     return H.Arrays_copy$bailout(1, src, srcStart, dst, dstStart, count);
   if (typeof dst !== "object" || dst === null || (dst.constructor !== Array || !!dst.immutable$list) && !H.isJsIndexable(dst, dst[init.dispatchPropertyName]))
     return H.Arrays_copy$bailout(1, src, srcStart, dst, dstStart, count);
-  if (srcStart < dstStart) {
-    i = srcStart + count - 1;
-    if (i !== (i | 0))
-      return H.Arrays_copy$bailout(2, src, srcStart, dst, dstStart, count, i);
-    j = dstStart + count - 1;
-    t1 = src.length;
-    t2 = dst.length;
-    for (; i >= srcStart; --i, --j) {
-      if (i < 0 || i >= t1)
+  if (srcStart < dstStart)
+    for (i = srcStart + count - 1, j = dstStart + count - 1, t1 = src.length, t2 = dst.length; i >= srcStart; --i, --j) {
+      if (i >>> 0 !== i || i >= t1)
         throw H.ioore(i);
       t3 = src[i];
       if (j >>> 0 !== j || j >= t2)
         throw H.ioore(j);
       dst[j] = t3;
     }
-  } else
+  else
     for (t1 = srcStart + count, t2 = src.length, t3 = dst.length, j = dstStart, i = srcStart; i < t1; ++i, ++j) {
-      if (i < 0 || i >= t2)
+      if (i >>> 0 !== i || i >= t2)
         throw H.ioore(i);
       t4 = src[i];
       if (j >>> 0 !== j || j >= t3)
@@ -3736,33 +3725,14 @@ Arrays_copy: function(src, srcStart, dst, dstStart, count) {
     }
 },
 
-Arrays_copy$bailout: function(state0, src, srcStart, dst, dstStart, count, i) {
-  switch (state0) {
-    case 0:
-    case 1:
-      state0 = 0;
-    case 2:
-      var j, t1;
-      if (state0 === 2 || state0 === 0 && srcStart < dstStart)
-        switch (state0) {
-          case 0:
-            i = srcStart + count - 1;
-          case 2:
-            state0 = 0;
-            j = dstStart + count - 1;
-            for (; i >= srcStart; --i, --j) {
-              if (i >>> 0 !== i || i >= src.length)
-                throw H.ioore(i);
-              C.JSArray_methods.$indexSet(dst, j, src[i]);
-            }
-        }
-      else
-        for (t1 = srcStart + count, j = dstStart, i = srcStart; i < t1; ++i, ++j) {
-          if (i >>> 0 !== i || i >= src.length)
-            throw H.ioore(i);
-          C.JSArray_methods.$indexSet(dst, j, src[i]);
-        }
-  }
+Arrays_copy$bailout: function(state0, src, srcStart, dst, dstStart, count) {
+  var i, j, t1, t2;
+  if (srcStart < dstStart)
+    for (i = srcStart + count - 1, j = dstStart + count - 1, t1 = J.getInterceptor$asx(src); i >= srcStart; --i, --j)
+      C.JSArray_methods.$indexSet(dst, j, t1.$index(src, i));
+  else
+    for (t1 = srcStart + count, t2 = J.getInterceptor$asx(src), j = dstStart, i = srcStart; i < t1; ++i, ++j)
+      C.JSArray_methods.$indexSet(dst, j, t2.$index(src, i));
 },
 
 Arrays_indexOf: function(a, element, startIndex, endIndex) {
@@ -3838,7 +3808,7 @@ IterableMixinWorkaround_setRangeList: function(list, start, end, from, skipCount
     return;
   if (skipCount < 0)
     throw H.wrapException(new P.ArgumentError(skipCount));
-  if (skipCount + $length > from.length)
+  if (skipCount + $length > J.get$length$asx(from))
     throw H.wrapException(new P.StateError("Not enough elements"));
   H.Arrays_copy(from, skipCount, list, start, $length);
 },
@@ -4185,6 +4155,9 @@ FixedLengthListMixin: {"": "Object;",
   add$1: function(receiver, value) {
     throw H.wrapException(new P.UnsupportedError("Cannot add to a fixed-length list"));
   },
+  addAll$1: function(receiver, iterable) {
+    throw H.wrapException(new P.UnsupportedError("Cannot add to a fixed-length list"));
+  },
   remove$1: function(receiver, element) {
     throw H.wrapException(new P.UnsupportedError("Cannot remove from a fixed-length list"));
   },
@@ -4204,6 +4177,9 @@ UnmodifiableListMixin: {"": "Object;",
     throw H.wrapException(new P.UnsupportedError("Cannot change the length of an unmodifiable list"));
   },
   add$1: function(_, value) {
+    throw H.wrapException(new P.UnsupportedError("Cannot add to an unmodifiable list"));
+  },
+  addAll$1: function(_, iterable) {
     throw H.wrapException(new P.UnsupportedError("Cannot add to an unmodifiable list"));
   },
   remove$1: function(_, element) {
@@ -5084,7 +5060,7 @@ _Future__propagateToListeners: function(source, listeners) {
     t2.isPropagationAborted_3 = false;
     t3 = listeners.get$_zone();
     t3._openCallbacks = t3._openCallbacks - 1;
-    t3._runInZone$2(new P._Future__propagateToListeners_closure0(t2, t1, hasError, listeners), false);
+    t3._runInZone$2(new P._Future__propagateToListeners_closure0(t1, t2, hasError, listeners), false);
     if (t2.isPropagationAborted_3 === true)
       return;
     t3 = t2.listenerHasValue_1 === true;
@@ -5162,7 +5138,7 @@ _Future__propagateToListeners_closure: {"": "Closure;box_2,listener_3",
   "+call:0:0": 0
 },
 
-_Future__propagateToListeners_closure0: {"": "Closure;box_1,box_2,hasError_4,listener_5",
+_Future__propagateToListeners_closure0: {"": "Closure;box_2,box_1,hasError_4,listener_5",
   call$0: function() {
     var t1, value, error, test, matchesTest, e, s, t2, t3, t4, exception;
     t1 = {};
@@ -6178,15 +6154,15 @@ _AsBroadcastStream__onListen_closure: {"": "Closure;this_0",
   "+call:0:0": 0
 },
 
-_BroadcastSubscriptionWrapper: {"": "Object;_stream",
+_BroadcastSubscriptionWrapper: {"": "Object;_liblib3$_stream",
   pause$1: function(_, resumeSignal) {
-    this._stream._pauseSubscription$1(resumeSignal);
+    this._liblib3$_stream._pauseSubscription$1(resumeSignal);
   },
   pause$0: function($receiver) {
     return this.pause$1($receiver, null);
   },
   cancel$0: function() {
-    this._stream._cancelSubscription$0();
+    this._liblib3$_stream._cancelSubscription$0();
   }
 },
 
@@ -6223,7 +6199,7 @@ _ForwardingStream: {"": "Stream;",
   }
 },
 
-_ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_stream,_subscription,_liblib3$_onData,_onError,_onDone,_zone,_state,_pending",
+_ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_liblib3$_stream,_subscription,_liblib3$_onData,_onError,_onDone,_zone,_state,_pending",
   _liblib3$_add$1: function(data) {
     if ((this._state & 2) !== 0)
       return;
@@ -6260,7 +6236,7 @@ _ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_stream,_subsc
     }
   },
   _handleData$1: function(data) {
-    this._stream._handleData$2(data, this);
+    this._liblib3$_stream._handleData$2(data, this);
   },
   get$_handleData: function() {
     return new T.BoundClosure$1(this, "_handleData$1", null);
@@ -6281,7 +6257,7 @@ _ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_stream,_subsc
     var t1, t2;
     t1 = this.get$_handleData();
     t2 = this.get$_handleError();
-    this._subscription = this._stream._liblib3$_source.listen$3$onDone$onError(t1, this.get$_handleDone(), t2);
+    this._subscription = this._liblib3$_stream._liblib3$_source.listen$3$onDone$onError(t1, this.get$_handleDone(), t2);
   },
   $as_BufferingStreamSubscription: function($S, $T) {
     return [$T];
@@ -6547,6 +6523,9 @@ _HashMap: {"": "Object;_liblib1$_length,_strings,_nums,_rest,_keys",
       return this._findBucketIndex$2(rest[this._computeHashCode$1(key)], key) >= 0;
     }
   },
+  addAll$1: function(_, other) {
+    J.forEach$1$ax(other, new P._HashMap_addAll_closure(this));
+  },
   $index: function(_, key) {
     var strings, t1, entry, nums, rest, bucket, index;
     if (typeof key === "string" && key !== "__proto__") {
@@ -6679,6 +6658,15 @@ _HashMap: {"": "Object;_liblib1$_length,_strings,_nums,_rest,_keys",
       return bucket.splice(index, 2)[1];
     }
   },
+  clear$0: function(_) {
+    if (this._liblib1$_length > 0) {
+      this._keys = null;
+      this._rest = null;
+      this._nums = null;
+      this._strings = null;
+      this._liblib1$_length = 0;
+    }
+  },
   forEach$1: function(_, action) {
     var keys, $length, i, key;
     keys = this._computeKeys$0();
@@ -6768,6 +6756,13 @@ _HashMap_values_closure: {"": "Closure;this_0",
     return J.$index$asx(this.this_0, each);
   },
   "+call:1:0": 0
+},
+
+_HashMap_addAll_closure: {"": "Closure;this_0",
+  call$2: function(key, value) {
+    J.$indexSet$ax(this.this_0, key, value);
+  },
+  "+call:2:0": 0
 },
 
 _IdentityHashMap: {"": "_HashMap;_liblib1$_length,_strings,_nums,_rest,_keys",
@@ -6918,6 +6913,9 @@ _LinkedHashMap: {"": "Object;_liblib1$_length,_strings,_nums,_rest,_first,_last,
       return this._findBucketIndex$2(rest[this._computeHashCode$1(key)], key) >= 0;
     }
   },
+  addAll$1: function(_, other) {
+    J.forEach$1$ax(other, new P._LinkedHashMap_addAll_closure(this));
+  },
   $index: function(_, key) {
     var strings, cell, nums, rest, bucket, index;
     if (typeof key === "string" && key !== "__proto__") {
@@ -7022,6 +7020,17 @@ _LinkedHashMap: {"": "Object;_liblib1$_length,_strings,_nums,_rest,_first,_last,
       return cell.get$_value();
     }
   },
+  clear$0: function(_) {
+    if (this._liblib1$_length > 0) {
+      this._last = null;
+      this._first = null;
+      this._rest = null;
+      this._nums = null;
+      this._strings = null;
+      this._liblib1$_length = 0;
+      this._modifications = this._modifications + 1 & 67108863;
+    }
+  },
   forEach$1: function(_, action) {
     var cell, modifications;
     cell = this._first;
@@ -7099,6 +7108,13 @@ _LinkedHashMap_values_closure: {"": "Closure;this_0",
     return J.$index$asx(this.this_0, each);
   },
   "+call:1:0": 0
+},
+
+_LinkedHashMap_addAll_closure: {"": "Closure;this_0",
+  call$2: function(key, value) {
+    J.$indexSet$ax(this.this_0, key, value);
+  },
+  "+call:2:0": 0
 },
 
 _LinkedIdentityHashMap: {"": "_LinkedHashMap;_liblib1$_length,_strings,_nums,_rest,_first,_last,_modifications",
@@ -7465,6 +7481,15 @@ ListMixin: {"": "Object;",
     this.set$length(receiver, t1 + 1);
     this.$indexSet(receiver, t1, element);
   },
+  addAll$1: function(receiver, iterable) {
+    var t1, element, t2;
+    for (t1 = J.get$iterator$ax(iterable); t1.moveNext$0();) {
+      element = t1.get$current();
+      t2 = this.get$length(receiver);
+      this.set$length(receiver, t2 + 1);
+      this.$indexSet(receiver, t2, element);
+    }
+  },
   remove$1: function(receiver, element) {
     var i, t1;
     for (i = 0; i < this.get$length(receiver); ++i) {
@@ -7714,6 +7739,39 @@ ListQueue: {"": "IterableBase;_table,_head,_tail,_modificationCount",
   add$1: function(_, element) {
     this._add$1(element);
   },
+  addAll$1: function(_, elements) {
+    var t1, addCount, $length, t2, t3, endSpace, preSpace;
+    t1 = J.getInterceptor(elements);
+    if (typeof elements === "object" && elements !== null && (elements.constructor === Array || !!t1.$isList)) {
+      addCount = t1.get$length(elements);
+      $length = this.get$length(this);
+      t1 = $length + addCount;
+      t2 = this._table;
+      t3 = t2.length;
+      if (t1 >= t3) {
+        this._preGrow$1(t1);
+        t2 = this._table;
+        H.IterableMixinWorkaround_setRangeList(t2, $length, t1, elements, 0);
+        this._tail = this._tail + addCount;
+      } else {
+        t1 = this._tail;
+        endSpace = t3 - t1;
+        if (addCount < endSpace) {
+          H.IterableMixinWorkaround_setRangeList(t2, t1, t1 + addCount, elements, 0);
+          this._tail = this._tail + addCount;
+        } else {
+          preSpace = addCount - endSpace;
+          H.IterableMixinWorkaround_setRangeList(t2, t1, t1 + endSpace, elements, 0);
+          t1 = this._table;
+          H.IterableMixinWorkaround_setRangeList(t1, 0, preSpace, elements, endSpace);
+          this._tail = preSpace;
+        }
+      }
+      this._modificationCount = this._modificationCount + 1;
+    } else
+      for (t1 = t1.get$iterator(elements); t1.moveNext$0();)
+        this._add$1(t1.get$current());
+  },
   remove$1: function(_, object) {
     var i, t1;
     for (i = this._head; i !== this._tail; i = (i + 1 & this._table.length - 1) >>> 0) {
@@ -7727,6 +7785,21 @@ ListQueue: {"": "IterableBase;_table,_head,_tail,_modificationCount",
       }
     }
     return false;
+  },
+  clear$0: function(_) {
+    var i, t1, t2, t3, t4;
+    i = this._head;
+    t1 = this._tail;
+    if (i !== t1) {
+      for (t2 = this._table, t3 = t2.length, t4 = t3 - 1; i !== t1; i = (i + 1 & t4) >>> 0) {
+        if (i < 0 || i >= t3)
+          throw H.ioore(i);
+        t2[i] = null;
+      }
+      this._tail = 0;
+      this._head = 0;
+      this._modificationCount = this._modificationCount + 1;
+    }
   },
   toString$0: function(_) {
     return H.IterableMixinWorkaround_toStringIterable(this, "{", "}");
@@ -7923,6 +7996,13 @@ ListQueue: {"": "IterableBase;_table,_head,_tail,_modificationCount",
       return this._tail + firstPartSize;
     }
   },
+  _preGrow$1: function(newElementCount) {
+    var newTable = P.List_List(P.ListQueue__nextPowerOf2(newElementCount), H.getRuntimeTypeArgument(this, "ListQueue", 0));
+    H.setRuntimeTypeInfo(newTable, [H.getRuntimeTypeArgument(this, "ListQueue", 0)]);
+    this._tail = this._writeToList$1(newTable);
+    this._table = newTable;
+    this._head = 0;
+  },
   ListQueue$1: function(initialCapacity, $E) {
     var t1 = P.List_List(8, $E);
     H.setRuntimeTypeInfo(t1, [$E]);
@@ -7938,6 +8018,18 @@ ListQueue$: function(initialCapacity, $E) {
   H.setRuntimeTypeInfo(t1, [$E]);
   t1.ListQueue$1(initialCapacity, $E);
   return t1;
+},
+
+ListQueue__nextPowerOf2: function(number) {
+  var nextNumber;
+  if (number == null)
+    throw number.$shl();
+  number = (number << 2 >>> 0) - 1;
+  for (; true; number = nextNumber) {
+    nextNumber = (number & number - 1) >>> 0;
+    if (nextNumber === 0)
+      return number;
+  }
 }}
 
 },
@@ -8628,6 +8720,9 @@ StringBuffer: {"": "Object;_contents<",
       }
     }
   },
+  clear$0: function(_) {
+    this._contents = "";
+  },
   toString$0: function(_) {
     return this._contents;
   },
@@ -8885,6 +8980,12 @@ _CssStyleDeclarationSet_setProperty_closure: {"": "Closure;propertyName_0,value_
 },
 
 CssStyleDeclarationBase: {"": "Object;",
+  get$clear: function(receiver) {
+    return this.getPropertyValue$1(receiver, "clear");
+  },
+  clear$0: function($receiver) {
+    return this.get$clear($receiver).call$0();
+  },
   get$content: function(receiver) {
     return this.getPropertyValue$1(receiver, "content");
   },
@@ -8955,6 +9056,12 @@ _ChildrenElementList: {"": "ListBase;_element,_childElements",
   get$iterator: function(_) {
     var t1 = this.toList$0(this);
     return new H.ListIterator(t1, t1.length, 0, null);
+  },
+  addAll$1: function(_, iterable) {
+    var t1, t2;
+    t1 = J.getInterceptor(iterable);
+    for (t1 = J.get$iterator$ax(typeof iterable === "object" && iterable !== null && !!t1.$is_ChildNodeListLazy ? P.List_List$from(iterable, true, null) : iterable), t2 = this._element; t1.moveNext$0();)
+      t2.appendChild(t1.get$current());
   },
   setRange$4: function(_, start, end, iterable, skipCount) {
     throw H.wrapException(new P.UnimplementedError(null));
@@ -9112,6 +9219,20 @@ _ChildNodeListLazy: {"": "ListBase;_this",
   add$1: function(_, value) {
     this._this.appendChild(value);
   },
+  addAll$1: function(_, iterable) {
+    var t1, t2, len, i;
+    t1 = J.getInterceptor$ax(iterable);
+    if (typeof iterable === "object" && iterable !== null && !!t1.$is_ChildNodeListLazy) {
+      t1 = iterable._this;
+      t2 = this._this;
+      if (t1 !== t2)
+        for (len = t1.childNodes.length, i = 0; i < len; ++i)
+          t2.appendChild(t1.firstChild);
+      return;
+    }
+    for (t1 = t1.get$iterator(iterable), t2 = this._this; t1.moveNext$0();)
+      t2.appendChild(t1.get$current());
+  },
   removeLast$0: function(_) {
     var result = this.get$last(this);
     if (result != null)
@@ -9151,6 +9272,7 @@ _ChildNodeListLazy: {"": "ListBase;_this",
       throw H.ioore(index);
     return t1[index];
   },
+  $is_ChildNodeListLazy: true,
   $asList: function() {
     return [W.Node0];
   },
@@ -9199,6 +9321,11 @@ _AttributeMap: {"": "Object;",
     if (this.containsKey$1(key) !== true)
       this.$indexSet(this, key, ifAbsent.call$0());
     return this.$index(this, key);
+  },
+  clear$0: function(_) {
+    var t1;
+    for (t1 = this.get$keys(), t1 = new H.ListIterator(t1, t1.length, 0, null); t1.moveNext$0();)
+      this.remove$1(this, t1._liblib$_current);
   },
   forEach$1: function(_, f) {
     var t1, key;
@@ -9291,9 +9418,9 @@ _EventStream0: {"": "Stream;_liblib5$_target,_liblib5$_eventType,_liblib5$_useCa
 
 _ElementEventStreamImpl: {"": "_EventStream0;_liblib5$_target,_liblib5$_eventType,_liblib5$_useCapture", $as_EventStream0: null},
 
-_ElementListEventStreamImpl: {"": "Stream;_liblib5$_pool,_liblib5$_stream",
+_ElementListEventStreamImpl: {"": "Stream;_liblib5$_pool,_stream",
   listen$4$cancelOnError$onDone$onError: function(onData, cancelOnError, onDone, onError) {
-    return this._liblib5$_stream.listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError);
+    return this._stream.listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError);
   },
   listen$3$onDone$onError: function(onData, onDone, onError) {
     return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
@@ -9418,6 +9545,9 @@ ImmutableListMixin: {"": "Object;",
     return new W.FixedSizeListIterator(receiver, this.get$length(receiver), -1, null);
   },
   add$1: function(receiver, value) {
+    throw H.wrapException(new P.UnsupportedError("Cannot add to immutable List."));
+  },
+  addAll$1: function(receiver, iterable) {
     throw H.wrapException(new P.UnsupportedError("Cannot add to immutable List."));
   },
   removeLast$0: function(receiver) {
@@ -9734,13 +9864,6 @@ CanvasRenderingContext2D: {"": "CanvasRenderingContext;fillStyle},lineCap},lineJ
   moveTo$2: function(receiver, x, y) {
     return receiver.moveTo(x, y);
   },
-  putImageData$7: function(receiver, imagedata, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
-    receiver.putImageData(P.convertDartToNative_ImageData(imagedata), dx, dy);
-    return;
-  },
-  putImageData$3: function($receiver, imagedata, dx, dy) {
-    return this.putImageData$7($receiver, imagedata, dx, dy, null, null, null, null);
-  },
   quadraticCurveTo$4: function(receiver, cpx, cpy, x, y) {
     return receiver.quadraticCurveTo(cpx, cpy, x, y);
   },
@@ -9969,8 +10092,6 @@ HttpRequest: {"": "XmlHttpRequestEventTarget;responseText=",
 HttpRequestProgressEvent: {"": "ProgressEvent;position="},
 
 IFrameElement: {"": "HtmlElement;height%,name=,src},width%"},
-
-ImageData: {"": "Interceptor;height=,width=", $isImageData: true, $asImageData: null},
 
 ImageElement: {"": "HtmlElement;complete=,height%,naturalHeight=,naturalWidth=,src},width%,x=,y="},
 
@@ -10606,78 +10727,9 @@ max$bailout: function(state0, a, b) {
 
 _Random: {"": "Object;"}}],
 ["dart.typed_data", "dart:typed_data", , P, {
-Endianness: {"": "Object;_littleEndian", static: {
-"": "Endianness_BIG_ENDIAN,Endianness_LITTLE_ENDIAN,Endianness_HOST_ENDIAN",
-}
-},
-
 TypedData_ListMixin: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
 
 TypedData_ListMixin_FixedLengthListMixin: {"": "TypedData_ListMixin+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin0: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin0: {"": "TypedData_ListMixin0+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin1: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin1: {"": "TypedData_ListMixin1+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin2: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin2: {"": "TypedData_ListMixin2+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin3: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin3: {"": "TypedData_ListMixin3+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin4: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin4: {"": "TypedData_ListMixin4+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin5: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin5: {"": "TypedData_ListMixin5+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin6: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin6: {"": "TypedData_ListMixin6+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-TypedData_ListMixin7: {"": "TypedData+ListMixin;", $isList: true, $asList: null, $isIterable: true, $asIterable: null},
-
-TypedData_ListMixin_FixedLengthListMixin7: {"": "TypedData_ListMixin7+FixedLengthListMixin;", $asList: null, $asIterable: null},
-
-Int64List: {"": "TypedData;", $isList: true,
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $isIterable: true,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isJavaScriptIndexingBehavior: true,
-  $asJavaScriptIndexingBehavior: null,
-  static: {
-"": "Int64List_BYTES_PER_ELEMENT",
-}
-
-},
-
-Uint64List: {"": "TypedData;", $isList: true,
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $isIterable: true,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isJavaScriptIndexingBehavior: true,
-  $asJavaScriptIndexingBehavior: null,
-  static: {
-"": "Uint64List_BYTES_PER_ELEMENT",
-}
-
-},
 
 TypedData: {"": "Interceptor;",
   _invalidIndex$2: function(receiver, index, $length) {
@@ -10697,463 +10749,7 @@ TypedData: {"": "Interceptor;",
   }
 },
 
-Float32List: {"": "TypedData_ListMixin_FixedLengthListMixin;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Float32Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSDouble];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSDouble];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Float64List: {"": "TypedData_ListMixin_FixedLengthListMixin0;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Float64Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSDouble];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSDouble];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Int16List: {"": "TypedData_ListMixin_FixedLengthListMixin1;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Int16Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Int32List: {"": "TypedData_ListMixin_FixedLengthListMixin2;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Int32Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Int8List: {"": "TypedData_ListMixin_FixedLengthListMixin3;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Int8Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Uint16List: {"": "TypedData_ListMixin_FixedLengthListMixin4;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Uint16Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Uint32List: {"": "TypedData_ListMixin_FixedLengthListMixin5;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Uint32Array(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Uint8ClampedList: {"": "TypedData_ListMixin_FixedLengthListMixin6;",
-  get$length: function(receiver) {
-    return C.JS_CONST_ZYJ(receiver);
-  },
-  $index: function(receiver, index) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$index$bailout(1, index, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $$index$bailout: function(state0, index, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    return receiver[index];
-  },
-  $indexSet: function(receiver, index, value) {
-    var t1;
-    if (typeof index !== "number")
-      return this.$$indexSet$bailout(1, index, value, receiver);
-    t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || index >= t1)
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  $$indexSet$bailout: function(state0, index, value, receiver) {
-    var t1 = C.JS_CONST_ZYJ(receiver);
-    if (index >>> 0 != index || J.$ge$n(index, t1))
-      this._invalidIndex$2(receiver, index, t1);
-    receiver[index] = value;
-  },
-  sublist$2: function(receiver, start, end) {
-    var source, t1;
-    source = receiver.subarray(start, this._checkSublistArguments$3(receiver, start, end, C.JS_CONST_ZYJ(receiver)));
-    source.$dartCachedLength = source.length;
-    t1 = new Uint8ClampedArray(source);
-    t1.$dartCachedLength = t1.length;
-    return t1;
-  },
-  sublist$1: function($receiver, start) {
-    return this.sublist$2($receiver, start, null);
-  },
-  $asList: function() {
-    return [J.JSInt];
-  },
-  $asJavaScriptIndexingBehavior: null,
-  $asIterable: function() {
-    return [J.JSInt];
-  },
-  $isList: true,
-  $isIterable: true,
-  $isJavaScriptIndexingBehavior: true
-},
-
-Uint8List: {"": "TypedData_ListMixin_FixedLengthListMixin7;",
+Uint8List: {"": "TypedData_ListMixin_FixedLengthListMixin;",
   get$length: function(receiver) {
     return C.JS_CONST_ZYJ(receiver);
   },
@@ -11220,7 +10816,7 @@ Config: {"": "Object;onConfig<,_config<,characters,_vn<",
   configure$1: function(response) {
     var defaults, opt, t1, t2, t3, assets, imagePath, soundPath;
     this._config = O.loadYaml(response);
-    defaults = H.makeLiteralMap(["dur", 1, "dir", "right", "trans", "fade", "width", 1920, "height", 1080, "layers", ["bg"]]);
+    defaults = H.makeLiteralMap(["dur", 1, "dir", "right", "gap", "none", "wait", "none", "trans", "fade", "width", 1920, "height", 1080, "layers", ["bg"]]);
     defaults.forEach$1(defaults, new N.Config_configure_closure(this));
     if (J.$index$asx(this._config, "options").containsKey$1("channels") === true)
       J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "channels"), new N.Config_configure_closure0(this));
@@ -11370,56 +10966,101 @@ Layer: {"": "DisplayObjectContainer;_children,_mouseChildren,_tabChildren,double
 
 Position: {"": "DisplayObjectContainer;args,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   add$1: function(_, child) {
-    var t1, t2, width, height, vn, sw, sh;
-    t1 = {};
-    t1.hor_0 = false;
-    t1.vert_1 = false;
-    t2 = J.getInterceptor$x(child);
-    width = t2.get$width(child);
-    height = t2.get$height(child);
-    vn = $.stage.getChildByName$1("vn");
-    t2 = J.getInterceptor$x(vn);
-    sw = J.$index$asx(t2.get$options(vn), "width");
-    sh = J.$index$asx(t2.get$options(vn), "height");
-    J.forEach$1$ax(this.args, new N.Position_add_closure(t1, child, width, height, sw, sh));
+    var t1, xy;
+    t1 = J.getInterceptor$x(child);
+    xy = this._getXY$2(this.args, [t1.get$width(child), t1.get$height(child)]);
+    if (0 >= xy.length)
+      throw H.ioore(0);
+    t1.set$x(child, xy[0]);
+    if (1 >= xy.length)
+      throw H.ioore(1);
+    t1.set$y(child, xy[1]);
     this.addChild$1(child);
-  }
+  },
+  _getXY$2: function(args, wh) {
+    var t1, t2, width, height, sw;
+    t1 = {};
+    t1.x_0 = null;
+    t1.y_1 = null;
+    t1.hor_2 = false;
+    t1.vert_3 = false;
+    t2 = wh.length;
+    if (0 >= t2)
+      throw H.ioore(0);
+    width = wh[0];
+    if (1 >= t2)
+      throw H.ioore(1);
+    height = wh[1];
+    t2 = $.stage;
+    t2.get$sourceWidth;
+    sw = t2._sourceWidth;
+    t2.get$sourceHeight;
+    J.forEach$1$ax(args, new N.Position__getXY_closure(t1, width, height, sw, t2._sourceHeight));
+    return [t1.x_0, t1.y_1];
+  },
+  Position$1: function(args) {
+    var t1, xy, t2, t3;
+    this.args = args;
+    if (args.containsKey$1("width") === true && args.containsKey$1("height") === true) {
+      t1 = J.getInterceptor$asx(args);
+      xy = this._getXY$2(args, [t1.$index(args, "width"), t1.$index(args, "height")]);
+      t2 = xy.length;
+      if (0 >= t2)
+        throw H.ioore(0);
+      t3 = xy[0];
+      if (1 >= t2)
+        throw H.ioore(1);
+      this._mask = new Z._RectangleMask(new Z.Rectangle(t3, xy[1], t1.$index(args, "width"), t1.$index(args, "height")), null, false, 4278190080, 1, null);
+    }
+  },
+  static: {
+Position$: function(args) {
+  var t1, t2;
+  t1 = P.List_List(null, Z.DisplayObject);
+  H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
+  t2 = $.DisplayObject__nextID;
+  $.DisplayObject__nextID = t2 + 1;
+  t2 = new N.Position(null, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+  t2.Position$1(args);
+  return t2;
+}}
+
 },
 
-Position_add_closure: {"": "Closure;box_0,child_1,width_2,height_3,sw_4,sh_5",
+Position__getXY_closure: {"": "Closure;box_0,width_1,height_2,sw_3,sh_4",
   call$2: function(edge, distance) {
     var t1 = this.box_0;
-    if (!t1.hor_0) {
-      t1.hor_0 = true;
+    if (!t1.hor_2) {
+      t1.hor_2 = true;
       switch (edge) {
         case "left":
-          J.set$x$x(this.child_1, distance);
+          t1.x_0 = distance;
           break;
         case "right":
-          J.set$x$x(this.child_1, J.$sub$n(J.$sub$n(this.sw_4, this.width_2), distance));
+          t1.x_0 = J.$sub$n(J.$sub$n(this.sw_3, this.width_1), distance);
           break;
         case "center":
-          J.set$x$x(this.child_1, J.$add$ns(J.$div$n(J.$sub$n(this.sw_4, this.width_2), 2), distance));
+          t1.x_0 = J.$add$ns(J.$div$n(J.$sub$n(this.sw_3, this.width_1), 2), distance);
           break;
         default:
-          t1.hor_0 = false;
+          t1.hor_2 = false;
           break;
       }
     }
-    if (!t1.vert_1) {
-      t1.vert_1 = true;
+    if (!t1.vert_3) {
+      t1.vert_3 = true;
       switch (edge) {
         case "top":
-          J.set$y$x(this.child_1, distance);
+          t1.y_1 = distance;
           break;
         case "bottom":
-          J.set$y$x(this.child_1, J.$sub$n(J.$sub$n(this.sh_5, this.height_3), distance));
+          t1.y_1 = J.$sub$n(J.$sub$n(this.sh_4, this.height_2), distance);
           break;
         case "middle":
-          J.set$y$x(this.child_1, J.$add$ns(J.$div$n(J.$sub$n(this.sh_5, this.height_3), 2), distance));
+          t1.y_1 = J.$add$ns(J.$div$n(J.$sub$n(this.sh_4, this.height_2), 2), distance);
           break;
         default:
-          t1.vert_1 = false;
+          t1.vert_3 = false;
           break;
       }
     }
@@ -11427,7 +11068,7 @@ Position_add_closure: {"": "Closure;box_0,child_1,width_2,height_3,sw_4,sh_5",
   "+call:2:0": 0
 },
 
-VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior,temp<,tween,lib9$Option$name",
+VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<,tween,lib9$Option$name",
   _before$0: function() {
     if (J.$eq(J.$index$asx(this.opts, "mode"), "add") !== true && this.position.get$numChildren() > 0)
       this.prior = this.position.getChildAt$1(0);
@@ -11470,6 +11111,43 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior,temp<,
   },
   get$fadeTransition: function() {
     return new P.BoundClosure$0(this, "fadeTransition$0", null);
+  },
+  crossFadeTransition$0: function() {
+    var t1, t2, t3, t4;
+    this.name = "fade";
+    this._before$0();
+    J.set$alpha$x(this.current, 0);
+    J.add$1$ax(this.position, this.current);
+    if (this.prior != null) {
+      t1 = this.vn.get$juggler();
+      t2 = this.prior;
+      t3 = J.$div$n(J.$index$asx(this.opts, "dur"), 2);
+      t4 = $.get$VN_ease();
+      t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+      t3 = t4._tweenPropertyFactory;
+      t3.get$alpha;
+      t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+      t4._onComplete = new N.VNTransition_crossFadeTransition_closure(this);
+    }
+    t1 = this.vn.get$juggler();
+    t2 = this.current;
+    t3 = J.$index$asx(this.opts, "dur");
+    t4 = $.get$VN_ease();
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+    t1 = J.$index$asx(this.opts, "gap");
+    if (typeof t1 === "number")
+      this.tween.set$delay(J.$add$ns(J.$index$asx(this.opts, "dur"), J.$index$asx(this.opts, "gap")));
+    t1 = this.tween;
+    t1.get$animate;
+    t2 = t1._tweenPropertyFactory;
+    t2.get$alpha;
+    t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
+    t2 = this.get$_after();
+    t1.set$onComplete;
+    t1._onComplete = t2;
+  },
+  get$crossFadeTransition: function() {
+    return new P.BoundClosure$0(this, "crossFadeTransition$0", null);
   },
   fadeOutTransition$0: function() {
     var t1, t2, t3, t4;
@@ -11789,6 +11467,14 @@ VNTransition__after_closure: {"": "Closure;",
   "+call:0:0": 0
 },
 
+VNTransition_crossFadeTransition_closure: {"": "Closure;this_0",
+  call$0: function() {
+    var t1 = this.this_0;
+    return J.get$position$x(t1).removeChild$1(t1.get$prior());
+  },
+  "+call:0:0": 0
+},
+
 VNTransition_fadeOutTransition_closure: {"": "Closure;this_0",
   call$0: function() {
     var t1, t2;
@@ -12043,10 +11729,11 @@ Play$: function(args) {
 
 Set: {"": "Verb;args,mod",
   Set$2$mod: function(args, mod, box_0) {
-    var vn, layer, posName, value, t1, posArgs, t2, priorObject, t3, t4, newObject, sa, sw, shape, t5, drawn, stroke, tf, vnt, transMap;
+    var vn, t1, opts, layer, posName, value, posArgs, t2, priorObject, t3, t4, t5, newObject, sa, sw, shape, drawn, stroke, tf, vnt, transMap;
     box_0.position_0 = null;
     vn = $.stage.getChildByName$1("vn");
-    box_0.opts_1 = H.makeLiteralMap([]);
+    t1 = J.getInterceptor$x(vn);
+    opts = t1.get$options(vn);
     if (0 >= args.length)
       throw H.ioore(0);
     layer = vn.getChildByName$1(args[0]);
@@ -12070,121 +11757,109 @@ Set: {"": "Verb;args,mod",
       }
     else
       value = null;
-    t1 = J.getInterceptor$x(vn);
-    if (args.length > 3) {
-      box_0.opts_1 = args[3];
-      J.forEach$1$ax(J.$index$asx(t1.get$options(vn), "defaults"), new N.Set_closure(box_0));
-    } else
-      box_0.opts_1 = J.$index$asx(t1.get$options(vn), "defaults");
+    if (args.length > 3)
+      J.addAll$1$ax(opts, args[3]);
     if (!this.mod) {
       if (typeof posName === "string") {
-        posArgs = J.$index$asx(J.$index$asx(J.get$options$x(vn), "positions"), posName);
+        posArgs = J.$index$asx(J.$index$asx(t1.get$options(vn), "positions"), posName);
         if (layer.getChildByName$1(posName) == null) {
-          t1 = P.List_List(null, Z.DisplayObject);
-          H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
-          t2 = $.DisplayObject__nextID;
-          $.DisplayObject__nextID = t2 + 1;
-          t2 = new N.Position(null, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-          t2.args = posArgs;
+          t2 = N.Position$(posArgs);
           t2._name = posName;
           layer.addChild$1(t2);
         }
         box_0.position_0 = layer.getChildByName$1(posName);
-        priorObject = J.$eq(J.$index$asx(box_0.opts_1, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
+        priorObject = J.$eq(J.$index$asx(opts, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
       } else {
-        t1 = J.getInterceptor(posName);
-        if (typeof posName === "object" && posName !== null && !!t1.$isMap) {
-          t1 = P.List_List(null, Z.DisplayObject);
-          H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
-          t2 = $.DisplayObject__nextID;
-          $.DisplayObject__nextID = t2 + 1;
-          t2 = new N.Position(null, t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-          t2.args = posName;
-          t1 = J.getInterceptor(value);
-          t2._name = t1.toString$0(value);
+        t2 = J.getInterceptor(posName);
+        if (typeof posName === "object" && posName !== null && !!t2.$isMap) {
+          t2 = N.Position$(posName);
+          t3 = J.getInterceptor(value);
+          t2._name = t3.toString$0(value);
           layer.addChild$1(t2);
-          t1.toString$0(value);
+          t3.toString$0(value);
         } else {
           t1 = vn.get$juggler();
-          t2 = J.$index$asx(box_0.opts_1, "dur");
-          t3 = $.get$VN_ease();
-          t3 = t1.tween$3(layer, t2, t3.$index(t3, J.$index$asx(box_0.opts_1, "ease")));
-          t2 = t3._tweenPropertyFactory;
-          t2.get$alpha;
-          t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-          t3._onComplete = new N.Set_closure0(box_0, vn, layer);
+          t2 = J.getInterceptor$asx(opts);
+          t3 = t2.$index(opts, "dur");
+          t4 = $.get$VN_ease();
+          t2 = t1.tween$3(layer, t3, t4.$index(t4, t2.$index(opts, "ease")));
+          t4 = t2._tweenPropertyFactory;
+          t4.get$alpha;
+          t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+          t2._onComplete = new N.Set_closure(vn, opts, layer);
           return;
         }
         priorObject = null;
       }
-      t1 = value == null;
-      if (t1)
+      t2 = value == null;
+      if (t2)
         if (priorObject != null) {
           if (box_0.position_0 != null) {
             t1 = vn.get$juggler();
             t2 = box_0.position_0;
-            t3 = J.$index$asx(box_0.opts_1, "dur");
-            t4 = $.get$VN_ease();
-            t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(box_0.opts_1, "ease")));
-            t3 = t4._tweenPropertyFactory;
-            t3.get$alpha;
-            t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-            t4._onComplete = new N.Set_closure1(box_0, vn, layer);
-            if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
+            t3 = J.getInterceptor$asx(opts);
+            t4 = t3.$index(opts, "dur");
+            t5 = $.get$VN_ease();
+            t5 = t1.tween$3(t2, t4, t5.$index(t5, t3.$index(opts, "ease")));
+            t4 = t5._tweenPropertyFactory;
+            t4.get$alpha;
+            t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+            t5._onComplete = new N.Set_closure0(box_0, vn, opts, layer);
+            if (J.$eq(t3.$index(opts, "wait"), "none") === true || t3.$index(opts, "wait") == null)
               $.script.next$0();
             return;
           }
-          t2 = $.DisplayObject__nextID;
-          $.DisplayObject__nextID = t2 + 1;
-          newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          t1 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t1 + 1;
+          newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
           newObject.set$bitmapData(null);
           newObject._pixelSnapping = "auto";
           newObject._clipRectangle = null;
         } else
           newObject = null;
       else if (typeof value === "number") {
-        t2 = $.stage;
-        t2.get$width;
-        t2 = J.toInt$0$nx(t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width);
+        t1 = $.stage;
+        t1.get$width;
+        t1 = J.toInt$0$nx(t1.getBoundsTransformed$1(t1.get$_transformationMatrix())._width);
         t3 = $.stage;
         t3.get$height;
-        t3 = Z.BitmapData$(t2, J.toInt$0$nx(t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height), false, value, 1);
-        t2 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t2 + 1;
-        newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+        t3 = Z.BitmapData$(t1, J.toInt$0$nx(t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height), false, value, 1);
+        t1 = $.DisplayObject__nextID;
+        $.DisplayObject__nextID = t1 + 1;
+        newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
         newObject.set$bitmapData(t3);
         newObject._pixelSnapping = "auto";
         newObject._clipRectangle = null;
       } else {
-        t2 = J.$index$asx(vn.get$assets(), "images");
-        t3 = J.getInterceptor$s(value);
-        t4 = t3.split$1(value, ".");
-        if (0 >= t4.length)
+        t3 = J.$index$asx(vn.get$assets(), "images");
+        t4 = J.getInterceptor$s(value);
+        t5 = t4.split$1(value, ".");
+        if (0 >= t5.length)
           throw H.ioore(0);
-        if (t2.containsKey$1(t4[0]) === true) {
-          t2 = t3.contains$1(value, ".");
-          t4 = $.resourceManager;
-          if (t2 === true) {
-            t2 = t3.split$1(value, ".");
-            if (0 >= t2.length)
+        if (t3.containsKey$1(t5[0]) === true) {
+          t1 = t4.contains$1(value, ".");
+          t3 = $.resourceManager;
+          if (t1 === true) {
+            t1 = t4.split$1(value, ".");
+            if (0 >= t1.length)
               throw H.ioore(0);
-            t2 = t4.getTextureAtlas$1(t2[0]);
-            t3 = t3.split$1(value, ".");
-            if (1 >= t3.length)
+            t1 = t3.getTextureAtlas$1(t1[0]);
+            t4 = t4.split$1(value, ".");
+            if (1 >= t4.length)
               throw H.ioore(1);
-            t3 = t2.getBitmapData$1(t3[1]);
-            t2 = $.DisplayObject__nextID;
-            $.DisplayObject__nextID = t2 + 1;
-            newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-            newObject.set$bitmapData(t3);
+            t4 = t1.getBitmapData$1(t4[1]);
+            t1 = $.DisplayObject__nextID;
+            $.DisplayObject__nextID = t1 + 1;
+            newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+            newObject.set$bitmapData(t4);
             newObject._pixelSnapping = "auto";
             newObject._clipRectangle = null;
           } else {
-            t2 = t4.getBitmapData$1(value);
+            t1 = t3.getBitmapData$1(value);
             t3 = $.DisplayObject__nextID;
             $.DisplayObject__nextID = t3 + 1;
             newObject = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-            newObject.set$bitmapData(t2);
+            newObject.set$bitmapData(t1);
             newObject._pixelSnapping = "auto";
             newObject._clipRectangle = null;
           }
@@ -12194,30 +11869,30 @@ Set: {"": "Verb;args,mod",
             sw = sa.containsKey$1("stroke_width") === true ? J.$index$asx(sa, "stroke_width") : 1;
           else
             sw = 0;
-          t2 = P.List_List(null, Z._GraphicsCommand);
-          H.setRuntimeTypeInfo(t2, [Z._GraphicsCommand]);
+          t1 = P.List_List(null, Z._GraphicsCommand);
+          H.setRuntimeTypeInfo(t1, [Z._GraphicsCommand]);
           t3 = $.DisplayObject__nextID;
           $.DisplayObject__nextID = t3 + 1;
-          shape = new Z.Shape(new Z.Graphics(t2, new Z.Rectangle(0, 0, 0, 0), true), t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          shape = new Z.Shape(new Z.Graphics(t1, new Z.Rectangle(0, 0, 0, 0), true), t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
           t3 = shape._graphics;
           t3._commands.push(new Z._GraphicsCommandBeginPath());
           t3._identityRectangleRefresh = true;
-          t2 = J.getInterceptor$asx(sa);
-          switch (t2.$index(sa, "shape")) {
+          t1 = J.getInterceptor$asx(sa);
+          switch (t1.$index(sa, "shape")) {
             case "rect":
               t3 = sa.containsKey$1("corner_radius");
               t4 = shape._graphics;
               t5 = J.getInterceptor$n(sw);
               if (t3 === true)
-                t4.rectRound$6(sw, sw, J.$sub$n(t2.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "height"), t5.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "corner_radius"), sw), J.$sub$n(t2.$index(sa, "corner_radius"), sw));
+                t4.rectRound$6(sw, sw, J.$sub$n(t1.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t5.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), sw));
               else {
-                t4._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t2.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "height"), t5.$mul(sw, 2))));
+                t4._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t1.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t5.$mul(sw, 2))));
                 t4._identityRectangleRefresh = true;
               }
               break;
             case "ellipse":
               t3 = J.getInterceptor$n(sw);
-              shape._graphics.ellipse$4(J.$div$n(t2.$index(sa, "width"), 2), J.$div$n(t2.$index(sa, "height"), 2), J.$sub$n(t2.$index(sa, "width"), t3.$mul(sw, 2)), J.$sub$n(t2.$index(sa, "height"), t3.$mul(sw, 2)));
+              shape._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), t3.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t3.$mul(sw, 2)));
               break;
             default:
           }
@@ -12227,11 +11902,11 @@ Set: {"": "Verb;args,mod",
           if (sa.containsKey$1("fill_color") === true) {
             t3 = shape._graphics;
             t4 = new Z._GraphicsCommandFillColor(null);
-            t4._color = Z._color2rgba(t2.$index(sa, "fill_color"));
+            t4._color = Z._color2rgba(t1.$index(sa, "fill_color"));
             t3._commands.push(t4);
             t3._identityRectangleRefresh = true;
           }
-          drawn = Z.BitmapData$(t2.$index(sa, "width"), t2.$index(sa, "height"), true, 0, 1);
+          drawn = Z.BitmapData$(t1.$index(sa, "width"), t1.$index(sa, "height"), true, 0, 1);
           drawn.draw$1(shape);
           if (sa.containsKey$1("stroke_color") === true) {
             t3 = P.List_List(null, Z._GraphicsCommand);
@@ -12242,20 +11917,20 @@ Set: {"": "Verb;args,mod",
             t4 = stroke._graphics;
             t4._commands.push(new Z._GraphicsCommandBeginPath());
             t4._identityRectangleRefresh = true;
-            switch (t2.$index(sa, "shape")) {
+            switch (t1.$index(sa, "shape")) {
               case "rect":
                 t3 = sa.containsKey$1("corner_radius");
-                t4 = stroke._graphics;
-                t5 = J.getInterceptor$n(sw);
+                t4 = J.getInterceptor$n(sw);
+                t5 = stroke._graphics;
                 if (t3 === true)
-                  t4.rectRound$6(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t2.$index(sa, "width"), sw), J.$sub$n(t2.$index(sa, "height"), sw), J.$sub$n(t2.$index(sa, "corner_radius"), t5.$div(sw, 2)), J.$sub$n(t2.$index(sa, "corner_radius"), t5.$div(sw, 2)));
+                  t5.rectRound$6(t4.$div(sw, 2), t4.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t4.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t4.$div(sw, 2)));
                 else {
-                  t4._commands.push(Z._GraphicsCommandRect$(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t2.$index(sa, "width"), sw), J.$sub$n(t2.$index(sa, "height"), sw)));
-                  t4._identityRectangleRefresh = true;
+                  t5._commands.push(Z._GraphicsCommandRect$(t4.$div(sw, 2), t4.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
+                  t5._identityRectangleRefresh = true;
                 }
                 break;
               case "ellipse":
-                stroke._graphics.ellipse$4(J.$div$n(t2.$index(sa, "width"), 2), J.$div$n(t2.$index(sa, "height"), 2), J.$sub$n(t2.$index(sa, "width"), sw), J.$sub$n(t2.$index(sa, "height"), sw));
+                stroke._graphics.ellipse$4(J.$div$n(t1.$index(sa, "width"), 2), J.$div$n(t1.$index(sa, "height"), 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw));
                 break;
               default:
             }
@@ -12263,28 +11938,28 @@ Set: {"": "Verb;args,mod",
             t3._commands.push(new Z._GraphicsCommandClosePath());
             t3._identityRectangleRefresh = true;
             t3 = stroke._graphics;
-            t2 = Z._color2rgba(t2.$index(sa, "stroke_color"));
+            t1 = Z._color2rgba(t1.$index(sa, "stroke_color"));
             t4 = new Z._GraphicsCommandStrokeColor(null, null, null, null);
             t4._lineWidth = J.toDouble$0$n(sw);
             t4._lineJoin = "round";
             t4._lineCap = "round";
-            t4._color = t2;
+            t4._color = t1;
             t3._commands.push(t4);
             t3._identityRectangleRefresh = true;
             drawn.draw$1(stroke);
           }
-          t2 = $.DisplayObject__nextID;
-          $.DisplayObject__nextID = t2 + 1;
-          newObject = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+          t1 = $.DisplayObject__nextID;
+          $.DisplayObject__nextID = t1 + 1;
+          newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
           newObject.set$bitmapData(drawn);
           newObject._pixelSnapping = "auto";
           newObject._clipRectangle = null;
         } else if (typeof value === "string") {
-          tf = J.$index$asx(J.$index$asx(J.get$options$x(vn), "text_formats"), J.$index$asx(box_0.opts_1, "text_format"));
-          t2 = J.getInterceptor$asx(tf);
-          newObject = Z.TextField$(value, new Z.TextFormat(t2.$index(tf, "font"), t2.$index(tf, "size"), t2.$index(tf, "color"), false, false, false, "left", 0, 0, 0, 0, 0, 0));
+          tf = J.$index$asx(J.$index$asx(t1.get$options(vn), "text_formats"), J.$index$asx(opts, "text_format"));
+          t1 = J.getInterceptor$asx(tf);
+          newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, "font"), t1.$index(tf, "size"), t1.$index(tf, "color"), false, false, false, t1.$index(tf, "align"), 0, 0, 0, 0, 0, 0));
           if (tf.containsKey$1("width") === true) {
-            newObject._width = J.toDouble$0$n(t2.$index(tf, "width"));
+            newObject._width = J.toDouble$0$n(t1.$index(tf, "width"));
             newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
             newObject._multiline = true;
             newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
@@ -12294,36 +11969,38 @@ Set: {"": "Verb;args,mod",
             newObject._autoSize = "left";
             newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
           }
+          newObject._defaultTextFormat.align = "center";
           if (tf.containsKey$1("height") === true) {
-            newObject._height = J.toDouble$0$n(t2.$index(tf, "height"));
+            newObject._height = J.toDouble$0$n(t1.$index(tf, "height"));
             newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
           }
         } else
           newObject = null;
       }
-      t1 = t1 ? "" : J.toString$0(value);
+      t1 = t2 ? "" : J.toString$0(value);
       newObject.set$name;
       newObject._name = t1;
     } else {
       box_0.position_0 = layer.getChildByName$1(posName);
       newObject = box_0.position_0.getChildByName$1(value);
-      J.$indexSet$ax(box_0.opts_1, "mod", true);
+      J.$indexSet$ax(opts, "mod", true);
       priorObject = null;
     }
     vn.set$prevNext([false, false]);
-    vnt = N.VNTransition$(box_0.position_0, newObject, box_0.opts_1);
-    transMap = H.makeLiteralMap(["fade", vnt.get$fadeTransition(), "fadeout", vnt.get$fadeOutTransition(), "fadethru", vnt.get$fadeThruTransition(), "fadeacross", vnt.get$fadeAcrossTransition(), "slide", vnt.get$slideTransition(), "scale", vnt.get$scaleTransition(), "pan", vnt.get$panTransition()]);
-    if (transMap.containsKey$1(J.$index$asx(box_0.opts_1, "trans")) === true)
-      transMap.$index(transMap, J.$index$asx(box_0.opts_1, "trans")).call$0();
+    vnt = N.VNTransition$(box_0.position_0, newObject, opts);
+    transMap = H.makeLiteralMap(["fade", vnt.get$fadeTransition(), "fadeout", vnt.get$fadeOutTransition(), "fadethru", vnt.get$fadeThruTransition(), "fadeacross", vnt.get$fadeAcrossTransition(), "slide", vnt.get$slideTransition(), "scale", vnt.get$scaleTransition(), "pan", vnt.get$panTransition(), "crossfade", vnt.get$crossFadeTransition()]);
+    t1 = J.getInterceptor$asx(opts);
+    if (transMap.containsKey$1(t1.$index(opts, "trans")) === true)
+      transMap.$index(transMap, t1.$index(opts, "trans")).call$0();
     else {
       if (priorObject != null)
         box_0.position_0.removeChild$1(priorObject);
       box_0.position_0.addChild$1(newObject);
-      t1 = J.$index$asx(box_0.opts_1, "wait");
-      if (typeof t1 === "number")
-        vn.get$juggler().delayCall$2(new N.Set_closure2(), J.$index$asx(box_0.opts_1, "wait"));
+      t2 = t1.$index(opts, "wait");
+      if (typeof t2 === "number")
+        vn.get$juggler().delayCall$2(new N.Set_closure1(), t1.$index(opts, "wait"));
     }
-    if (J.$eq(J.$index$asx(box_0.opts_1, "wait"), "none") === true || J.$index$asx(box_0.opts_1, "wait") == null)
+    if (J.$eq(t1.$index(opts, "wait"), "none") === true || t1.$index(opts, "wait") == null)
       $.script.next$0();
   },
   static: {
@@ -12335,31 +12012,18 @@ Set$: function(args, mod) {
 
 },
 
-Set_closure: {"": "Closure;box_0",
-  call$2: function(k, v) {
-    this.box_0.opts_1.putIfAbsent$2(k, new N.Set__closure1(v));
-  },
-  "+call:2:0": 0
-},
-
-Set__closure1: {"": "Closure;v_1",
+Set_closure: {"": "Closure;vn_1,opts_2,layer_3",
   call$0: function() {
-    return this.v_1;
-  },
-  "+call:0:0": 0
-},
-
-Set_closure0: {"": "Closure;box_0,vn_2,layer_3",
-  call$0: function() {
-    var t1, t2;
+    var t1, t2, t3;
     t1 = this.layer_3;
     if (t1.get$numChildren() > 0)
       t1.removeChildren$0();
     J.set$alpha$x(t1, 1);
-    t1 = this.box_0;
-    t2 = J.$index$asx(t1.opts_1, "wait");
-    if (typeof t2 === "number")
-      this.vn_2.get$juggler().delayCall$2(new N.Set__closure0(), J.$index$asx(t1.opts_1, "wait"));
+    t1 = this.opts_2;
+    t2 = J.getInterceptor$asx(t1);
+    t3 = t2.$index(t1, "wait");
+    if (typeof t3 === "number")
+      this.vn_1.get$juggler().delayCall$2(new N.Set__closure0(), t2.$index(t1, "wait"));
   },
   "+call:0:0": 0
 },
@@ -12371,14 +12035,15 @@ Set__closure0: {"": "Closure;",
   "+call:0:0": 0
 },
 
-Set_closure1: {"": "Closure;box_0,vn_4,layer_5",
+Set_closure0: {"": "Closure;box_0,vn_4,opts_5,layer_6",
   call$0: function() {
-    var t1, t2;
-    t1 = this.box_0;
-    this.layer_5.removeChild$1(t1.position_0);
-    t2 = J.$index$asx(t1.opts_1, "wait");
-    if (typeof t2 === "number")
-      this.vn_4.get$juggler().delayCall$2(new N.Set__closure(), J.$index$asx(t1.opts_1, "wait"));
+    var t1, t2, t3;
+    this.layer_6.removeChild$1(this.box_0.position_0);
+    t1 = this.opts_5;
+    t2 = J.getInterceptor$asx(t1);
+    t3 = t2.$index(t1, "wait");
+    if (typeof t3 === "number")
+      this.vn_4.get$juggler().delayCall$2(new N.Set__closure(), t2.$index(t1, "wait"));
   },
   "+call:0:0": 0
 },
@@ -12390,7 +12055,7 @@ Set__closure: {"": "Closure;",
   "+call:0:0": 0
 },
 
-Set_closure2: {"": "Closure;",
+Set_closure1: {"": "Closure;",
   call$0: function() {
     return $.script.next$0();
   },
@@ -12645,20 +12310,6 @@ convertNativeToDart_AcceptStructuredClone: function(object, mustCopy) {
   return new P.convertNativeToDart_AcceptStructuredClone_walk(mustCopy, new P.convertNativeToDart_AcceptStructuredClone_findSlot([], copies), new P.convertNativeToDart_AcceptStructuredClone_readSlot(copies), new P.convertNativeToDart_AcceptStructuredClone_writeSlot(copies)).call$1(object);
 },
 
-convertNativeToDart_ImageData: function(nativeImageData) {
-  var t1 = J.getInterceptor(nativeImageData);
-  if (typeof nativeImageData === "object" && nativeImageData !== null && !!t1.$isImageData)
-    return nativeImageData;
-  return new P._TypedImageData(nativeImageData.data, nativeImageData.height, nativeImageData.width);
-},
-
-convertDartToNative_ImageData: function(imageData) {
-  var t1 = J.getInterceptor(imageData);
-  if (!!t1.$is_TypedImageData)
-    return {data: imageData.data, height: imageData.height, width: imageData.width};
-  return imageData;
-},
-
 JenkinsSmiHash_combine: function(hash, value) {
   if (value == null)
     throw H.iae(value);
@@ -12804,8 +12455,6 @@ convertNativeToDart_AcceptStructuredClone_walk: {"": "Closure;mustCopy_4,findSlo
   }
 },
 
-_TypedImageData: {"": "Object;data,height>,width>", $is_TypedImageData: true, $isImageData: true, $asImageData: null},
-
 FilteredElementList: {"": "ListBase;_node,_childNodes",
   get$_filtered: function() {
     var t1 = this._childNodes;
@@ -12830,6 +12479,11 @@ FilteredElementList: {"": "ListBase;_node,_childNodes",
   },
   add$1: function(_, value) {
     this._childNodes._this.appendChild(value);
+  },
+  addAll$1: function(_, iterable) {
+    var t1, t2;
+    for (t1 = J.get$iterator$ax(iterable), t2 = this._childNodes._this; t1.moveNext$0();)
+      t2.appendChild(t1.get$current());
   },
   contains$1: function(_, needle) {
     var t1 = J.getInterceptor(needle);
@@ -17866,7 +17520,17 @@ _ensureInt: function(value) {
 },
 
 _ensureNum: function(value) {
-  return value;
+  if (typeof value === "number")
+    return value;
+  else
+    throw H.wrapException(new P.ArgumentError("The supplied value (" + H.S(value) + ") is not a number."));
+},
+
+_ensureString: function(value) {
+  if (typeof value === "string")
+    return value;
+  else
+    throw H.wrapException(new P.ArgumentError("The supplied value (" + H.S(value) + ") is not a string."));
 },
 
 _replaceFilename: function(url, filename) {
@@ -18617,40 +18281,38 @@ BitmapData: {"": "Object;_width,_height,_transparent,_pixelRatio<,_pixelRatioSou
   get$height: function(_) {
     return this._height;
   },
-  getImageData$5: function(_, x, y, width, height, pixelRatio) {
-    var tempBitmapData, pr, prs, t1, t2, t3, t4, t5, t6;
-    if (pixelRatio != null && pixelRatio !== this._pixelRatio) {
-      tempBitmapData = Z.BitmapData$(width, height, true, 0, pixelRatio);
-      tempBitmapData.draw$2(this, Z.Matrix$(1, 0, 0, 1, J.$negate$n(x), J.$negate$n(y)));
-      return tempBitmapData.getImageData$4(tempBitmapData, x, y, width, height);
-    }
+  copyPixels$3: function(sourceBitmapData, sourceRect, destPoint) {
+    var sourceCanvas, sourcePixelRatio, t1, t2, t3, t4, destinationContext, destinationPixelRatio, t5, dx, dy, dw, dh;
     this._ensureContext$0();
-    pr = this._pixelRatio;
-    prs = this._pixelRatioSource;
-    t1 = $.get$_backingStorePixelRatio();
-    t2 = this._context;
-    t3 = J.getInterceptor$n(x);
-    t4 = J.getInterceptor$n(y);
-    t5 = J.getInterceptor$n(width);
-    t6 = J.getInterceptor$n(height);
-    if (t1 > 1) {
-      t1 = t3.$mul(x, pr);
-      t4 = t4.$mul(y, pr);
-      t5 = t5.$mul(width, pr);
-      t6 = t6.$mul(height, pr);
-      t2.getImageDataHD$4;
-      return P.convertNativeToDart_ImageData(t2.webkitGetImageDataHD(t1, t4, t5, t6));
-    } else {
-      t1 = t3.$mul(x, prs);
-      t4 = t4.$mul(y, prs);
-      t5 = t5.$mul(width, prs);
-      t6 = t6.$mul(height, prs);
-      t2.getImageData$4;
-      return P.convertNativeToDart_ImageData(t2.getImageData(t1, t4, t5, t6));
-    }
-  },
-  getImageData$4: function($receiver, x, y, width, height) {
-    return this.getImageData$5($receiver, x, y, width, height, null);
+    sourceBitmapData._ensureContext$0();
+    sourceCanvas = sourceBitmapData._context.canvas;
+    sourcePixelRatio = sourceBitmapData._pixelRatioSource;
+    t1 = sourceRect._x;
+    if (typeof t1 !== "number")
+      throw H.iae(t1);
+    t2 = sourceRect._y;
+    if (typeof t2 !== "number")
+      throw H.iae(t2);
+    t3 = sourceRect._width;
+    if (typeof t3 !== "number")
+      throw H.iae(t3);
+    t4 = sourceRect._height;
+    if (typeof t4 !== "number")
+      throw H.iae(t4);
+    destinationContext = this._context;
+    destinationPixelRatio = this._pixelRatioSource;
+    t5 = destPoint._x;
+    if (typeof t5 !== "number")
+      throw H.iae(t5);
+    dx = destinationPixelRatio * t5;
+    t5 = destPoint._y;
+    if (typeof t5 !== "number")
+      throw H.iae(t5);
+    dy = destinationPixelRatio * t5;
+    dw = destinationPixelRatio * t3;
+    dh = destinationPixelRatio * t4;
+    destinationContext.clearRect(dx, dy, dw, dh);
+    destinationContext.drawImage(sourceCanvas, sourcePixelRatio * t1, sourcePixelRatio * t2, sourcePixelRatio * t3, sourcePixelRatio * t4, dx, dy, dw, dh);
   },
   draw$2: function(source, matrix) {
     var t1;
@@ -19046,39 +18708,38 @@ DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeO
     return this._visible && !this._off;
   },
   get$_transformationMatrix: function() {
-    var t1, t2, skewXrotation, skewYrotation, cosX, sinX, a, b, c, d, t3;
+    var t1, t2, skewXrotation, skewYrotation, scaleX, scaleY, pivotX, pivotY, cosX, sinX, a, b, c, d;
     if (this._transformationMatrixRefresh) {
       this._transformationMatrixRefresh = false;
       t1 = this._skewX;
       t2 = this._rotation;
       skewXrotation = t1 + t2;
       skewYrotation = this._skewY + t2;
-      if (skewXrotation === 0 && skewYrotation === 0) {
-        t1 = this._scaleX;
-        t2 = this._scaleY;
-        this._transformationMatrixPrivate.setTo$6(t1, 0, 0, t2, this._x - this._pivotX * t1, this._y - this._pivotY * t2);
-      } else {
+      scaleX = this._scaleX;
+      scaleY = this._scaleY;
+      pivotX = this._pivotX;
+      pivotY = this._pivotY;
+      if (scaleX > -0.0001 && scaleX < 0.0001)
+        scaleX = scaleX >= 0 ? 0.0001 : -0.0001;
+      if (scaleY > -0.0001 && scaleY < 0.0001)
+        scaleY = scaleY >= 0 ? 0.0001 : -0.0001;
+      if (skewXrotation === 0 && skewYrotation === 0)
+        this._transformationMatrixPrivate.setTo$6(scaleX, 0, 0, scaleY, this._x - pivotX * scaleX, this._y - pivotY * scaleY);
+      else {
         cosX = Math.cos(skewXrotation);
         sinX = Math.sin(skewXrotation);
-        t1 = this._scaleX;
         if (skewXrotation === skewYrotation) {
-          a = t1 * cosX;
-          b = t1 * sinX;
-          t1 = this._scaleY;
-          c = -t1 * sinX;
-          d = t1 * cosX;
+          a = scaleX * cosX;
+          b = scaleX * sinX;
+          c = -scaleY * sinX;
+          d = scaleY * cosX;
         } else {
-          a = t1 * Math.cos(skewYrotation);
-          t1 = this._scaleX;
-          b = t1 * Math.sin(skewYrotation);
-          t1 = this._scaleY;
-          c = -t1 * sinX;
-          d = t1 * cosX;
+          a = scaleX * Math.cos(skewYrotation);
+          b = scaleX * Math.sin(skewYrotation);
+          c = -scaleY * sinX;
+          d = scaleY * cosX;
         }
-        t1 = this._x;
-        t2 = this._pivotX;
-        t3 = this._pivotY;
-        this._transformationMatrixPrivate.setTo$6(a, b, c, d, t1 - (t2 * a + t3 * c), this._y - (t2 * b + t3 * d));
+        this._transformationMatrixPrivate.setTo$6(a, b, c, d, this._x - (pivotX * a + pivotY * c), this._y - (pivotX * b + pivotY * d));
       }
     }
     return this._transformationMatrixPrivate;
@@ -19090,7 +18751,8 @@ DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeO
       t1.clone$0;
       return Z.Matrix$(t1._a, t1._b, t1._c, t1._d, t1._tx, t1._ty);
     }
-    if (targetSpace.get$_parent() === this)
+    t1 = targetSpace == null;
+    if (!t1 && targetSpace.get$_parent() === this)
       return targetSpace.get$_transformationMatrix().cloneInvert$0();
     resultMatrix = Z.Matrix$fromIdentity();
     resultObject = this;
@@ -19100,7 +18762,7 @@ DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeO
       resultMatrix.concat$1(resultObject.get$_transformationMatrix());
       resultObject = resultObject._parent;
     }
-    if (targetSpace == null && resultObject != null) {
+    if (t1 && resultObject != null) {
       resultMatrix.concat$1(resultObject.get$_transformationMatrix());
       resultObject = null;
     }
@@ -19329,19 +18991,20 @@ DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeO
       for (ancestor = this._parent, ancestors = null; ancestor != null; ancestor = ancestor._parent)
         if (ancestor._hasEventListener$3($event._type, $event.get$captures(), $event._bubbles)) {
           if (ancestors == null)
-            ancestors = H.interceptedTypeCast($.get$_displayObjectListPool().pop$0(), "$isList");
+            ancestors = $.get$_displayObjectListPool().pop$0();
           J.add$1$ax(ancestors, ancestor);
         }
     } else
       ancestors = null;
     if ($event.get$captures() && ancestors != null) {
       t1 = J.getInterceptor$asx(ancestors);
-      i = t1.get$length(ancestors) - 1;
+      i = J.$sub$n(t1.get$length(ancestors), 1);
       while (true) {
-        if (!(i >= 0 && $event._stopsPropagation === false))
+        t2 = J.getInterceptor$n(i);
+        if (!(t2.$ge(i, 0) && $event._stopsPropagation === false))
           break;
         t1.$index(ancestors, i)._dispatchEventInternal$4($event, this, t1.$index(ancestors, i), 1);
-        --i;
+        i = t2.$sub(i, 1);
       }
     }
     if ($event._stopsPropagation === false)
@@ -19350,7 +19013,10 @@ DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeO
       t1 = J.getInterceptor$asx(ancestors);
       i = 0;
       while (true) {
-        if (!(i < t1.get$length(ancestors) && $event._stopsPropagation === false))
+        t2 = t1.get$length(ancestors);
+        if (typeof t2 !== "number")
+          throw H.iae(t2);
+        if (!(i < t2 && $event._stopsPropagation === false))
           break;
         t1.$index(ancestors, i)._dispatchEventInternal$4($event, this, t1.$index(ancestors, i), 3);
         ++i;
@@ -19699,11 +19365,20 @@ DisplayObjectContainer: {"": "InteractiveObject;",
     }
   },
   _dispatchEventDescendants$2: function(displayObject, $event) {
-    var descendants, t1, i;
-    descendants = H.interceptedTypeCast($.get$_displayObjectListPool().pop$0(), "$isList");
+    var descendants, t1, i, t2;
+    descendants = $.get$_displayObjectListPool().pop$0();
     this._collectDescendants$2(displayObject, descendants);
-    for (t1 = J.getInterceptor$asx(descendants), i = 0; i < t1.get$length(descendants); ++i)
+    t1 = J.getInterceptor$asx(descendants);
+    i = 0;
+    while (true) {
+      t2 = t1.get$length(descendants);
+      if (typeof t2 !== "number")
+        throw H.iae(t2);
+      if (!(i < t2))
+        break;
       J.dispatchEvent$1$x(t1.$index(descendants, i), $event);
+      ++i;
+    }
     t1.clear$0(descendants);
     $.get$_displayObjectListPool().push$1(descendants);
   },
@@ -19711,6 +19386,10 @@ DisplayObjectContainer: {"": "InteractiveObject;",
 },
 
 Graphics: {"": "Object;_commands,_identityRectangle,_identityRectangleRefresh",
+  clear$0: function(_) {
+    C.JSArray_methods.set$length(this._commands, 0);
+    this._identityRectangleRefresh = true;
+  },
   rectRound$6: function(x, y, width, height, ellipseWidth, ellipseHeight) {
     var t1, t2, t3, t4, t5, t6;
     t1 = J.getInterceptor$ns(x);
@@ -20349,7 +20028,7 @@ _Touch: {"": "Object;touchPointID<,target*,primaryTouchPoint<", static: {
 }
 },
 
-Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeight,_contentFrameRate,_canvasWidth,_canvasHeight,_contentRectangle,_clientTransformation,_stageTransformation,_renderLoop,_liblib4$_juggler,_focus<,_renderState,_stageRenderMode,_stageScaleMode,_stageAlign,_mouseCursor,_mousePosition,_mouseTarget,_mouseButtons,_touches,_mouseEvent,_touchEvent,_touchEventSubscriptions,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
+Stage: {"": "DisplayObjectContainer;_canvas,_context,_sourceWidth,_sourceHeight,_frameRate,_canvasWidth,_canvasHeight,_contentRectangle,_clientTransformation,_stageTransformation,_renderLoop,_liblib4$_juggler,_focus<,_renderState,_stageRenderMode,_stageScaleMode,_stageAlign,_mouseCursor,_mousePosition,_mouseTarget,_mouseButtons,_touches,_mouseEvent,_touchEvent,_touchEventSubscriptions,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   get$juggler: function() {
     return this._liblib4$_juggler;
   },
@@ -20398,7 +20077,7 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
     }
   },
   _updateCanvasSize$0: function() {
-    var client, t1, t2, t3, t4, t5, clientWidth, clientHeight, contentWidth, contentHeight, ratioWidth, ratioHeight, scaleY, scaleX, pivotX, pivotY, contentRectangle, t6, pixelRatio;
+    var client, t1, t2, t3, t4, t5, clientWidth, clientHeight, sourceWidth, sourceHeight, ratioWidth, ratioHeight, scaleY, scaleX, pivotX, pivotY, contentRectangle, t6, pixelRatio;
     client = this._canvas.getBoundingClientRect();
     t1 = this._canvas;
     t2 = t1.clientLeft;
@@ -20416,20 +20095,20 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
       throw H.iae(t3);
     clientWidth = t1.clientWidth;
     clientHeight = t1.clientHeight;
-    contentWidth = this._contentWidth;
-    contentHeight = this._contentHeight;
+    sourceWidth = this._sourceWidth;
+    sourceHeight = this._sourceHeight;
     if (typeof clientWidth !== "number")
       throw H.wrapException("dart2js_hint");
     if (typeof clientHeight !== "number")
       throw H.wrapException("dart2js_hint");
-    if (typeof contentWidth !== "number")
+    if (typeof sourceWidth !== "number")
       throw H.wrapException("dart2js_hint");
-    if (typeof contentHeight !== "number")
+    if (typeof sourceHeight !== "number")
       throw H.wrapException("dart2js_hint");
     if (clientWidth === 0 || clientHeight === 0)
       return;
-    ratioWidth = clientWidth / contentWidth;
-    ratioHeight = clientHeight / contentHeight;
+    ratioWidth = clientWidth / sourceWidth;
+    ratioHeight = clientHeight / sourceHeight;
     switch (this._stageScaleMode) {
       case "exactFit":
         scaleY = ratioHeight;
@@ -20456,12 +20135,12 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
       case "TR":
       case "R":
       case "BR":
-        pivotX = clientWidth - contentWidth * scaleX;
+        pivotX = clientWidth - sourceWidth * scaleX;
         break;
       case "T":
       case "":
       case "B":
-        pivotX = (clientWidth - contentWidth * scaleX) / 2;
+        pivotX = (clientWidth - sourceWidth * scaleX) / 2;
         break;
       default:
         pivotX = 0;
@@ -20470,12 +20149,12 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
       case "BL":
       case "B":
       case "BR":
-        pivotY = clientHeight - contentHeight * scaleY;
+        pivotY = clientHeight - sourceHeight * scaleY;
         break;
       case "L":
       case "":
       case "R":
-        pivotY = (clientHeight - contentHeight * scaleY) / 2;
+        pivotY = (clientHeight - sourceHeight * scaleY) / 2;
         break;
       default:
         pivotY = 0;
@@ -20858,7 +20537,7 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
   get$_onKeyEvent: function() {
     return new T.BoundClosure$1(this, "_onKeyEvent$1", null);
   },
-  Stage$5: function($name, canvas, contentWidth, contentHeight, contentFrameRate) {
+  Stage$5: function($name, canvas, sourceWidth, sourceHeight, frameRate) {
     var t1, t2;
     t1 = J.getInterceptor(canvas);
     if (typeof canvas !== "object" || canvas === null || !t1.$isCanvasElement)
@@ -20870,9 +20549,9 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
     this._name = $name;
     this._canvas = canvas;
     this._context = canvas.getContext("2d");
-    this._contentWidth = contentWidth != null ? contentWidth : canvas.width;
-    this._contentHeight = contentHeight != null ? contentHeight : canvas.height;
-    this._contentFrameRate = 30;
+    this._sourceWidth = sourceWidth != null ? sourceWidth : canvas.width;
+    this._sourceHeight = sourceHeight != null ? sourceHeight : canvas.height;
+    this._frameRate = 30;
     this._canvasWidth = -1;
     this._canvasHeight = -1;
     this._contentRectangle = new Z.Rectangle(0, 0, 0, 0);
@@ -20948,14 +20627,14 @@ Stage: {"": "DisplayObjectContainer;_canvas,_context,_contentWidth,_contentHeigh
   $isStage: true,
   static: {
 "": "Stage_autoHiDpi,Stage_resizeEvent",
-Stage$: function($name, canvas, contentWidth, contentHeight, contentFrameRate) {
+Stage$: function($name, canvas, sourceWidth, sourceHeight, frameRate) {
   var t1, t2;
   t1 = P.List_List(null, Z.DisplayObject);
   H.setRuntimeTypeInfo(t1, [Z.DisplayObject]);
   t2 = $.DisplayObject__nextID;
   $.DisplayObject__nextID = t2 + 1;
   t2 = new Z.Stage(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, [], t1, true, true, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-  t2.Stage$5($name, canvas, contentWidth, contentHeight, contentFrameRate);
+  t2.Stage$5($name, canvas, sourceWidth, sourceHeight, frameRate);
   return t2;
 }}
 
@@ -21099,7 +20778,7 @@ RenderLoop$: function() {
 
 _ContextState: {"": "Object;matrix,alpha*,compositeOperation,_nextContextState"},
 
-RenderState: {"": "Object;_context<,_currentTime,_deltaTime,_firstContextState,_currentContextState",
+RenderState: {"": "Object;_context,_currentTime,_deltaTime,_firstContextState,_currentContextState",
   get$context: function(_) {
     return this._context;
   },
@@ -21529,7 +21208,7 @@ TouchEvent: {"": "Event;_touchPointID,_isPrimaryTouchPoint,_localX,_localY,_stag
 
 AlphaMaskFilter: {"": "BitmapFilter;_alphaBitmapData,_matrix",
   apply$4: function(sourceBitmapData, sourceRect, destinationBitmapData, destinationPoint) {
-    var destinationRect, t1, t2, t3, t4, alphaRoot, alphaWarp, alphaBitmap, sourceImageData;
+    var destinationRect, t1, t2, t3, t4, alphaRoot, alphaWarp, alphaBitmap;
     destinationRect = new Z.Rectangle(destinationPoint._x, destinationPoint._y, sourceRect._width, sourceRect._height);
     destinationBitmapData.get$width;
     t1 = destinationBitmapData._width;
@@ -21576,11 +21255,8 @@ AlphaMaskFilter: {"": "BitmapFilter;_alphaBitmapData,_matrix",
       t1 = !(J.$eq(t1._x, destinationPoint._x) === true && J.$eq(t1._y, destinationPoint._y) === true);
     } else
       t1 = true;
-    if (t1) {
-      destinationBitmapData._ensureContext$0();
-      sourceImageData = sourceBitmapData.getImageData$5(sourceBitmapData, sourceRect._x, sourceRect._y, sourceRect._width, sourceRect._height, destinationBitmapData._pixelRatio);
-      J.putImageData$3$x(destinationBitmapData._context, sourceImageData, destinationPoint._x, destinationPoint._y);
-    }
+    if (t1)
+      destinationBitmapData.copyPixels$3(sourceBitmapData, sourceRect, destinationPoint);
     t1 = alphaRoot.get$_transformationMatrix();
     destinationBitmapData.draw$2(alphaRoot, Z.Matrix$(t1._a, t1._b, t1._c, t1._d, t1._tx, t1._ty));
   },
@@ -22387,7 +22063,7 @@ _FontStyleMetrics$: function(fontStyle) {
 
 },
 
-TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_caretIndex,_caretLine,_caretTime,_caretX,_caretY,_caretWidth,_caretHeight,_wordWrap,_multiline,_displayAsPassword,_background,_border,_passwordChar,_backgroundColor,_borderColor,_maxChars,_width,_height,_textWidth,_textHeight,_textLineMetrics,_refreshPending,_canvas,_context,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
+TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_caretIndex,_caretLine,_caretTime,_caretX,_caretY,_caretWidth,_caretHeight,_wordWrap,_multiline,_displayAsPassword,_background,_border,_passwordChar,_backgroundColor,_borderColor,_maxChars,_width,_height,_textWidth,_textHeight,_textLineMetrics,_refreshPending,_cacheAsBitmap,_cacheAsBitmapCanvas,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib4$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   get$text: function(_) {
     return this._text;
   },
@@ -22424,11 +22100,17 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
   },
   render$1: function(renderState) {
     var renderContext, root, t1, stage;
-    this._refreshTextLineMetrics$0();
-    this._refreshCanvas$0();
+    if ((this._refreshPending & 1) === 1)
+      this._refreshTextLineMetrics$0();
+    if ((this._refreshPending & 2) === 2)
+      this._refreshCache$0();
+    this._refreshPending = 0;
+    renderContext = renderState.get$context(renderState);
+    if (this._cacheAsBitmap)
+      renderContext.drawImage(this._cacheAsBitmapCanvas, 0, 0, this._width, this._height);
+    else
+      this._renderText$1(renderContext);
     this._caretTime = this._caretTime + renderState.get$deltaTime();
-    renderContext = renderState.get$_context();
-    renderContext.drawImage(this._canvas, 0, 0, this._width, this._height);
     if (this._type === "input") {
       root = this.get$root();
       t1 = J.getInterceptor(root);
@@ -22446,64 +22128,66 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
     }
   },
   _refreshTextLineMetrics$0: function() {
-    var t1, textFormatSize, t2, textFormatLeftMargin, textFormatRightMargin, textFormatTopMargin, textFormatBottomMargin, textFormatAlign, availableWidth, fontStyle, fontStyleMetrics, fontStyleMetricsAscent, fontStyleMetricsDescent, canvasContext, startIndex, checkLine, validLine, lineWidth, paragraph, t3, word, t4, checkLine0, line, textLineMetrics, width, offsetX, textIndex, text, shiftX, t5, shiftY, autoWidth, autoHeight;
-    t1 = this._refreshPending;
-    if ((t1 & 1) === 0)
-      return;
-    else
-      this._refreshPending = t1 & 254;
+    var t1, t2, textFormatSize, textFormatLeftMargin, textFormatRightMargin, textFormatTopMargin, textFormatBottomMargin, textFormatIndent, textFormatLeading, textFormatAlign, fontStyle, fontStyleMetrics, fontStyleMetricsAscent, fontStyleMetricsDescent, availableWidth, canvasContext, paragraphLines, startIndex, checkLine, validLine, lineWidth, lineIndent, paragraph, t3, word, t4, checkLine0, line, textLineMetrics, indent, offsetX, offsetY, width, offsetX0, autoWidth, autoHeight, textIndex, text, shiftX, t5, shiftY;
     t1 = this._textLineMetrics;
     C.JSArray_methods.set$length(t1, 0);
-    textFormatSize = J.toDouble$0$n(this._defaultTextFormat.size);
     t2 = this._defaultTextFormat;
-    textFormatLeftMargin = t2.leftMargin;
-    textFormatRightMargin = t2.rightMargin;
-    textFormatTopMargin = t2.topMargin;
-    textFormatBottomMargin = t2.bottomMargin;
-    textFormatAlign = t2.align;
-    availableWidth = this._width - textFormatLeftMargin - textFormatRightMargin;
+    textFormatSize = Z._ensureNum(t2.size);
+    textFormatLeftMargin = Z._ensureNum(t2.leftMargin);
+    textFormatRightMargin = Z._ensureNum(t2.rightMargin);
+    textFormatTopMargin = Z._ensureNum(t2.topMargin);
+    textFormatBottomMargin = Z._ensureNum(t2.bottomMargin);
+    textFormatIndent = Z._ensureNum(t2.indent);
+    textFormatLeading = Z._ensureNum(t2.leading);
+    textFormatAlign = Z._ensureString(t2.align);
     fontStyle = t2.get$_cssFontStyle();
     fontStyleMetrics = Z._getFontStyleMetrics(fontStyle);
-    fontStyleMetricsAscent = fontStyleMetrics.get$ascent();
-    fontStyleMetricsDescent = fontStyleMetrics.get$descent();
+    fontStyleMetricsAscent = Z._ensureNum(fontStyleMetrics.get$ascent());
+    fontStyleMetricsDescent = Z._ensureNum(fontStyleMetrics.get$descent());
+    availableWidth = this._width - textFormatLeftMargin - textFormatRightMargin;
     canvasContext = $.get$_dummyCanvasContext();
+    paragraphLines = P.List_List(null, J.JSInt);
+    H.setRuntimeTypeInfo(paragraphLines, [J.JSInt]);
     canvasContext.font = fontStyle;
     canvasContext.textAlign = "start";
     canvasContext.textBaseline = "alphabetic";
     canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-    for (t2 = J.split$1$s(this._text, "\n"), t2 = new H.ListIterator(t2, t2.length, 0, null), startIndex = 0, checkLine = "", validLine = "", lineWidth = 0; t2.moveNext$0();) {
+    for (t2 = J.split$1$s(this._text, "\n"), t2 = new H.ListIterator(t2, t2.length, 0, null), startIndex = 0, checkLine = "", validLine = "", lineWidth = 0, lineIndent = 0; t2.moveNext$0();) {
       paragraph = t2._liblib$_current;
+      paragraphLines.push(t1.length);
       if (!this._wordWrap) {
-        t1.push(new Z.TextLineMetrics(paragraph, startIndex, 0, 0, 0, 0, 0, 0, 0));
+        t1.push(new Z.TextLineMetrics(paragraph, startIndex, 0, 0, 0, 0, 0, 0, 0, 0));
         t3 = J.$add$ns(J.get$length$asx(paragraph), 1);
         if (typeof t3 !== "number")
           throw H.iae(t3);
         startIndex += t3;
       } else {
-        for (t3 = J.split$1$s(paragraph, " "), t3 = new H.ListIterator(t3, t3.length, 0, null), checkLine = null; t3.moveNext$0(); validLine = checkLine, checkLine = checkLine0) {
+        for (t3 = J.split$1$s(paragraph, " "), t3 = new H.ListIterator(t3, t3.length, 0, null), lineIndent = textFormatIndent, checkLine = null; t3.moveNext$0(); validLine = checkLine, checkLine = checkLine0) {
           word = t3._liblib$_current;
           t4 = checkLine == null;
           checkLine0 = this._passwordEncoder$1(t4 ? word : H.S(checkLine) + " " + H.S(word));
           lineWidth = J.toDouble$0$n(canvasContext.measureText(checkLine0).width);
-          if (lineWidth >= availableWidth)
+          if (lineIndent + lineWidth >= availableWidth) {
             if (t4) {
-              t1.push(new Z.TextLineMetrics(checkLine0, startIndex, 0, 0, 0, 0, 0, 0, 0));
+              t1.push(new Z.TextLineMetrics(checkLine0, startIndex, 0, 0, 0, 0, 0, 0, 0, 0));
               t4 = J.$add$ns(J.get$length$asx(checkLine0), 1);
               if (typeof t4 !== "number")
                 throw H.iae(t4);
               startIndex += t4;
               checkLine0 = null;
             } else {
-              t1.push(new Z.TextLineMetrics(checkLine, startIndex, 0, 0, 0, 0, 0, 0, 0));
+              t1.push(new Z.TextLineMetrics(checkLine, startIndex, 0, 0, 0, 0, 0, 0, 0, 0));
               t4 = J.$add$ns(J.get$length$asx(checkLine), 1);
               if (typeof t4 !== "number")
                 throw H.iae(t4);
               startIndex += t4;
               checkLine0 = this._passwordEncoder$1(word);
             }
+            lineIndent = 0;
+          }
         }
         if (checkLine != null) {
-          t1.push(new Z.TextLineMetrics(checkLine, startIndex, 0, 0, 0, 0, 0, 0, 0));
+          t1.push(new Z.TextLineMetrics(checkLine, startIndex, 0, 0, 0, 0, 0, 0, 0, 0));
           t3 = J.$add$ns(J.get$length$asx(checkLine), 1);
           if (typeof t3 !== "number")
             throw H.iae(t3);
@@ -22513,35 +22197,69 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
     }
     this._textWidth = 0;
     this._textHeight = 0;
-    for (line = 0; t2 = t1.length, line < t2; ++line) {
+    for (t2 = textFormatTopMargin + textFormatSize, t3 = textFormatLeading + textFormatSize + fontStyleMetricsDescent, line = 0; line < t1.length; ++line) {
       textLineMetrics = t1[line];
+      indent = C.JSArray_methods.contains$1(paragraphLines, line) ? textFormatIndent : 0;
+      offsetX = textFormatLeftMargin + indent;
+      offsetY = t2 + line * t3;
       width = J.toDouble$0$n(canvasContext.measureText(textLineMetrics._text).width);
       switch (textFormatAlign) {
         case "center":
         case "justify":
-          offsetX = textFormatLeftMargin + (availableWidth - width) / 2;
+          offsetX0 = offsetX + (availableWidth - width) / 2;
           break;
         case "right":
         case "end":
-          offsetX = textFormatLeftMargin + (availableWidth - width);
+          offsetX0 = offsetX + (availableWidth - width);
           break;
         default:
-          offsetX = textFormatLeftMargin;
+          offsetX0 = offsetX;
       }
-      textLineMetrics._x = offsetX;
-      textLineMetrics._y = textFormatTopMargin + line * textFormatSize + textFormatSize;
+      textLineMetrics._x = offsetX0;
+      textLineMetrics._y = offsetY;
       textLineMetrics._width = width;
       textLineMetrics._height = textFormatSize;
       textLineMetrics._ascent = fontStyleMetricsAscent;
       textLineMetrics._descent = fontStyleMetricsDescent;
-      textLineMetrics._leading = 0;
-      this._textWidth = P.max(this._textWidth, width);
-      this._textHeight = this._textHeight + textFormatSize;
+      textLineMetrics._leading = textFormatLeading;
+      textLineMetrics._indent = indent;
+      this._textWidth = P.max(this._textWidth, offsetX + width + textFormatRightMargin);
+      this._textHeight = offsetY + fontStyleMetricsDescent + textFormatBottomMargin;
     }
-    if (t2 > 0) {
-      this._textHeight = this._textHeight + (textFormatTopMargin + textFormatBottomMargin + fontStyleMetricsDescent);
-      this._textWidth = J.$add$ns(this._textWidth, textFormatLeftMargin + textFormatRightMargin);
-    }
+    autoWidth = this._wordWrap ? this._width : J.ceil$0$nx(this._textWidth);
+    autoHeight = C.JSNumber_methods.toInt$0(Math.ceil(this._textHeight));
+    if (this._width !== autoWidth || this._height !== autoHeight)
+      switch (this._autoSize) {
+        case "left":
+          this._width = J.toDouble$0$n(autoWidth);
+          this._refreshPending = (this._refreshPending | 3) >>> 0;
+          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
+          this._refreshPending = (this._refreshPending | 3) >>> 0;
+          break;
+        case "right":
+          this._refreshTextLineMetrics$0();
+          t2 = Z.DisplayObject.prototype.get$x.call(this, this);
+          t3 = J.getInterceptor$n(autoWidth);
+          t4 = t3.$sub(autoWidth, this._width);
+          if (typeof t4 !== "number")
+            throw H.iae(t4);
+          this.set$x(this, t2 - t4);
+          this._width = t3.toDouble$0(autoWidth);
+          this._refreshPending = (this._refreshPending | 3) >>> 0;
+          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
+          this._refreshPending = (this._refreshPending | 3) >>> 0;
+          break;
+        case "center":
+          this._refreshTextLineMetrics$0();
+          t2 = J.getInterceptor$n(autoWidth);
+          this.set$x(this, Z.DisplayObject.prototype.get$x.call(this, this) - J.$div$n(t2.$sub(autoWidth, this._width), 2));
+          this._width = t2.toDouble$0(autoWidth);
+          this._refreshPending = (this._refreshPending | 3) >>> 0;
+          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
+          this._refreshPending = (this._refreshPending | 3) >>> 0;
+          break;
+        default:
+      }
     if (this._type === "input") {
       for (line = t1.length - 1; line >= 0; --line) {
         if (line >= t1.length)
@@ -22575,87 +22293,57 @@ TextField: {"": "InteractiveObject;_text,_defaultTextFormat,_autoSize,_type,_car
         textLineMetrics._y = textLineMetrics._y + shiftY;
       }
     }
-    autoWidth = this._wordWrap ? this._width : J.ceil$0$nx(this._textWidth);
-    autoHeight = C.JSNumber_methods.toInt$0(Math.ceil(this._textHeight));
-    if (this._width !== autoWidth || this._height !== autoHeight)
-      switch (this._autoSize) {
-        case "left":
-          this._width = J.toDouble$0$n(autoWidth);
-          this._refreshPending = (this._refreshPending | 3) >>> 0;
-          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
-          this._refreshPending = (this._refreshPending | 3) >>> 0;
-          break;
-        case "right":
-          this._refreshTextLineMetrics$0();
-          t1 = Z.DisplayObject.prototype.get$x.call(this, this);
-          t2 = J.getInterceptor$n(autoWidth);
-          t3 = t2.$sub(autoWidth, this._width);
-          if (typeof t3 !== "number")
-            throw H.iae(t3);
-          this.set$x(this, t1 - t3);
-          this._width = t2.toDouble$0(autoWidth);
-          this._refreshPending = (this._refreshPending | 3) >>> 0;
-          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
-          this._refreshPending = (this._refreshPending | 3) >>> 0;
-          break;
-        case "center":
-          this._refreshTextLineMetrics$0();
-          t1 = J.getInterceptor$n(autoWidth);
-          this.set$x(this, Z.DisplayObject.prototype.get$x.call(this, this) - J.$div$n(t1.$sub(autoWidth, this._width), 2));
-          this._width = t1.toDouble$0(autoWidth);
-          this._refreshPending = (this._refreshPending | 3) >>> 0;
-          this._height = C.JSNumber_methods.toDouble$0(autoHeight);
-          this._refreshPending = (this._refreshPending | 3) >>> 0;
-          break;
-        default:
-      }
   },
-  _refreshCanvas$0: function() {
-    var t1, t2, pixelRatio, canvasWidth, canvasHeight, i, lm;
-    t1 = this._refreshPending;
-    if ((t1 & 2) === 0)
-      return;
-    else
-      this._refreshPending = t1 & 253;
-    t1 = $.get$Stage_autoHiDpi() ? $.get$_devicePixelRatio() : 1;
-    t2 = $.get$_backingStorePixelRatio();
-    if (t1 == null)
-      throw t1.$div();
-    pixelRatio = t1 / t2;
-    canvasWidth = C.JSNumber_methods.toInt$0(Math.ceil(this._width * pixelRatio));
-    canvasHeight = C.JSNumber_methods.toInt$0(Math.ceil(this._height * pixelRatio));
-    if (this._canvas == null) {
-      this._canvas = W.CanvasElement_CanvasElement(canvasHeight, canvasWidth);
-      this._context = J.get$context2D$x(this._canvas);
+  _refreshCache$0: function() {
+    var t1, t2, pixelRatio, canvasWidth, canvasHeight, context;
+    if (this._cacheAsBitmap) {
+      t1 = $.get$Stage_autoHiDpi() ? $.get$_devicePixelRatio() : 1;
+      t2 = $.get$_backingStorePixelRatio();
+      if (t1 == null)
+        throw t1.$div();
+      pixelRatio = t1 / t2;
+      canvasWidth = C.JSNumber_methods.toInt$0(Math.ceil(this._width * pixelRatio));
+      canvasHeight = C.JSNumber_methods.toInt$0(Math.ceil(this._height * pixelRatio));
+      if (this._cacheAsBitmapCanvas == null)
+        this._cacheAsBitmapCanvas = W.CanvasElement_CanvasElement(canvasHeight, canvasWidth);
+      t1 = this._cacheAsBitmapCanvas;
+      t2 = J.getInterceptor$x(t1);
+      if (t2.get$width(t1) !== canvasWidth)
+        t2.set$width(t1, canvasWidth);
+      t1 = this._cacheAsBitmapCanvas;
+      t2 = J.getInterceptor$x(t1);
+      if (t2.get$height(t1) !== canvasHeight)
+        t2.set$height(t1, canvasHeight);
+      context = J.get$context2D$x(this._cacheAsBitmapCanvas);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      context.clearRect(0, 0, this._width, this._height);
+      this._renderText$1(context);
     }
-    t1 = this._canvas;
-    t2 = J.getInterceptor$x(t1);
-    if (t2.get$width(t1) !== canvasWidth)
-      t2.set$width(t1, canvasWidth);
-    t1 = this._canvas;
-    t2 = J.getInterceptor$x(t1);
-    if (t2.get$height(t1) !== canvasHeight)
-      t2.set$height(t1, canvasHeight);
-    this._context.font = this._defaultTextFormat.get$_cssFontStyle();
-    this._context.textAlign = "start";
-    this._context.textBaseline = "alphabetic";
-    this._context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    t1 = this._context;
+  },
+  _renderText$1: function(context) {
+    var t1, i, lm;
+    context.save();
+    context.beginPath();
+    context.rect(0, 0, this._width, this._height);
+    context.clip();
+    context.font = this._defaultTextFormat.get$_cssFontStyle();
+    context.textAlign = "start";
+    context.textBaseline = "alphabetic";
     if (this._background) {
-      t1.fillStyle = Z._color2rgb(this._backgroundColor);
-      this._context.fillRect(0, 0, this._width, this._height);
-    } else
-      t1.clearRect(0, 0, this._width, this._height);
-    this._context.fillStyle = Z._color2rgb(this._defaultTextFormat.color);
+      context.fillStyle = Z._color2rgb(this._backgroundColor);
+      context.fillRect(0, 0, this._width, this._height);
+    }
+    context.fillStyle = Z._color2rgb(this._defaultTextFormat.color);
     for (t1 = this._textLineMetrics, i = 0; i < t1.length; ++i) {
       lm = t1[i];
-      this._context.fillText(lm._text, lm._x, lm._y);
+      context.fillText(lm._text, lm._x, lm._y);
     }
     if (this._border) {
-      this._context.strokeStyle = Z._color2rgb(this._borderColor);
-      this._context.lineWidth = 1;
-      this._context.strokeRect(0, 0, this._width, this._height);
+      context.strokeStyle = Z._color2rgb(this._borderColor);
+      context.lineWidth = 1;
+      context.strokeRect(0, 0, this._width, this._height);
     }
+    context.restore();
   },
   _passwordEncoder$1: function(text) {
     var t1, t2, newText, i;
@@ -22843,7 +22531,7 @@ TextField$: function(text, textFormat) {
   H.setRuntimeTypeInfo(t1, [Z.TextLineMetrics]);
   t2 = $.DisplayObject__nextID;
   $.DisplayObject__nextID = t2 + 1;
-  t2 = new Z.TextField("", null, "none", "dynamic", 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, "\u2022", 16777215, 0, 0, 100, 100, 0, 0, t1, 3, null, null, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+  t2 = new Z.TextField("", null, "none", "dynamic", 0, 0, 0, 0, 0, 0, 0, false, false, false, false, false, "\u2022", 16777215, 0, 0, 100, 100, 0, 0, t1, 3, true, null, false, true, true, 0, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
   t2.TextField$2(text, textFormat);
   return t2;
 }}
@@ -22862,7 +22550,7 @@ TextFormat: {"": "Object;font,size,color,bold,italic,underline,align,topMargin,b
   }
 },
 
-TextLineMetrics: {"": "Object;_text,_textIndex,_x<,_y<,_width,_height,_ascent,_descent,_leading",
+TextLineMetrics: {"": "Object;_text,_textIndex,_x<,_y<,_width,_height,_ascent,_descent,_leading,_indent",
   get$x: function(_) {
     return this._x;
   },
@@ -23432,6 +23120,10 @@ YamlMap: {"": "Object;_liblib6$_map",
     var t1 = this._liblib6$_map;
     return t1.remove$1(t1, this._wrapKey$1(key));
   },
+  clear$0: function(_) {
+    var t1 = this._liblib6$_map;
+    return t1.clear$0(t1);
+  },
   forEach$1: function(_, f) {
     var t1 = this._liblib6$_map;
     return t1.forEach$1(t1, new L.YamlMap_forEach_closure(this, f));
@@ -23598,8 +23290,6 @@ init.globalFunctions.TransitionFunction_easeOutBounce$closure = Z.TransitionFunc
 init.globalFunctions.TransitionFunction_easeInOutBounce$closure = Z.TransitionFunction_easeInOutBounce$closure = new Z.Closure$easeInOutBounce(Z.TransitionFunction_easeInOutBounce, "TransitionFunction_easeInOutBounce$closure");
 init.globalFunctions.TransitionFunction_easeOutInBounce$closure = Z.TransitionFunction_easeOutInBounce$closure = new Z.Closure$easeOutInBounce(Z.TransitionFunction_easeOutInBounce, "TransitionFunction_easeOutInBounce$closure");
 // Runtime type support
-Z.DisplayObject.$isDisplayObject = true;
-Z.Stage.$isDisplayObject = true;
 // getInterceptor methods
 J.getInterceptor = function(receiver) {
   if (typeof receiver == "number") {
@@ -23971,9 +23661,6 @@ J.get$offsetTop$x = function(receiver) {
 J.get$onEnded$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$onEnded(receiver);
 };
-J.get$options$x = function(receiver) {
-  return J.getInterceptor$x(receiver).get$options(receiver);
-};
 J.get$outline$x = function(receiver) {
   return J.getInterceptor$x(receiver).get$outline(receiver);
 };
@@ -24045,9 +23732,6 @@ J.moveTo$2$x = function(receiver, a0, a1) {
 };
 J.play$0$x = function(receiver) {
   return J.getInterceptor$x(receiver).play$0(receiver);
-};
-J.putImageData$3$x = function(receiver, a0, a1, a2) {
-  return J.getInterceptor$x(receiver).putImageData$3(receiver, a0, a1, a2);
 };
 J.quadraticCurveTo$4$x = function(receiver, a0, a1, a2, a3) {
   return J.getInterceptor$x(receiver).quadraticCurveTo$4(receiver, a0, a1, a2, a3);
@@ -24422,8 +24106,6 @@ H.defineNativeMethods("XMLHttpRequestProgressEvent", W.HttpRequestProgressEvent)
 
 H.defineNativeMethods("HTMLIFrameElement", W.IFrameElement);
 
-H.defineNativeMethods("ImageData", W.ImageData);
-
 H.defineNativeMethods("HTMLImageElement", W.ImageElement);
 
 H.defineNativeMethods("HTMLInputElement", W.InputElement);
@@ -24608,25 +24290,7 @@ H.defineNativeMethods("AudioParam", P.AudioParam);
 
 H.defineNativeMethodsNonleaf("AudioSourceNode", P.AudioSourceNode);
 
-H.defineNativeMethods("DataView", P.TypedData);
-
-H.defineNativeMethodsExtended("ArrayBufferView", P.TypedData, [P.TypedData_ListMixin, P.TypedData_ListMixin_FixedLengthListMixin, P.TypedData_ListMixin0, P.TypedData_ListMixin_FixedLengthListMixin0, P.TypedData_ListMixin1, P.TypedData_ListMixin_FixedLengthListMixin1, P.TypedData_ListMixin2, P.TypedData_ListMixin_FixedLengthListMixin2, P.TypedData_ListMixin3, P.TypedData_ListMixin_FixedLengthListMixin3, P.TypedData_ListMixin4, P.TypedData_ListMixin_FixedLengthListMixin4, P.TypedData_ListMixin5, P.TypedData_ListMixin_FixedLengthListMixin5, P.TypedData_ListMixin6, P.TypedData_ListMixin_FixedLengthListMixin6, P.TypedData_ListMixin7, P.TypedData_ListMixin_FixedLengthListMixin7, P.Int64List, P.Uint64List]);
-
-H.defineNativeMethods("Float32Array", P.Float32List);
-
-H.defineNativeMethods("Float64Array", P.Float64List);
-
-H.defineNativeMethods("Int16Array", P.Int16List);
-
-H.defineNativeMethods("Int32Array", P.Int32List);
-
-H.defineNativeMethods("Int8Array", P.Int8List);
-
-H.defineNativeMethods("Uint16Array", P.Uint16List);
-
-H.defineNativeMethods("Uint32Array", P.Uint32List);
-
-H.defineNativeMethods("CanvasPixelArray|Uint8ClampedArray", P.Uint8ClampedList);
+H.defineNativeMethodsExtended("ArrayBufferView", P.TypedData, [P.TypedData_ListMixin, P.TypedData_ListMixin_FixedLengthListMixin]);
 
 H.defineNativeMethodsNonleaf("Uint8Array", P.Uint8List);
 

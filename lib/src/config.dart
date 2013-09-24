@@ -19,7 +19,7 @@ class Config {
     _config = loadYaml(response);
     
     //set some defaults where not provided
-    Map defaults = {'dur': 1.0, 'dir': 'right', 'trans': 'fade', 'width':1920, 'height':1080, 'layers': ['bg']};
+    Map defaults = {'dur': 1.0, 'dir': 'right', 'gap': 'none', 'wait': 'none','trans': 'fade', 'width':1920, 'height':1080, 'layers': ['bg']};
     defaults.forEach((k,v) {
       _config['options'].putIfAbsent(k, ()=>v);  
     });

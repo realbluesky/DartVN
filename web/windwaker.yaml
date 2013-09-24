@@ -3,96 +3,68 @@ options:
   stage_id: vnStage
   scale: showAll
   align: none
-  width: 1600
-  height: 900
+  width: 1920
+  height: 1080
   defaults:
     dur: .75 
-    trans: fade
+    trans: crossfade
     ease: linear
+    gap: 1.5
     wait: none
     text_format: story
     color: 0xFF000000
   #layers are ordered as they appear below, back to front
-  layers: [bg, fg]
+  layers: [bg, img, txt]
   channels: [bgm]
   positions:
     tl: {top: 0, left: 0}
+    im: {top: 110, left: 160, width: 1600, height: 739}
     mc: {center: 0, middle: 0}
-    bc: {center: 0, bottom: 0}
-    bl: {bottom: 0, left: 0}
+    bc: {center: 0, bottom: 70}
   text_formats:
-    story: {font: 'Calibri, Tahoma, Verdana, sans-serif', size: 40, color: 0xFFFFFFFF, width: 800, height: 130} #161
+    story: {font: 'Calibri, Tahoma, Verdana, sans-serif', size: 40, color: 0xFFFFFFFF, width: 800, height: 131, align: center}
 assets:
   image_path: ../assets/image/windwaker/
   images: {s1: story1.jpg, s2: story2.jpg, s3: story3.jpg, s4: story4.jpg, s5: story5.jpg, s6: story6.jpg}
   shapes:
-    text_area: {shape: rect, fill_color: 0xFF000000, width: 1600, height: 161}
+    black: {shape: rect, fill_color: 0xFF000000, width: 1920, height: 1080}
   sounds:
     story: ../assets/sound/windwaker/story.mp3
 script:  
-   - [play, bgm, story]
-   - [set, fg, mc, "This is but one of the legends of which the people speak...", {wait: 6.5}] 
-   - [set, fg, mc, "", {wait: 1.5}]
-   - [set, bg, tl, s2, {dur: 15}]
-   - [set, bg, tl, s1, {mode: add}]
-   - [mod, bg, tl, s1, {trans: pan, dur: 16, dist: [0, -739]}]
-   - [set, fg, bl, text_area, {dur: 0}]
-   - [set, fg, bc, "Long ago, there existed a kingdom where a golden power lay hidden.", {wait: 6.5}]
-   - [set, fg, bc, "", {wait: 1}]
-   - [set, fg, bc, "It was a prosperous land blessed with green forests, tall mountains, and peace.", {wait: 6}]
-   - [mod, bg, tl, s1, {trans: fadeout}]
-   - [set, fg, bc, "", {wait: 1}]
-   - [set, fg, bc, "But one day a man of great evil found the golden power and took it for himself...", {wait: 6}]
-   - [set, fg, bc, "", {wait: 1}]
-   - [set, fg, bc, "With its strength at his command, he spread darkness across the kingdom.", {wait: 6}]
-   - [set, fg, bc, "", {wait: 1}]
-   - [set, fg, bc, "But then, when all hope had died, and the hour of doom seemed at hand...", {wait: 6}]
-   - [set, fg, bc, "", {wait: .5}]
-   - [set, bg, tl, s3, {trans: fadethru}]
-   - [set, fg, bc, "...a young boy clothed in green appeared as if from nowhere.", {wait: 6}]
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "Wielding the blade of evil's bane, he sealed the dark one away and gave the land light.", {wait: 9}]
-   - [set, fg, bc, "", {wait: .5}]
-   - [set, bg, tl, s5, {dur: 15}]
-   - [set, bg, tl, s4, {trans: fadethru, mode: add}]
-   - [mod, bg, tl, s4, {trans: pan, dur: 45, dist: [-1184, 0]}]
-   - [set, fg, bc, "This boy, who traveled through time to save the land, was known as the Hero of Time.", {wait: 8}]
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "The boy's tale was passed down through generations until it became legend...", {wait: 8}]
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "But then...a day came when a fell wind began to blow across the kingdom.", {wait: 7}]
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "The great evil that all thought had been forever sealed away by the hero...", {wait: 8}]
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "...once again crept forth from the depths of the earth, eager to resume its dark designs.", {wait: 7}]
-   - [mod, bg, tl, s4, {trans: fadeout}]
-   - [set, fg, bc, "", {wait: 1}]  
-   - [set, fg, bc, "The people believed that the Hero of Time would again come to save them.", {wait: 7}]   
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "...But the hero did not appear.", {wait: 7}]
-   - [set, fg, bc, "", {wait: 1.5}]
-   - [set, fg, bc, "Faced by an onslaught of evil, the people could do nothing but appeal to the gods.", {wait: 8}]   
-   - [set, fg, bc, "", {wait: 1}]
-   - [set, fg, bc, "In their last hour, as doom drew nigh, they left their future in the hands of fate.", {wait: 8}]
-   - [set, fg, bc]
-   - [mod, bg, tl, s5, {trans: fadeout, wait: 1}]
-   - [set, fg, mc, "What became of that kingdom...? None remain who know.", {wait: 8}] 
-   - [set, fg, mc]  
-   - [set, bg, mc, s6]
-   - [set, fg, bc, "The memory of the kingdom vanished, but its legend survived on the wind's breath.", {wait: 9}]
-    
-  #  mod[ify] is same as set, but object is expected to be present, so isn't added. dist: [dx, dy]
-  #- [set, bg, tl, town, {trans: fade, dur: 2}]
-  #- [set, mg, center_middle, "DartVN Sample - Zelda Convo", {text_format: title, trans: fadeacross, dur: 2}]
-  #- [set, mg, center_middle, "", {dur: 2}]
-  #- [say, link.stand, "How's everything going?",
-  #    "That good?  I'm glad to hear it.",
-  #    "Should this work this way, or what?"]
-  #- [set, mg, stage_left, link.calm, {trans: fade, dur: .75, wait: 1}]
-  #- [set, mg, stage_right, zelda.hand, {trans: fadethru, color: 0xFFFFFFFF, dur: .75}]
-  #- [set, fg, center_middle, "text_bubble", {wait: 0, dur: 1}]
-  #- [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, wait: 3}]
-  #- [set, fg] #clear a position by passsing nothing
-  #- [set, mg] #clear a layer by passing nothing
-  #- [set, bg, tl, 0xFF000000]
+   - [set, bg, tl, black, {trans: fade, dur: 0}]
+   - [goto, end]
+   - [play, bgm, story]      
+   - [set, txt, mc, "This is but one of the legends of which the people speak...", {trans: fade, wait: 6.5}] 
+   - [set, txt, mc, "", {trans: fade, wait: 1.5}]
+   - [set, img, im, s1, {trans: fade}]
+   - [mod, img, im, s1, {trans: pan, dur: 16, dist: [0, -739]}]
+   - [set, txt, bc, "Long ago, there existed a kingdom where a golden power lay hidden.", {trans: fade, wait: 6.5}]
+   - [set, txt, bc, "It was a prosperous land blessed with green forests, tall mountains, and peace.", {wait: 6}]
+   - [set, img, im, s2, {gap: none}]
+   - [set, txt, bc, "But one day a man of great evil found the golden power and took it for himself...", {wait: 6}]
+   - [set, txt, bc, "With its strength at his command, he spread darkness across the kingdom.", {wait: 6}]
+   - [set, txt, bc, "But then, when all hope had died, and the hour of doom seemed at hand...", {wait: 6}]
+   - [set, img, im, s3, {gap: 0}]
+   - [set, txt, bc, "...a young boy clothed in green appeared as if from nowhere.", {wait: 6}]
+   - [set, txt, bc, "Wielding the blade of evil's bane, he sealed the dark one away and gave the land light.", {wait: 9}]
+   - [set, img, im, s4, {gap: 0}]
+   - [mod, img, im, s4, {trans: pan, dur: 45, dist: [-1184, 0]}]
+   - [set, txt, bc, "This boy, who traveled through time to save the land, was known as the Hero of Time.", {wait: 8}]
+   - [set, txt, bc, "The boy's tale was passed down through generations until it became legend...", {wait: 8}]
+   - [set, txt, bc, "But then...a day came when a fell wind began to blow across the kingdom.", {wait: 7}]
+   - [set, txt, bc, "The great evil that all thought had been forever sealed away by the hero...", {wait: 8}]
+   - [set, txt, bc, "...once again crept forth from the depths of the earth, eager to resume its dark designs.", {wait: 7}]
+   - [set, img, im, s5, {gap: none}] 
+   - [set, txt, bc, "The people believed that the Hero of Time would again come to save them.", {wait: 7}]   
+   - [set, txt, bc, "...But the hero did not appear.", {wait: 7}]
+   - [set, txt, bc, "Faced by an onslaught of evil, the people could do nothing but appeal to the gods.", {wait: 8}]   
+   - [set, txt, bc, "In their last hour, as doom drew nigh, they left their future in the hands of fate.", {wait: 8}]
+   - [set, txt, bc]
+   - [set, img, im]
+   - [set, txt, mc, "What became of that kingdom...? None remain who know.", {wait: 8}]
+   - [set, txt, mc, ""] 
+   - [label, end]
+   - [set, img, im, s6, {trans: fade}]
+   - [mod, img, im, s6, {trans: scale, dur: 43, range: [2, 1]}]
+   - [set, txt, bc, "The memory of the kingdom vanished, but its legend survived on the wind's breath.", {wait: 9}]
   

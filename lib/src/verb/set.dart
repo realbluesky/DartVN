@@ -13,20 +13,12 @@ class Set extends Verb {
     var newName; 
     Position position;
     VN vn = stage.getChildByName('vn');
-    Map opts = {};// = vn.options; can restore this when addAll is implemented
+    Map opts = new Map.from(vn.options['defaults']); 
     Layer layer = vn.getChildByName(args[0]);
     if(args.length>1) posName = (args[1]=="")?null:args[1];
     if(args.length>2) value = (args[2]=="")?null:args[2];
-    if(args.length>3) {
-      //can't do this yet because YamlMap doesn't implement addAll, instead have below 5 lines
-      //opts.addAll(args[3]);
-      opts = args[3];
-      vn.options['defaults'].forEach((k,v) {
-        opts.putIfAbsent(k, ()=>v);  
-      });
-    } else {
-      opts = vn.options['defaults'];
-    }
+    if(args.length>3) (args[3] as Map).forEach((k,v) { opts[k] = v; });
+    
     var newObject;
     
     //actually setting up, not mod[ifying]
@@ -107,13 +99,14 @@ class Set extends Verb {
         newObject = new Bitmap(drawn); 
       } else if(value is String) { //not an image or shape, so just display the text
         Map tf = vn.options['text_formats'][opts['text_format']];
-        newObject = new TextField(value, new TextFormat(tf['font'], tf['size'], tf['color']));
+        newObject = new TextField(value, new TextFormat(tf['font'], tf['size'], tf['color'], align: tf['align']));
         if(tf.containsKey('width')) {
           newObject..width = tf['width']
               ..multiline = true
               ..wordWrap = true;
         }
         else newObject.autoSize = TextFieldAutoSize.LEFT;
+        newObject.defaultTextFormat.align = TextFormatAlign.CENTER;
         if(tf.containsKey('height')) newObject.height = tf['height'];
       }
       
@@ -135,7 +128,7 @@ class Set extends Verb {
     VNTransition vnt = new VNTransition(position, newObject, opts);
     Map transMap = {'fade': vnt.fadeTransition, 'fadeout': vnt.fadeOutTransition, 'fadethru': vnt.fadeThruTransition,
                     'fadeacross': vnt.fadeAcrossTransition, 'slide': vnt.slideTransition, 'scale': vnt.scaleTransition, 
-                    'pan': vnt.panTransition};
+                    'pan': vnt.panTransition, 'crossfade': vnt.crossFadeTransition};
     if(transMap.containsKey(opts['trans'])) {
       transMap[opts['trans']]();
     }

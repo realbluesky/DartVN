@@ -49,6 +49,24 @@ class VNTransition extends Option {
   }
 
 //-----------------------------------------------------------------------------//
+ void crossFadeTransition() {
+    name = 'crossfade'; 
+    _before();
+    _during();
+    current.alpha = 0;
+    position.add(current);
+    
+    if(prior != null) vn.juggler.tween(prior, opts['dur']/2, VN.ease[opts['ease']])
+      ..animate.alpha.to(0)
+      ..onComplete = () => position.removeChild(prior);
+    
+    tween = vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']]);
+    if(opts['gap'] is num) tween.delay = opts['dur'] + opts['gap'];
+    tween..animate.alpha.to(1.0)
+         ..onComplete = _after;
+  } 
+ 
+//-----------------------------------------------------------------------------//
 void fadeOutTransition() {
   name = 'fadeout'; 
   if(opts['mod'] == null) {
@@ -184,26 +202,22 @@ void fadeOutTransition() {
 //-----------------------------------------------------------------------------//
   void scaleTransition() {  
     name = 'scale';
-    _before();
-    _during();
+    if(opts['mod'] == null) {
+      _before();
+      position.add(current);
+    }
 
-    //Bitmap current;
-    
-    position.add(current); //sets current final position
-    var start = { 'right': -current.width,
-                  'left':   stage.width,
-                  'up':     stage.height,
-                  'down':  -current.height}[opts['dir']];
-    var horizontal = ['right','left'].contains(opts['dir']);    
-    
-    var trans = vn.juggler.transition(start, horizontal?current.x:current.y, opts['dur'], VN.ease[opts['ease']], (value) {
-      if(horizontal) current.x = value;
-      else current.y = value;
+    current.pivotX = current.width/2;
+    current.pivotY = current.height/2;
+    current.x += current.width/2;
+    current.y += current.height/2;
+    current.scaleX = current.scaleY = opts['range'][0];
 
-    });
     
-    trans..onStart = (() =>  current.alpha=1 )
-         ..onComplete = _after; 
+    vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']])
+      ..animate.scaleX.to(opts['range'][1])
+      ..animate.scaleY.to(opts['range'][1]);
+    
   }  
   
   void panTransition() {  
