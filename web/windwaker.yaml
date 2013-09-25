@@ -32,7 +32,6 @@ assets:
     story: ../assets/sound/windwaker/story.mp3
 script:  
    - [set, bg, tl, black, {trans: fade, dur: 0}]
-   - [goto, end]
    - [play, bgm, story]      
    - [set, txt, mc, "This is but one of the legends of which the people speak...", {trans: fade, wait: 6.5}] 
    - [set, txt, mc, "", {trans: fade, wait: 1.5}]
@@ -63,7 +62,6 @@ script:
    - [set, img, im]
    - [set, txt, mc, "What became of that kingdom...? None remain who know.", {wait: 8}]
    - [set, txt, mc, ""] 
-   - [label, end]
    - [set, img, im, s6, {trans: fade}]
    - [mod, img, im, s6, {trans: scale, dur: 43, range: [2, 1]}]
    - [set, txt, bc, "The memory of the kingdom vanished, but its legend survived on the wind's breath.", {wait: 9}]

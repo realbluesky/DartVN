@@ -446,8 +446,8 @@ JSArray: {"": "List/Interceptor;",
   },
   addAll$1: function(receiver, collection) {
     var t1;
-    for (t1 = J.get$iterator$ax(collection); t1.moveNext$0();)
-      this.add$1(receiver, t1.get$current());
+    for (t1 = new H.ListIterator(collection, collection.length, 0, null); t1.moveNext$0();)
+      this.add$1(receiver, t1._liblib$_current);
   },
   clear$0: function(receiver) {
     this.set$length(receiver, 0);
@@ -2944,9 +2944,6 @@ ConstantMap: {"": "Object;length>,_jsObject,_liblib0$_keys",
   clear$0: function(_) {
     return this._throwUnmodifiable$0();
   },
-  addAll$1: function(_, other) {
-    return this._throwUnmodifiable$0();
-  },
   $isMap: true,
   $asMap: function($V) {
     return [J.JSString, $V];
@@ -3701,22 +3698,28 @@ Constructor_visitMapping_closure: {"": "Closure;dartMap_0",
 ["dart._collection.dev", "dart:_collection-dev", , H, {
 Arrays_copy: function(src, srcStart, dst, dstStart, count) {
   var i, j, t1, t2, t3, t4;
-  if (typeof src !== "string" && (typeof src !== "object" || src === null || src.constructor !== Array && !H.isJsIndexable(src, src[init.dispatchPropertyName])))
+  if (srcStart !== (srcStart | 0))
     return H.Arrays_copy$bailout(1, src, srcStart, dst, dstStart, count);
   if (typeof dst !== "object" || dst === null || (dst.constructor !== Array || !!dst.immutable$list) && !H.isJsIndexable(dst, dst[init.dispatchPropertyName]))
     return H.Arrays_copy$bailout(1, src, srcStart, dst, dstStart, count);
-  if (srcStart < dstStart)
-    for (i = srcStart + count - 1, j = dstStart + count - 1, t1 = src.length, t2 = dst.length; i >= srcStart; --i, --j) {
-      if (i >>> 0 !== i || i >= t1)
+  if (srcStart < dstStart) {
+    i = srcStart + count - 1;
+    if (i !== (i | 0))
+      return H.Arrays_copy$bailout(2, src, srcStart, dst, dstStart, count, i);
+    j = dstStart + count - 1;
+    t1 = src.length;
+    t2 = dst.length;
+    for (; i >= srcStart; --i, --j) {
+      if (i < 0 || i >= t1)
         throw H.ioore(i);
       t3 = src[i];
       if (j >>> 0 !== j || j >= t2)
         throw H.ioore(j);
       dst[j] = t3;
     }
-  else
+  } else
     for (t1 = srcStart + count, t2 = src.length, t3 = dst.length, j = dstStart, i = srcStart; i < t1; ++i, ++j) {
-      if (i >>> 0 !== i || i >= t2)
+      if (i < 0 || i >= t2)
         throw H.ioore(i);
       t4 = src[i];
       if (j >>> 0 !== j || j >= t3)
@@ -3725,14 +3728,33 @@ Arrays_copy: function(src, srcStart, dst, dstStart, count) {
     }
 },
 
-Arrays_copy$bailout: function(state0, src, srcStart, dst, dstStart, count) {
-  var i, j, t1, t2;
-  if (srcStart < dstStart)
-    for (i = srcStart + count - 1, j = dstStart + count - 1, t1 = J.getInterceptor$asx(src); i >= srcStart; --i, --j)
-      C.JSArray_methods.$indexSet(dst, j, t1.$index(src, i));
-  else
-    for (t1 = srcStart + count, t2 = J.getInterceptor$asx(src), j = dstStart, i = srcStart; i < t1; ++i, ++j)
-      C.JSArray_methods.$indexSet(dst, j, t2.$index(src, i));
+Arrays_copy$bailout: function(state0, src, srcStart, dst, dstStart, count, i) {
+  switch (state0) {
+    case 0:
+    case 1:
+      state0 = 0;
+    case 2:
+      var j, t1;
+      if (state0 === 2 || state0 === 0 && srcStart < dstStart)
+        switch (state0) {
+          case 0:
+            i = srcStart + count - 1;
+          case 2:
+            state0 = 0;
+            j = dstStart + count - 1;
+            for (; i >= srcStart; --i, --j) {
+              if (i >>> 0 !== i || i >= src.length)
+                throw H.ioore(i);
+              C.JSArray_methods.$indexSet(dst, j, src[i]);
+            }
+        }
+      else
+        for (t1 = srcStart + count, j = dstStart, i = srcStart; i < t1; ++i, ++j) {
+          if (i >>> 0 !== i || i >= src.length)
+            throw H.ioore(i);
+          C.JSArray_methods.$indexSet(dst, j, src[i]);
+        }
+  }
 },
 
 Arrays_indexOf: function(a, element, startIndex, endIndex) {
@@ -3808,7 +3830,7 @@ IterableMixinWorkaround_setRangeList: function(list, start, end, from, skipCount
     return;
   if (skipCount < 0)
     throw H.wrapException(new P.ArgumentError(skipCount));
-  if (skipCount + $length > J.get$length$asx(from))
+  if (skipCount + $length > from.length)
     throw H.wrapException(new P.StateError("Not enough elements"));
   H.Arrays_copy(from, skipCount, list, start, $length);
 },
@@ -4155,9 +4177,6 @@ FixedLengthListMixin: {"": "Object;",
   add$1: function(receiver, value) {
     throw H.wrapException(new P.UnsupportedError("Cannot add to a fixed-length list"));
   },
-  addAll$1: function(receiver, iterable) {
-    throw H.wrapException(new P.UnsupportedError("Cannot add to a fixed-length list"));
-  },
   remove$1: function(receiver, element) {
     throw H.wrapException(new P.UnsupportedError("Cannot remove from a fixed-length list"));
   },
@@ -4177,9 +4196,6 @@ UnmodifiableListMixin: {"": "Object;",
     throw H.wrapException(new P.UnsupportedError("Cannot change the length of an unmodifiable list"));
   },
   add$1: function(_, value) {
-    throw H.wrapException(new P.UnsupportedError("Cannot add to an unmodifiable list"));
-  },
-  addAll$1: function(_, iterable) {
     throw H.wrapException(new P.UnsupportedError("Cannot add to an unmodifiable list"));
   },
   remove$1: function(_, element) {
@@ -5060,7 +5076,7 @@ _Future__propagateToListeners: function(source, listeners) {
     t2.isPropagationAborted_3 = false;
     t3 = listeners.get$_zone();
     t3._openCallbacks = t3._openCallbacks - 1;
-    t3._runInZone$2(new P._Future__propagateToListeners_closure0(t1, t2, hasError, listeners), false);
+    t3._runInZone$2(new P._Future__propagateToListeners_closure0(t2, t1, hasError, listeners), false);
     if (t2.isPropagationAborted_3 === true)
       return;
     t3 = t2.listenerHasValue_1 === true;
@@ -5138,7 +5154,7 @@ _Future__propagateToListeners_closure: {"": "Closure;box_2,listener_3",
   "+call:0:0": 0
 },
 
-_Future__propagateToListeners_closure0: {"": "Closure;box_2,box_1,hasError_4,listener_5",
+_Future__propagateToListeners_closure0: {"": "Closure;box_1,box_2,hasError_4,listener_5",
   call$0: function() {
     var t1, value, error, test, matchesTest, e, s, t2, t3, t4, exception;
     t1 = {};
@@ -6154,15 +6170,15 @@ _AsBroadcastStream__onListen_closure: {"": "Closure;this_0",
   "+call:0:0": 0
 },
 
-_BroadcastSubscriptionWrapper: {"": "Object;_liblib3$_stream",
+_BroadcastSubscriptionWrapper: {"": "Object;_stream",
   pause$1: function(_, resumeSignal) {
-    this._liblib3$_stream._pauseSubscription$1(resumeSignal);
+    this._stream._pauseSubscription$1(resumeSignal);
   },
   pause$0: function($receiver) {
     return this.pause$1($receiver, null);
   },
   cancel$0: function() {
-    this._liblib3$_stream._cancelSubscription$0();
+    this._stream._cancelSubscription$0();
   }
 },
 
@@ -6199,7 +6215,7 @@ _ForwardingStream: {"": "Stream;",
   }
 },
 
-_ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_liblib3$_stream,_subscription,_liblib3$_onData,_onError,_onDone,_zone,_state,_pending",
+_ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_stream,_subscription,_liblib3$_onData,_onError,_onDone,_zone,_state,_pending",
   _liblib3$_add$1: function(data) {
     if ((this._state & 2) !== 0)
       return;
@@ -6236,7 +6252,7 @@ _ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_liblib3$_stre
     }
   },
   _handleData$1: function(data) {
-    this._liblib3$_stream._handleData$2(data, this);
+    this._stream._handleData$2(data, this);
   },
   get$_handleData: function() {
     return new T.BoundClosure$1(this, "_handleData$1", null);
@@ -6257,7 +6273,7 @@ _ForwardingStreamSubscription: {"": "_BufferingStreamSubscription;_liblib3$_stre
     var t1, t2;
     t1 = this.get$_handleData();
     t2 = this.get$_handleError();
-    this._subscription = this._liblib3$_stream._liblib3$_source.listen$3$onDone$onError(t1, this.get$_handleDone(), t2);
+    this._subscription = this._stream._liblib3$_source.listen$3$onDone$onError(t1, this.get$_handleDone(), t2);
   },
   $as_BufferingStreamSubscription: function($S, $T) {
     return [$T];
@@ -6523,9 +6539,6 @@ _HashMap: {"": "Object;_liblib1$_length,_strings,_nums,_rest,_keys",
       return this._findBucketIndex$2(rest[this._computeHashCode$1(key)], key) >= 0;
     }
   },
-  addAll$1: function(_, other) {
-    J.forEach$1$ax(other, new P._HashMap_addAll_closure(this));
-  },
   $index: function(_, key) {
     var strings, t1, entry, nums, rest, bucket, index;
     if (typeof key === "string" && key !== "__proto__") {
@@ -6756,13 +6769,6 @@ _HashMap_values_closure: {"": "Closure;this_0",
     return J.$index$asx(this.this_0, each);
   },
   "+call:1:0": 0
-},
-
-_HashMap_addAll_closure: {"": "Closure;this_0",
-  call$2: function(key, value) {
-    J.$indexSet$ax(this.this_0, key, value);
-  },
-  "+call:2:0": 0
 },
 
 _IdentityHashMap: {"": "_HashMap;_liblib1$_length,_strings,_nums,_rest,_keys",
@@ -7481,15 +7487,6 @@ ListMixin: {"": "Object;",
     this.set$length(receiver, t1 + 1);
     this.$indexSet(receiver, t1, element);
   },
-  addAll$1: function(receiver, iterable) {
-    var t1, element, t2;
-    for (t1 = J.get$iterator$ax(iterable); t1.moveNext$0();) {
-      element = t1.get$current();
-      t2 = this.get$length(receiver);
-      this.set$length(receiver, t2 + 1);
-      this.$indexSet(receiver, t2, element);
-    }
-  },
   remove$1: function(receiver, element) {
     var i, t1;
     for (i = 0; i < this.get$length(receiver); ++i) {
@@ -7739,39 +7736,6 @@ ListQueue: {"": "IterableBase;_table,_head,_tail,_modificationCount",
   add$1: function(_, element) {
     this._add$1(element);
   },
-  addAll$1: function(_, elements) {
-    var t1, addCount, $length, t2, t3, endSpace, preSpace;
-    t1 = J.getInterceptor(elements);
-    if (typeof elements === "object" && elements !== null && (elements.constructor === Array || !!t1.$isList)) {
-      addCount = t1.get$length(elements);
-      $length = this.get$length(this);
-      t1 = $length + addCount;
-      t2 = this._table;
-      t3 = t2.length;
-      if (t1 >= t3) {
-        this._preGrow$1(t1);
-        t2 = this._table;
-        H.IterableMixinWorkaround_setRangeList(t2, $length, t1, elements, 0);
-        this._tail = this._tail + addCount;
-      } else {
-        t1 = this._tail;
-        endSpace = t3 - t1;
-        if (addCount < endSpace) {
-          H.IterableMixinWorkaround_setRangeList(t2, t1, t1 + addCount, elements, 0);
-          this._tail = this._tail + addCount;
-        } else {
-          preSpace = addCount - endSpace;
-          H.IterableMixinWorkaround_setRangeList(t2, t1, t1 + endSpace, elements, 0);
-          t1 = this._table;
-          H.IterableMixinWorkaround_setRangeList(t1, 0, preSpace, elements, endSpace);
-          this._tail = preSpace;
-        }
-      }
-      this._modificationCount = this._modificationCount + 1;
-    } else
-      for (t1 = t1.get$iterator(elements); t1.moveNext$0();)
-        this._add$1(t1.get$current());
-  },
   remove$1: function(_, object) {
     var i, t1;
     for (i = this._head; i !== this._tail; i = (i + 1 & this._table.length - 1) >>> 0) {
@@ -7996,13 +7960,6 @@ ListQueue: {"": "IterableBase;_table,_head,_tail,_modificationCount",
       return this._tail + firstPartSize;
     }
   },
-  _preGrow$1: function(newElementCount) {
-    var newTable = P.List_List(P.ListQueue__nextPowerOf2(newElementCount), H.getRuntimeTypeArgument(this, "ListQueue", 0));
-    H.setRuntimeTypeInfo(newTable, [H.getRuntimeTypeArgument(this, "ListQueue", 0)]);
-    this._tail = this._writeToList$1(newTable);
-    this._table = newTable;
-    this._head = 0;
-  },
   ListQueue$1: function(initialCapacity, $E) {
     var t1 = P.List_List(8, $E);
     H.setRuntimeTypeInfo(t1, [$E]);
@@ -8018,18 +7975,6 @@ ListQueue$: function(initialCapacity, $E) {
   H.setRuntimeTypeInfo(t1, [$E]);
   t1.ListQueue$1(initialCapacity, $E);
   return t1;
-},
-
-ListQueue__nextPowerOf2: function(number) {
-  var nextNumber;
-  if (number == null)
-    throw number.$shl();
-  number = (number << 2 >>> 0) - 1;
-  for (; true; number = nextNumber) {
-    nextNumber = (number & number - 1) >>> 0;
-    if (nextNumber === 0)
-      return number;
-  }
 }}
 
 },
@@ -9057,12 +9002,6 @@ _ChildrenElementList: {"": "ListBase;_element,_childElements",
     var t1 = this.toList$0(this);
     return new H.ListIterator(t1, t1.length, 0, null);
   },
-  addAll$1: function(_, iterable) {
-    var t1, t2;
-    t1 = J.getInterceptor(iterable);
-    for (t1 = J.get$iterator$ax(typeof iterable === "object" && iterable !== null && !!t1.$is_ChildNodeListLazy ? P.List_List$from(iterable, true, null) : iterable), t2 = this._element; t1.moveNext$0();)
-      t2.appendChild(t1.get$current());
-  },
   setRange$4: function(_, start, end, iterable, skipCount) {
     throw H.wrapException(new P.UnimplementedError(null));
   },
@@ -9219,20 +9158,6 @@ _ChildNodeListLazy: {"": "ListBase;_this",
   add$1: function(_, value) {
     this._this.appendChild(value);
   },
-  addAll$1: function(_, iterable) {
-    var t1, t2, len, i;
-    t1 = J.getInterceptor$ax(iterable);
-    if (typeof iterable === "object" && iterable !== null && !!t1.$is_ChildNodeListLazy) {
-      t1 = iterable._this;
-      t2 = this._this;
-      if (t1 !== t2)
-        for (len = t1.childNodes.length, i = 0; i < len; ++i)
-          t2.appendChild(t1.firstChild);
-      return;
-    }
-    for (t1 = t1.get$iterator(iterable), t2 = this._this; t1.moveNext$0();)
-      t2.appendChild(t1.get$current());
-  },
   removeLast$0: function(_) {
     var result = this.get$last(this);
     if (result != null)
@@ -9272,7 +9197,6 @@ _ChildNodeListLazy: {"": "ListBase;_this",
       throw H.ioore(index);
     return t1[index];
   },
-  $is_ChildNodeListLazy: true,
   $asList: function() {
     return [W.Node0];
   },
@@ -9418,9 +9342,9 @@ _EventStream0: {"": "Stream;_liblib5$_target,_liblib5$_eventType,_liblib5$_useCa
 
 _ElementEventStreamImpl: {"": "_EventStream0;_liblib5$_target,_liblib5$_eventType,_liblib5$_useCapture", $as_EventStream0: null},
 
-_ElementListEventStreamImpl: {"": "Stream;_liblib5$_pool,_stream",
+_ElementListEventStreamImpl: {"": "Stream;_liblib5$_pool,_liblib5$_stream",
   listen$4$cancelOnError$onDone$onError: function(onData, cancelOnError, onDone, onError) {
-    return this._stream.listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError);
+    return this._liblib5$_stream.listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError);
   },
   listen$3$onDone$onError: function(onData, onDone, onError) {
     return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
@@ -9545,9 +9469,6 @@ ImmutableListMixin: {"": "Object;",
     return new W.FixedSizeListIterator(receiver, this.get$length(receiver), -1, null);
   },
   add$1: function(receiver, value) {
-    throw H.wrapException(new P.UnsupportedError("Cannot add to immutable List."));
-  },
-  addAll$1: function(receiver, iterable) {
     throw H.wrapException(new P.UnsupportedError("Cannot add to immutable List."));
   },
   removeLast$0: function(receiver) {
@@ -11070,73 +10991,92 @@ Position__getXY_closure: {"": "Closure;box_0,width_1,height_2,sw_3,sh_4",
 
 VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<,tween,lib9$Option$name",
   _before$0: function() {
-    if (J.$eq(J.$index$asx(this.opts, "mode"), "add") !== true && this.position.get$numChildren() > 0)
+    var t1 = this.opts;
+    if (J.$eq(t1.$index(t1, "mode"), "add") !== true && this.position.get$numChildren() > 0)
       this.prior = this.position.getChildAt$1(0);
   },
   _after$0: function() {
-    var t1 = this.prior;
+    var t1, t2;
+    t1 = this.prior;
     if (t1 != null && J.$eq(t1, this.current) !== true && this.position.getChildByName$1(J.get$name$x(this.prior)) != null)
       this.position.removeChild$1(this.prior);
     J.set$alpha$x(this.current, 1);
-    if (J.$eq(J.$index$asx(this.opts, "wait"), "user") === true)
+    t1 = this.opts;
+    if (J.$eq(t1.$index(t1, "wait"), "user") === true)
       this.vn.set$prevNext([true, true]);
     else {
-      t1 = J.$index$asx(this.opts, "wait");
-      if (typeof t1 === "number")
-        this.vn.get$juggler().delayCall$2(new N.VNTransition__after_closure(), J.$index$asx(this.opts, "wait"));
+      t1 = this.opts;
+      t1 = t1.$index(t1, "wait");
+      if (typeof t1 === "number") {
+        t1 = this.vn.get$juggler();
+        t2 = this.opts;
+        t1.delayCall$2(new N.VNTransition__after_closure(), t2.$index(t2, "wait"));
+      }
     }
   },
   get$_after: function() {
     return new P.BoundClosure$0(this, "_after$0", null);
   },
   fadeTransition$0: function() {
-    var t1, t2, t3, t4;
+    var t1, t2, t3, t4, t5;
     this.name = "fade";
     this._before$0();
     J.set$alpha$x(this.current, 0);
     J.add$1$ax(this.position, this.current);
     t1 = this.vn.get$juggler();
     t2 = this.current;
-    t3 = J.$index$asx(this.opts, "dur");
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t4 = $.get$VN_ease();
-    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
-    t4 = this.tween;
-    t4.get$animate;
-    t3 = t4._tweenPropertyFactory;
-    t3.get$alpha;
-    t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t3 = this.get$_after();
-    t4.set$onComplete;
-    t4._onComplete = t3;
+    t5 = this.opts;
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, t5.$index(t5, "ease")));
+    t5 = this.tween;
+    t5.get$animate;
+    t4 = t5._tweenPropertyFactory;
+    t4.get$alpha;
+    t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
+    t4 = this.get$_after();
+    t5.set$onComplete;
+    t5._onComplete = t4;
   },
   get$fadeTransition: function() {
     return new P.BoundClosure$0(this, "fadeTransition$0", null);
   },
   crossFadeTransition$0: function() {
-    var t1, t2, t3, t4;
-    this.name = "fade";
+    var t1, t2, t3, t4, t5;
+    this.name = "crossfade";
     this._before$0();
     J.set$alpha$x(this.current, 0);
     J.add$1$ax(this.position, this.current);
     if (this.prior != null) {
       t1 = this.vn.get$juggler();
       t2 = this.prior;
-      t3 = J.$div$n(J.$index$asx(this.opts, "dur"), 2);
+      t3 = this.opts;
+      t3 = J.$div$n(t3.$index(t3, "dur"), 2);
       t4 = $.get$VN_ease();
-      t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
-      t3 = t4._tweenPropertyFactory;
-      t3.get$alpha;
-      t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-      t4._onComplete = new N.VNTransition_crossFadeTransition_closure(this);
+      t5 = this.opts;
+      t5 = t1.tween$3(t2, t3, t4.$index(t4, t5.$index(t5, "ease")));
+      t4 = t5._tweenPropertyFactory;
+      t4.get$alpha;
+      t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+      t5._onComplete = new N.VNTransition_crossFadeTransition_closure(this);
     }
     t1 = this.vn.get$juggler();
     t2 = this.current;
-    t3 = J.$index$asx(this.opts, "dur");
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t4 = $.get$VN_ease();
-    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
-    t1 = J.$index$asx(this.opts, "gap");
-    if (typeof t1 === "number")
-      this.tween.set$delay(J.$add$ns(J.$index$asx(this.opts, "dur"), J.$index$asx(this.opts, "gap")));
+    t5 = this.opts;
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, t5.$index(t5, "ease")));
+    t1 = this.opts;
+    t1 = t1.$index(t1, "gap");
+    if (typeof t1 === "number") {
+      t1 = this.tween;
+      t2 = this.opts;
+      t2 = t2.$index(t2, "dur");
+      t3 = this.opts;
+      t1.set$delay(J.$add$ns(t2, t3.$index(t3, "gap")));
+    }
     t1 = this.tween;
     t1.get$animate;
     t2 = t1._tweenPropertyFactory;
@@ -11150,30 +11090,33 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
     return new P.BoundClosure$0(this, "crossFadeTransition$0", null);
   },
   fadeOutTransition$0: function() {
-    var t1, t2, t3, t4;
+    var t1, t2, t3, t4, t5;
     this.name = "fadeout";
-    if (J.$index$asx(this.opts, "mod") == null) {
+    t1 = this.opts;
+    if (t1.$index(t1, "mod") == null) {
       this._before$0();
       J.add$1$ax(this.position, this.current);
     }
     t1 = this.vn.get$juggler();
     t2 = this.current;
-    t3 = J.$index$asx(this.opts, "dur");
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t4 = $.get$VN_ease();
-    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
-    t4 = this.tween;
-    t4.get$animate;
-    t3 = t4._tweenPropertyFactory;
-    t3.get$alpha;
-    t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-    t4.set$onComplete;
-    t4._onComplete = new N.VNTransition_fadeOutTransition_closure(this);
+    t5 = this.opts;
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, t5.$index(t5, "ease")));
+    t5 = this.tween;
+    t5.get$animate;
+    t4 = t5._tweenPropertyFactory;
+    t4.get$alpha;
+    t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+    t5.set$onComplete;
+    t5._onComplete = new N.VNTransition_fadeOutTransition_closure(this);
   },
   get$fadeOutTransition: function() {
     return new P.BoundClosure$0(this, "fadeOutTransition$0", null);
   },
   fadeThruTransition$0: function() {
-    var t1, t2, t3, t4;
+    var t1, t2, t3, t4, t5;
     this.name = "fadethru";
     this._before$0();
     t1 = this.current;
@@ -11189,11 +11132,14 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
       t2._clipRectangle = null;
       this.current = t2;
     }
-    t1 = Z.BitmapData$(J.toInt$0$nx(J.get$width$x(this.current)), J.toInt$0$nx(J.get$height$x(this.current)), false, J.$index$asx(this.opts, "color"), 1);
+    t1 = J.toInt$0$nx(J.get$width$x(this.current));
+    t2 = J.toInt$0$nx(J.get$height$x(this.current));
+    t3 = this.opts;
+    t3 = Z.BitmapData$(t1, t2, false, t3.$index(t3, "color"), 1);
     t2 = $.DisplayObject__nextID;
     $.DisplayObject__nextID = t2 + 1;
     t2 = new Z.Bitmap(null, null, null, t2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-    t2.set$bitmapData(t1);
+    t2.set$bitmapData(t3);
     t2._pixelSnapping = "auto";
     t2._clipRectangle = null;
     t2._alpha = 0;
@@ -11205,30 +11151,37 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
     J.add$1$ax(this.position, this.temp);
     t1 = this.vn.get$juggler();
     t2 = this.temp;
-    t3 = J.$div$n(J.$index$asx(this.opts, "dur"), 2);
+    t3 = this.opts;
+    t3 = J.$div$n(t3.$index(t3, "dur"), 2);
     t4 = $.get$VN_ease();
-    t4 = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
-    t3 = t4._tweenPropertyFactory;
-    t3.get$alpha;
-    t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
-    t4._onComplete = new N.VNTransition_fadeThruTransition_closure(this);
-    t4 = this.vn.get$juggler();
-    t3 = this.temp;
-    t2 = J.$div$n(J.$index$asx(this.opts, "dur"), 2);
-    t1 = $.get$VN_ease();
-    t1 = t4.tween$3(t3, t2, t1.$index(t1, J.$index$asx(this.opts, "ease")));
+    t5 = this.opts;
+    t5 = t1.tween$3(t2, t3, t4.$index(t4, t5.$index(t5, "ease")));
+    t4 = t5._tweenPropertyFactory;
+    t4.get$alpha;
+    t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(1);
+    t5._onComplete = new N.VNTransition_fadeThruTransition_closure(this);
+    t5 = this.vn.get$juggler();
+    t4 = this.temp;
+    t3 = this.opts;
+    t3 = J.$div$n(t3.$index(t3, "dur"), 2);
+    t2 = $.get$VN_ease();
+    t1 = this.opts;
+    t1 = t5.tween$3(t4, t3, t2.$index(t2, t1.$index(t1, "ease")));
     t2 = t1._tweenPropertyFactory;
     t2.get$alpha;
     t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-    t1.set$delay(J.$div$n(J.$index$asx(this.opts, "dur"), 2));
+    t2 = this.opts;
+    t1.set$delay(J.$div$n(t2.$index(t2, "dur"), 2));
     t1._onComplete = this.get$_after();
-    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeThruTransition_closure0(this), J.$index$asx(this.opts, "dur"));
+    t1 = this.vn.get$juggler();
+    t2 = this.opts;
+    t1.delayCall$2(new N.VNTransition_fadeThruTransition_closure0(this), t2.$index(t2, "dur"));
   },
   get$fadeThruTransition: function() {
     return new P.BoundClosure$0(this, "fadeThruTransition$0", null);
   },
   fadeAcrossTransition$0: function() {
-    var t1, t2, t3, stops, gradientWidthHeight, pathWidthHeight, fade, gradient, t4, t5, alphaMask, t6;
+    var t1, t2, t3, stops, gradientWidthHeight, pathWidthHeight, fade, gradient, t4, t5, alphaMask, t6, t7;
     t1 = {};
     this.name = "fadeacross";
     this._before$0();
@@ -11251,7 +11204,8 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
     pathWidthHeight = [J.$mul$n(J.get$width$x(this.current), 0.2), J.get$height$x(this.current)];
     t1.horizontal_0 = true;
     t1.startStop_1 = [J.$mul$n(J.$negate$n(J.get$width$x(this.current)), 0.2), J.get$width$x(this.current)];
-    switch (J.$index$asx(this.opts, "dir")) {
+    t2 = this.opts;
+    switch (t2.$index(t2, "dir")) {
       case "left":
         t2 = new H.ReversedListIterable(stops);
         H.setRuntimeTypeInfo(t2, [null]);
@@ -11346,16 +11300,20 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
     if (1 >= t3)
       throw H.ioore(1);
     t5 = t5[1];
-    t3 = J.$index$asx(this.opts, "dur");
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t6 = $.get$VN_ease();
-    t2.transition$5(t2, t4, t5, t3, t6.$index(t6, J.$index$asx(this.opts, "ease")), new N.VNTransition_fadeAcrossTransition_closure(t1, this, fade))._onComplete = this.get$_after();
-    this.vn.get$juggler().delayCall$2(new N.VNTransition_fadeAcrossTransition_closure0(this), J.$index$asx(this.opts, "dur"));
+    t7 = this.opts;
+    t2.transition$5(t2, t4, t5, t3, t6.$index(t6, t7.$index(t7, "ease")), new N.VNTransition_fadeAcrossTransition_closure(t1, this, fade))._onComplete = this.get$_after();
+    t1 = this.vn.get$juggler();
+    t7 = this.opts;
+    t1.delayCall$2(new N.VNTransition_fadeAcrossTransition_closure0(this), t7.$index(t7, "dur"));
   },
   get$fadeAcrossTransition: function() {
     return new P.BoundClosure$0(this, "fadeAcrossTransition$0", null);
   },
   slideTransition$0: function() {
-    var t1, t2, t3, start, horizontal, t4, trans;
+    var t1, t2, t3, start, horizontal, t4, t5, trans;
     this.name = "slide";
     this._before$0();
     J.set$alpha$x(this.current, 0);
@@ -11367,14 +11325,18 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
     t3 = $.stage;
     t3.get$height;
     t3 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height, "down", J.$negate$n(J.get$height$x(this.current))]);
-    start = t3.$index(t3, J.$index$asx(this.opts, "dir"));
-    horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.opts, "dir"));
-    t3 = this.vn.get$juggler();
+    t2 = this.opts;
+    start = t3.$index(t3, t2.$index(t2, "dir"));
+    t2 = this.opts;
+    horizontal = C.JSArray_methods.contains$1(["right", "left"], t2.$index(t2, "dir"));
+    t2 = this.vn.get$juggler();
     t1 = this.current;
     t1 = horizontal ? J.get$x$x(t1) : J.get$y$x(t1);
-    t2 = J.$index$asx(this.opts, "dur");
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t4 = $.get$VN_ease();
-    trans = t3.transition$5(t3, start, t1, t2, t4.$index(t4, J.$index$asx(this.opts, "ease")), new N.VNTransition_slideTransition_closure(this, horizontal));
+    t5 = this.opts;
+    trans = t2.transition$5(t2, start, t1, t3, t4.$index(t4, t5.$index(t5, "ease")), new N.VNTransition_slideTransition_closure(this, horizontal));
     trans._onStart = new N.VNTransition_slideTransition_closure0(this);
     trans._onComplete = this.get$_after();
   },
@@ -11382,45 +11344,70 @@ VNTransition: {"": "Option;name>,position>,current<,opts<,vn<,layer,prior<,temp<
     return new P.BoundClosure$0(this, "slideTransition$0", null);
   },
   scaleTransition$0: function() {
-    var t1, t2, t3, start, horizontal, t4, trans;
+    var t1, t2, t3, t4, t5;
     this.name = "scale";
-    this._before$0();
-    J.add$1$ax(this.position, this.current);
-    t1 = J.$negate$n(J.get$width$x(this.current));
-    t2 = $.stage;
-    t2.get$width;
-    t2 = t2.getBoundsTransformed$1(t2.get$_transformationMatrix())._width;
-    t3 = $.stage;
-    t3.get$height;
-    t3 = H.makeLiteralMap(["right", t1, "left", t2, "up", t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height, "down", J.$negate$n(J.get$height$x(this.current))]);
-    start = t3.$index(t3, J.$index$asx(this.opts, "dir"));
-    horizontal = C.JSArray_methods.contains$1(["right", "left"], J.$index$asx(this.opts, "dir"));
-    t3 = this.vn.get$juggler();
+    t1 = this.opts;
+    if (t1.$index(t1, "mod") == null) {
+      this._before$0();
+      J.add$1$ax(this.position, this.current);
+    }
     t1 = this.current;
-    t1 = horizontal ? J.get$x$x(t1) : J.get$y$x(t1);
-    t2 = J.$index$asx(this.opts, "dur");
+    t1.set$pivotX(J.$div$n(J.get$width$x(t1), 2));
+    t1 = this.current;
+    t1.set$pivotY(J.$div$n(J.get$height$x(t1), 2));
+    t1 = this.current;
+    t2 = J.getInterceptor$x(t1);
+    t2.set$x(t1, J.$add$ns(t2.get$x(t1), J.$div$n(J.get$width$x(this.current), 2)));
+    t1 = this.current;
+    t2 = J.getInterceptor$x(t1);
+    t2.set$y(t1, J.$add$ns(t2.get$y(t1), J.$div$n(J.get$height$x(this.current), 2)));
+    t1 = this.current;
+    t2 = this.opts;
+    t2 = J.$index$asx(t2.$index(t2, "range"), 0);
+    t1.set$scaleY(t2);
+    t1.set$scaleX(t2);
+    t2 = this.vn.get$juggler();
+    t1 = this.current;
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t4 = $.get$VN_ease();
-    trans = t3.transition$5(t3, start, t1, t2, t4.$index(t4, J.$index$asx(this.opts, "ease")), new N.VNTransition_scaleTransition_closure(this, horizontal));
-    trans._onStart = new N.VNTransition_scaleTransition_closure0(this);
-    trans._onComplete = this.get$_after();
+    t5 = this.opts;
+    t5 = t2.tween$3(t1, t3, t4.$index(t4, t5.$index(t5, "ease")));
+    t4 = t5._tweenPropertyFactory;
+    t4.get$scaleX;
+    t4 = t4._addTweenProperty$1("scaleX");
+    t3 = this.opts;
+    t4.targetValue = J.toDouble$0$n(J.$index$asx(t3.$index(t3, "range"), 1));
+    t5 = t5._tweenPropertyFactory;
+    t5.get$scaleY;
+    t5 = t5._addTweenProperty$1("scaleY");
+    t3 = this.opts;
+    t5.targetValue = J.toDouble$0$n(J.$index$asx(t3.$index(t3, "range"), 1));
   },
   get$scaleTransition: function() {
     return new P.BoundClosure$0(this, "scaleTransition$0", null);
   },
   panTransition$0: function() {
-    var nx, ny, t1, t2, t3, t4;
+    var t1, t2, nx, ny, t3, t4, t5;
     this.name = "pan";
-    if (J.$index$asx(this.opts, "mod") == null) {
+    t1 = this.opts;
+    if (t1.$index(t1, "mod") == null) {
       this._before$0();
       J.add$1$ax(this.position, this.current);
     }
-    nx = J.$add$ns(J.get$x$x(this.current), J.$index$asx(J.$index$asx(this.opts, "dist"), 0));
-    ny = J.$add$ns(J.get$y$x(this.current), J.$index$asx(J.$index$asx(this.opts, "dist"), 1));
+    t1 = J.get$x$x(this.current);
+    t2 = this.opts;
+    nx = J.$add$ns(t1, J.$index$asx(t2.$index(t2, "dist"), 0));
+    t2 = J.get$y$x(this.current);
+    t1 = this.opts;
+    ny = J.$add$ns(t2, J.$index$asx(t1.$index(t1, "dist"), 1));
     t1 = this.vn.get$juggler();
     t2 = this.current;
-    t3 = J.$index$asx(this.opts, "dur");
+    t3 = this.opts;
+    t3 = t3.$index(t3, "dur");
     t4 = $.get$VN_ease();
-    this.tween = t1.tween$3(t2, t3, t4.$index(t4, J.$index$asx(this.opts, "ease")));
+    t5 = this.opts;
+    this.tween = t1.tween$3(t2, t3, t4.$index(t4, t5.$index(t5, "ease")));
     t1 = J.getInterceptor(nx);
     if (t1.$eq(nx, J.get$x$x(this.current)) !== true) {
       t2 = this.tween;
@@ -11480,12 +11467,17 @@ VNTransition_fadeOutTransition_closure: {"": "Closure;this_0",
     var t1, t2;
     t1 = this.this_0;
     J.get$position$x(t1).removeChild$1(t1.get$current());
-    if (J.$eq(J.$index$asx(t1.get$opts(), "wait"), "user") === true)
+    t2 = t1.get$opts();
+    if (J.$eq(t2.$index(t2, "wait"), "user") === true)
       t1.get$vn().set$prevNext([true, true]);
     else {
-      t2 = J.$index$asx(t1.get$opts(), "wait");
-      if (typeof t2 === "number")
-        t1.get$vn().get$juggler().delayCall$2(new N.VNTransition_fadeOutTransition__closure(), J.$index$asx(t1.get$opts(), "wait"));
+      t2 = t1.get$opts();
+      t2 = t2.$index(t2, "wait");
+      if (typeof t2 === "number") {
+        t2 = t1.get$vn().get$juggler();
+        t1 = t1.get$opts();
+        t2.delayCall$2(new N.VNTransition_fadeOutTransition__closure(), t1.$index(t1, "wait"));
+      }
     }
   },
   "+call:0:0": 0
@@ -11524,7 +11516,8 @@ VNTransition_fadeAcrossTransition_closure: {"": "Closure;box_0,this_1,fade_2",
     t5 = t3.horizontal_0 ? 0 : J.toInt$0$nx(value);
     t6 = this.fade_2;
     t2.applyCache$4(t4, t5, J.toInt$0$nx(t6.getBoundsTransformed$1(t6.get$_transformationMatrix())._width), J.toInt$0$nx(t6.getBoundsTransformed$1(t6.get$_transformationMatrix())._height));
-    switch (J.$index$asx(t1.get$opts(), "dir")) {
+    t2 = t1.get$opts();
+    switch (t2.$index(t2, "dir")) {
       case "right":
         t1.get$current().set$clipRectangle(new Z.Rectangle(0, 0, P.min(P.max(0, J.$add$ns(value, 1)), J.toInt$0$nx(J.get$width$x(t1.get$current()))), J.toInt$0$nx(J.get$height$x(t1.get$current()))));
         break;
@@ -11589,25 +11582,6 @@ VNTransition_slideTransition_closure: {"": "Closure;this_0,horizontal_1",
 },
 
 VNTransition_slideTransition_closure0: {"": "Closure;this_2",
-  call$0: function() {
-    J.set$alpha$x(this.this_2.get$current(), 1);
-    return 1;
-  },
-  "+call:0:0": 0
-},
-
-VNTransition_scaleTransition_closure: {"": "Closure;this_0,horizontal_1",
-  call$1: function(value) {
-    var t1 = this.this_0;
-    if (this.horizontal_1)
-      J.set$x$x(t1.get$current(), value);
-    else
-      J.set$y$x(t1.get$current(), value);
-  },
-  "+call:1:0": 0
-},
-
-VNTransition_scaleTransition_closure0: {"": "Closure;this_2",
   call$0: function() {
     J.set$alpha$x(this.this_2.get$current(), 1);
     return 1;
@@ -11729,11 +11703,13 @@ Play$: function(args) {
 
 Set: {"": "Verb;args,mod",
   Set$2$mod: function(args, mod, box_0) {
-    var vn, t1, opts, layer, posName, value, posArgs, t2, priorObject, t3, t4, t5, newObject, sa, sw, shape, drawn, stroke, tf, vnt, transMap;
+    var vn, t1, t2, opts, layer, posName, value, posArgs, priorObject, t3, t4, newObject, t5, sa, sw, shape, drawn, stroke, tf, vnt, transMap;
     box_0.position_0 = null;
     vn = $.stage.getChildByName$1("vn");
     t1 = J.getInterceptor$x(vn);
-    opts = t1.get$options(vn);
+    t2 = J.$index$asx(t1.get$options(vn), "defaults");
+    opts = P.LinkedHashMap_LinkedHashMap(null, null, null, null, null);
+    opts.addAll$1(opts, t2);
     if (0 >= args.length)
       throw H.ioore(0);
     layer = vn.getChildByName$1(args[0]);
@@ -11757,8 +11733,10 @@ Set: {"": "Verb;args,mod",
       }
     else
       value = null;
-    if (args.length > 3)
-      J.addAll$1$ax(opts, args[3]);
+    if (args.length > 3) {
+      t2 = H.propertyTypeCast(args[3], "$isMap");
+      t2.forEach$1(t2, new N.Set_closure(opts));
+    }
     if (!this.mod) {
       if (typeof posName === "string") {
         posArgs = J.$index$asx(J.$index$asx(t1.get$options(vn), "positions"), posName);
@@ -11768,7 +11746,7 @@ Set: {"": "Verb;args,mod",
           layer.addChild$1(t2);
         }
         box_0.position_0 = layer.getChildByName$1(posName);
-        priorObject = J.$eq(J.$index$asx(opts, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
+        priorObject = J.$eq(opts.$index(opts, "mode"), "add") !== true && box_0.position_0.get$numChildren() > 0 ? box_0.position_0.getChildAt$1(0) : null;
       } else {
         t2 = J.getInterceptor(posName);
         if (typeof posName === "object" && posName !== null && !!t2.$isMap) {
@@ -11779,14 +11757,13 @@ Set: {"": "Verb;args,mod",
           t3.toString$0(value);
         } else {
           t1 = vn.get$juggler();
-          t2 = J.getInterceptor$asx(opts);
-          t3 = t2.$index(opts, "dur");
-          t4 = $.get$VN_ease();
-          t2 = t1.tween$3(layer, t3, t4.$index(t4, t2.$index(opts, "ease")));
-          t4 = t2._tweenPropertyFactory;
-          t4.get$alpha;
-          t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-          t2._onComplete = new N.Set_closure(vn, opts, layer);
+          t2 = opts.$index(opts, "dur");
+          t3 = $.get$VN_ease();
+          t3 = t1.tween$3(layer, t2, t3.$index(t3, opts.$index(opts, "ease")));
+          t2 = t3._tweenPropertyFactory;
+          t2.get$alpha;
+          t2._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+          t3._onComplete = new N.Set_closure0(vn, opts, layer);
           return;
         }
         priorObject = null;
@@ -11797,15 +11774,14 @@ Set: {"": "Verb;args,mod",
           if (box_0.position_0 != null) {
             t1 = vn.get$juggler();
             t2 = box_0.position_0;
-            t3 = J.getInterceptor$asx(opts);
-            t4 = t3.$index(opts, "dur");
-            t5 = $.get$VN_ease();
-            t5 = t1.tween$3(t2, t4, t5.$index(t5, t3.$index(opts, "ease")));
-            t4 = t5._tweenPropertyFactory;
-            t4.get$alpha;
-            t4._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
-            t5._onComplete = new N.Set_closure0(box_0, vn, opts, layer);
-            if (J.$eq(t3.$index(opts, "wait"), "none") === true || t3.$index(opts, "wait") == null)
+            t3 = opts.$index(opts, "dur");
+            t4 = $.get$VN_ease();
+            t4 = t1.tween$3(t2, t3, t4.$index(t4, opts.$index(opts, "ease")));
+            t3 = t4._tweenPropertyFactory;
+            t3.get$alpha;
+            t3._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
+            t4._onComplete = new N.Set_closure1(box_0, vn, opts, layer);
+            if (J.$eq(opts.$index(opts, "wait"), "none") === true || opts.$index(opts, "wait") == null)
               $.script.next$0();
             return;
           }
@@ -11920,13 +11896,13 @@ Set: {"": "Verb;args,mod",
             switch (t1.$index(sa, "shape")) {
               case "rect":
                 t3 = sa.containsKey$1("corner_radius");
-                t4 = J.getInterceptor$n(sw);
-                t5 = stroke._graphics;
+                t4 = stroke._graphics;
+                t5 = J.getInterceptor$n(sw);
                 if (t3 === true)
-                  t5.rectRound$6(t4.$div(sw, 2), t4.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t4.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t4.$div(sw, 2)));
+                  t4.rectRound$6(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t5.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t5.$div(sw, 2)));
                 else {
-                  t5._commands.push(Z._GraphicsCommandRect$(t4.$div(sw, 2), t4.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
-                  t5._identityRectangleRefresh = true;
+                  t4._commands.push(Z._GraphicsCommandRect$(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
+                  t4._identityRectangleRefresh = true;
                 }
                 break;
               case "ellipse":
@@ -11955,7 +11931,7 @@ Set: {"": "Verb;args,mod",
           newObject._pixelSnapping = "auto";
           newObject._clipRectangle = null;
         } else if (typeof value === "string") {
-          tf = J.$index$asx(J.$index$asx(t1.get$options(vn), "text_formats"), J.$index$asx(opts, "text_format"));
+          tf = J.$index$asx(J.$index$asx(t1.get$options(vn), "text_formats"), opts.$index(opts, "text_format"));
           t1 = J.getInterceptor$asx(tf);
           newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, "font"), t1.$index(tf, "size"), t1.$index(tf, "color"), false, false, false, t1.$index(tf, "align"), 0, 0, 0, 0, 0, 0));
           if (tf.containsKey$1("width") === true) {
@@ -11983,24 +11959,23 @@ Set: {"": "Verb;args,mod",
     } else {
       box_0.position_0 = layer.getChildByName$1(posName);
       newObject = box_0.position_0.getChildByName$1(value);
-      J.$indexSet$ax(opts, "mod", true);
+      opts.$indexSet(opts, "mod", true);
       priorObject = null;
     }
     vn.set$prevNext([false, false]);
     vnt = N.VNTransition$(box_0.position_0, newObject, opts);
     transMap = H.makeLiteralMap(["fade", vnt.get$fadeTransition(), "fadeout", vnt.get$fadeOutTransition(), "fadethru", vnt.get$fadeThruTransition(), "fadeacross", vnt.get$fadeAcrossTransition(), "slide", vnt.get$slideTransition(), "scale", vnt.get$scaleTransition(), "pan", vnt.get$panTransition(), "crossfade", vnt.get$crossFadeTransition()]);
-    t1 = J.getInterceptor$asx(opts);
-    if (transMap.containsKey$1(t1.$index(opts, "trans")) === true)
-      transMap.$index(transMap, t1.$index(opts, "trans")).call$0();
+    if (transMap.containsKey$1(opts.$index(opts, "trans")) === true)
+      transMap.$index(transMap, opts.$index(opts, "trans")).call$0();
     else {
       if (priorObject != null)
         box_0.position_0.removeChild$1(priorObject);
       box_0.position_0.addChild$1(newObject);
-      t2 = t1.$index(opts, "wait");
-      if (typeof t2 === "number")
-        vn.get$juggler().delayCall$2(new N.Set_closure1(), t1.$index(opts, "wait"));
+      t1 = opts.$index(opts, "wait");
+      if (typeof t1 === "number")
+        vn.get$juggler().delayCall$2(new N.Set_closure2(), opts.$index(opts, "wait"));
     }
-    if (J.$eq(t1.$index(opts, "wait"), "none") === true || t1.$index(opts, "wait") == null)
+    if (J.$eq(opts.$index(opts, "wait"), "none") === true || opts.$index(opts, "wait") == null)
       $.script.next$0();
   },
   static: {
@@ -12012,18 +11987,25 @@ Set$: function(args, mod) {
 
 },
 
-Set_closure: {"": "Closure;vn_1,opts_2,layer_3",
+Set_closure: {"": "Closure;opts_1",
+  call$2: function(k, v) {
+    var t1 = this.opts_1;
+    t1.$indexSet(t1, k, v);
+  },
+  "+call:2:0": 0
+},
+
+Set_closure0: {"": "Closure;vn_2,opts_3,layer_4",
   call$0: function() {
-    var t1, t2, t3;
-    t1 = this.layer_3;
+    var t1, t2;
+    t1 = this.layer_4;
     if (t1.get$numChildren() > 0)
       t1.removeChildren$0();
     J.set$alpha$x(t1, 1);
-    t1 = this.opts_2;
-    t2 = J.getInterceptor$asx(t1);
-    t3 = t2.$index(t1, "wait");
-    if (typeof t3 === "number")
-      this.vn_1.get$juggler().delayCall$2(new N.Set__closure0(), t2.$index(t1, "wait"));
+    t1 = this.opts_3;
+    t2 = t1.$index(t1, "wait");
+    if (typeof t2 === "number")
+      this.vn_2.get$juggler().delayCall$2(new N.Set__closure0(), t1.$index(t1, "wait"));
   },
   "+call:0:0": 0
 },
@@ -12035,15 +12017,14 @@ Set__closure0: {"": "Closure;",
   "+call:0:0": 0
 },
 
-Set_closure0: {"": "Closure;box_0,vn_4,opts_5,layer_6",
+Set_closure1: {"": "Closure;box_0,vn_5,opts_6,layer_7",
   call$0: function() {
-    var t1, t2, t3;
-    this.layer_6.removeChild$1(this.box_0.position_0);
-    t1 = this.opts_5;
-    t2 = J.getInterceptor$asx(t1);
-    t3 = t2.$index(t1, "wait");
-    if (typeof t3 === "number")
-      this.vn_4.get$juggler().delayCall$2(new N.Set__closure(), t2.$index(t1, "wait"));
+    var t1, t2;
+    this.layer_7.removeChild$1(this.box_0.position_0);
+    t1 = this.opts_6;
+    t2 = t1.$index(t1, "wait");
+    if (typeof t2 === "number")
+      this.vn_5.get$juggler().delayCall$2(new N.Set__closure(), t1.$index(t1, "wait"));
   },
   "+call:0:0": 0
 },
@@ -12055,7 +12036,7 @@ Set__closure: {"": "Closure;",
   "+call:0:0": 0
 },
 
-Set_closure1: {"": "Closure;",
+Set_closure2: {"": "Closure;",
   call$0: function() {
     return $.script.next$0();
   },
@@ -12479,11 +12460,6 @@ FilteredElementList: {"": "ListBase;_node,_childNodes",
   },
   add$1: function(_, value) {
     this._childNodes._this.appendChild(value);
-  },
-  addAll$1: function(_, iterable) {
-    var t1, t2;
-    for (t1 = J.get$iterator$ax(iterable), t2 = this._childNodes._this; t1.moveNext$0();)
-      t2.appendChild(t1.get$current());
   },
   contains$1: function(_, needle) {
     var t1 = J.getInterceptor(needle);
@@ -18659,19 +18635,23 @@ DisplayObject: {"": "EventDispatcher;_x<,_y<,_alpha<,_mask<,_shadow<,_compositeO
     this._transformationMatrixRefresh = true;
   },
   set$pivotX: function(value) {
-    this._pivotX = value;
+    if (typeof value === "number")
+      this._pivotX = value;
     this._transformationMatrixRefresh = true;
   },
   set$pivotY: function(value) {
-    this._pivotY = value;
+    if (typeof value === "number")
+      this._pivotY = value;
     this._transformationMatrixRefresh = true;
   },
   set$scaleX: function(value) {
-    this._scaleX = value;
+    if (typeof value === "number")
+      this._scaleX = value;
     this._transformationMatrixRefresh = true;
   },
   set$scaleY: function(value) {
-    this._scaleY = value;
+    if (typeof value === "number")
+      this._scaleY = value;
     this._transformationMatrixRefresh = true;
   },
   set$skewX: function(value) {
@@ -21363,10 +21343,10 @@ Matrix: {"": "Object;_a,_b,_c,_d,_tx,_ty,_det",
     this._det = this._det * scaleX * scaleY;
   },
   setTo$6: function(a, b, c, d, tx, ty) {
-    this._a = a;
+    this._a = C.JSNumber_methods.toDouble$0(a);
     this._b = b;
     this._c = c;
-    this._d = d;
+    this._d = C.JSNumber_methods.toDouble$0(d);
     this._tx = tx;
     this._ty = ty;
     this._det = this._a * this._d - this._b * this._c;
