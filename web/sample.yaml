@@ -1,6 +1,5 @@
 options:
   name: DartVN Sample
-  stage_id: vnStage #id of the canvas containing div
   scale: showAll #showAll, noScale, noBorder, exactFit
   align: none #none, left, right, top, topLeft, topRight, bottom, bottomLeft, bottomRight
   width: 1920

@@ -1,6 +1,5 @@
 options:
   name: Wind Waker Intro Demo
-  stage_id: vnStage
   scale: showAll
   align: none
   width: 1920

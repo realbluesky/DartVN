@@ -2,22 +2,23 @@ part of dartvn;
 
 class Position extends DisplayObjectContainer {
   Map args;
-  
+
   Position(Map args) {
     this.args = args;
-    if(args.containsKey('width') && args.containsKey('height')) {  
+    if(args.containsKey('width') && args.containsKey('height')) {
       List xy =_getXY(args, [args['width'], args['height']]);
       this.mask = new Mask.rectangle(xy[0], xy[1], args['width'],args['height']);
     }
   }
-  
+
   void add(DisplayObject child) {
     List xy =_getXY(args, [child.width, child.height]);
+    print('child dim: '+child.width.toString()+' x '+child.height.toString());
     child.x = xy[0];
     child.y = xy[1];
     addChild(child);
   }
-  
+
   List<num> _getXY(args, List<num> wh) {
     num x; num y;
     bool hor = false;
@@ -26,7 +27,7 @@ class Position extends DisplayObjectContainer {
     num height = wh[1];
     num sw = stage.sourceWidth;
     num sh = stage.sourceHeight;
-
+    print('stage dim:'+sw.toString()+' x '+sh.toString());
     args.forEach((edge, distance) {
       if(!hor) {
         hor = true;
@@ -41,7 +42,7 @@ class Position extends DisplayObjectContainer {
           break;
         }
       }
-      
+
       if(!vert) {
         vert = true;
         switch(edge) {
@@ -55,11 +56,11 @@ class Position extends DisplayObjectContainer {
             break;
         }
       }
-      
+
     });
-    
+
     return [x,y];
   }
-  
+
 }
 

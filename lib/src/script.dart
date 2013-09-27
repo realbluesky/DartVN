@@ -5,8 +5,8 @@ class Script {
   Map<String, int> _labels = {};
   int _currentLine;
   int get numLines => _script.length;
-  
-  
+
+
   Script(List script) {
     _script = script;
     _currentLine = -1;
@@ -15,36 +15,36 @@ class Script {
       if(_script[i][0] == 'label') _labels[_script[i][1]] = i;
     }
   }
-  
+
   dynamic next() {
-    if(this.numLines>_currentLine+1) { 
+    if(this.numLines>_currentLine+1) {
       _currentLine++;
       return exec();
     } else return false;
   }
-  
+
   dynamic prev() {
-    if(_currentLine>0) { 
+    if(_currentLine>0) {
       _currentLine--;
       return exec();
     } else return false;
   }
-  
+
   dynamic goto(label) {
     if(_labels.containsKey(label)) {
       _currentLine = _labels[label];
       return exec();
     }
   }
-  
+
   dynamic exec() {
     List line;
     Map options = {};
     line = _script[_currentLine];
-    
+
     var verb = line[0];
     List args = line.sublist(1);
-    
+    print(line);
     switch(verb) {
       case 'play': new Play(args);
         break;
@@ -61,12 +61,12 @@ class Script {
         next();
         break;
     }
-    
+
   }
-  
-     
-      
-    
-  
-  
+
+
+
+
+
+
 }

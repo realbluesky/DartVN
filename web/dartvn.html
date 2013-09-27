@@ -3,12 +3,27 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="vnscript" content="windwaker.yaml">
     <title>Dartvn</title>
     <link rel="stylesheet" href="dartvn.css">
   </head>
   <body>
-    <canvas id="vnStage"></canvas>
+    <button data-reload="myCanvas">Reload</button>
+    <canvas width="500" height="400" id="myCanvas" data-script="#script"></canvas>
+<textarea id="script">
+options:
+  defaults: {text_format: hello, wait: 3}
+  positions:
+    mc: {middle: 0, center: 0}
+  text_formats:
+    hello: {font: 'Lato, Calibri', size: 15, color: 0xff000000}
+script:
+  - [label, start]
+  - [set, bg, mc, "Welcome to DartVN.org!"]
+  - [set, bg, mc, "We hope you'll create wonderful things."]
+  - [set, bg, mc, "kthxbye!"]
+  - [set, bg, mc, ""]
+  - [goto, start]
+</textarea>
     <script type="application/dart" src="dartvn.dart"></script>
     <script src="packages/browser/dart.js"></script>
   </body>
