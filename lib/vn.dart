@@ -77,6 +77,15 @@ class VN extends DisplayObjectContainer implements Animatable {
 
   }
 
+  destroy() {
+    //stop audio
+    channels.forEach((k,v) {
+      v.plays.forEach((p) => p.stop());
+    });
+    stage.juggler.remove(this);
+    stage.removeChild(this);
+  }
+
   bool advanceTime(num time) {
     _juggler.advanceTime(time);
   }

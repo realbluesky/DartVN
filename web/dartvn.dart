@@ -14,7 +14,8 @@ void main() {
     el.onClick.listen((e) {
       var canvasId = el.dataset['reload'];
       if(vns.containsKey(canvasId)) {
-        print('adding new VN, how do I kill the existing VN fully?');
+        VN vn = vns[canvasId];
+        vn.destroy();
         vns[canvasId] = new VN(html.query('#'+canvasId));
       }
     });

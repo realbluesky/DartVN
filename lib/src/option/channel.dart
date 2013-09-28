@@ -2,14 +2,14 @@ part of dartvn;
 
 class Channel extends Option {
   String name;
-  List<Play> plays = [];
-  
+  List<SoundChannel> plays = [];
+
   Channel(this.name);
-  
-  Play add(Play sound) {
+
+  SoundChannel add(SoundChannel sound) {
     plays.add(sound);
     return sound;
   }
-  
-  
+
+
 }

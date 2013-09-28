@@ -17,7 +17,10 @@ class Config {
     var script = _canvas.attributes['data-script'];
     if(script.endsWith('.yaml') || script.endsWith('.yml') || script.endsWith('.json'))
       var request = html.HttpRequest.getString(script).then(configure);
-    else configure(html.query(script).innerHtml);
+    else { //probably not ok to assume a textarea here, but most times it should be...?
+      html.TextAreaElement txt = html.query(script);
+      configure(txt.value);
+    }
   }
 
   configure(String response) {
@@ -53,6 +56,7 @@ class Config {
     if(_config.containsKey('assets')) {
       Map assets = _config['assets'];
       var imagePath = assets.containsKey('image_path')?assets['image_path']:'';
+      //TODO can't assume assets have images key...all these ifs containsKeys are nuts, gotta be a better way
       if(assets.containsKey('images')) assets['images'].forEach((name, String url) {
         if(url.endsWith('.json')) resourceManager.addTextureAtlas(name, imagePath + url, TextureAtlasFormat.JSONARRAY);
         else resourceManager.addBitmapData(name, imagePath + url);

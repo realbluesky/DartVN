@@ -12,11 +12,16 @@
 <textarea id="script">
 options:
   defaults: {text_format: hello, wait: 3}
+  channels: [bgm]
   positions:
     mc: {middle: 0, center: 0}
   text_formats:
     hello: {font: 'Lato, Calibri', size: 15, color: 0xff000000}
+assets:
+  sounds:
+    story: ../assets/sound/windwaker/story.mp3
 script:
+  - [play, bgm, story]
   - [label, start]
   - [set, bg, mc, "Welcome to DartVN.org!"]
   - [set, bg, mc, "We hope you'll create wonderful things."]
