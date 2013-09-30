@@ -9,6 +9,7 @@ part 'src/config.dart';
 part 'src/character.dart';
 part 'src/script.dart';
 part 'src/option.dart';
+part 'src/option/alias.dart';
 part 'src/option/channel.dart';
 part 'src/option/layer.dart';
 part 'src/option/position.dart';
@@ -30,6 +31,7 @@ class VN extends DisplayObjectContainer implements Animatable {
   Map options;
   Map assets;
   Map<String, Channel> channels = {};
+  Map<String, Alias> aliases = {};
 
   VN(html.CanvasElement canvas) {
     resourceManager = new ResourceManager();

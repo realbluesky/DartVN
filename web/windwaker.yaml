@@ -5,63 +5,67 @@ options:
   width: 1920
   height: 1080
   defaults:
-    dur: .75 
     trans: crossfade
-    ease: linear
+    dur: .75
     gap: 1.5
-    wait: none
+    ease: linear
+    for: none
     text_format: story
-    color: 0xFF000000
-  #layers are ordered as they appear below, back to front
-  layers: [bg, img, txt]
-  channels: [bgm]
+  layers: [background, drawing, text]
+  channels: [backgroundMusic]
   positions:
     tl: {top: 0, left: 0}
     im: {top: 110, left: 160, width: 1600, height: 739}
     mc: {center: 0, middle: 0}
     bc: {center: 0, bottom: 70}
   text_formats:
-    story: {font: 'Calibri, Tahoma, Verdana, sans-serif', size: 40, color: 0xFFFFFFFF, width: 800, height: 131, align: center}
+    story: {font: 'Calibri, Tahoma, Verdana, sans-serif', size: 40, color: 0xFFFFFFFF, width: 800, height: 131, align: left}
+  aliases:
+    txt: [set, text, bc, :1, {for: :2}]
 assets:
-  image_path: ../assets/image/windwaker/
+  image_path: ../assets/windwaker/image/
   images: {s1: story1.jpg, s2: story2.jpg, s3: story3.jpg, s4: story4.jpg, s5: story5.jpg, s6: story6.jpg}
-  shapes:
-    black: {shape: rect, fill_color: 0xFF000000, width: 1920, height: 1080}
   sounds:
-    story: ../assets/sound/windwaker/story.mp3
-script:  
-   - [set, bg, tl, black, {trans: fade, dur: 0}]
-   - [play, bgm, story]      
-   - [set, txt, mc, "This is but one of the legends of which the people speak...", {trans: fade, wait: 6.5}] 
-   - [set, txt, mc, "", {trans: fade, wait: 1.5}]
-   - [set, img, im, s1, {trans: fade}]
-   - [mod, img, im, s1, {trans: pan, dur: 16, dist: [0, -739]}]
-   - [set, txt, bc, "Long ago, there existed a kingdom where a golden power lay hidden.", {trans: fade, wait: 6.5}]
-   - [set, txt, bc, "It was a prosperous land blessed with green forests, tall mountains, and peace.", {wait: 6}]
-   - [set, img, im, s2, {gap: none}]
-   - [set, txt, bc, "But one day a man of great evil found the golden power and took it for himself...", {wait: 6}]
-   - [set, txt, bc, "With its strength at his command, he spread darkness across the kingdom.", {wait: 6}]
-   - [set, txt, bc, "But then, when all hope had died, and the hour of doom seemed at hand...", {wait: 6}]
-   - [set, img, im, s3, {gap: 0}]
-   - [set, txt, bc, "...a young boy clothed in green appeared as if from nowhere.", {wait: 6}]
-   - [set, txt, bc, "Wielding the blade of evil's bane, he sealed the dark one away and gave the land light.", {wait: 9}]
-   - [set, img, im, s4, {gap: 0}]
-   - [mod, img, im, s4, {trans: pan, dur: 45, dist: [-1184, 0]}]
-   - [set, txt, bc, "This boy, who traveled through time to save the land, was known as the Hero of Time.", {wait: 8}]
-   - [set, txt, bc, "The boy's tale was passed down through generations until it became legend...", {wait: 8}]
-   - [set, txt, bc, "But then...a day came when a fell wind began to blow across the kingdom.", {wait: 7}]
-   - [set, txt, bc, "The great evil that all thought had been forever sealed away by the hero...", {wait: 8}]
-   - [set, txt, bc, "...once again crept forth from the depths of the earth, eager to resume its dark designs.", {wait: 7}]
-   - [set, img, im, s5, {gap: none}] 
-   - [set, txt, bc, "The people believed that the Hero of Time would again come to save them.", {wait: 7}]   
-   - [set, txt, bc, "...But the hero did not appear.", {wait: 7}]
-   - [set, txt, bc, "Faced by an onslaught of evil, the people could do nothing but appeal to the gods.", {wait: 8}]   
-   - [set, txt, bc, "In their last hour, as doom drew nigh, they left their future in the hands of fate.", {wait: 8}]
-   - [set, txt, bc]
-   - [set, img, im]
-   - [set, txt, mc, "What became of that kingdom...? None remain who know.", {wait: 8}]
-   - [set, txt, mc, ""] 
-   - [set, img, im, s6, {trans: fade}]
-   - [mod, img, im, s6, {trans: scale, dur: 43, range: [2, 1]}]
-   - [set, txt, bc, "The memory of the kingdom vanished, but its legend survived on the wind's breath.", {wait: 9}]
-  
+    legendaryHero: ../assets/windwaker/sound/story.mp3
+script:
+   - [label, start]
+   - [play, backgroundMusic, legendaryHero]
+   - [set, background, tl, 0xFF000000, {trans: fade, dur: 0, for: .5}]
+   - [set, text, mc, "This is but one of the legends of which the people speak...", {trans: fade, for: 6}]
+   - [set, text, mc, "", {trans: fade, for: 1}]
+   - [set, drawing, im, s1, {trans: fade}]
+   - [mod, drawing, im, s1, {trans: pan, dur: 17, dist: [0, -739]}]
+   - [set, text, bc, "Long ago, there existed a kingdom where\na golden power lay hidden.", {trans: fade, dur: 1, for: 6}]
+   - [txt, "It was a prosperous land blessed with green forests, tall mountains, and peace.", 6]
+   - [set, drawing, im, s2, {dir: 1.5, gap: none}]
+   - [set, text, bc, "But one day a man of great evil found the\ngolden power and took it for himself...", {for: 6, gap: .5}]
+   - [txt, "With its strength at his command, he spread darkness across the kingdom.", 6.5]
+   - [txt, "But then, when all hope had died, and the\nhour of doom seemed at hand...", 6]
+   - [set, drawing, im, s3, {gap: 0}]
+   - [set, text, bc,  "...a young boy clothed in green appeared\nas if from nowhere.", {for: 6, gap: .25}]
+   - [txt, "Wielding the blade of evil's bane, he sealed\nthe dark one away and gave the land light.", 9]
+   - [set, drawing, im, s4, {gap: 0}]
+   - [mod, drawing, im, s4, {trans: pan, dur: 45, dist: [-1184, 0]}]
+   - [set, text, bc, "This boy, who traveled through time to save\nthe land, was known as the Hero of Time.", {for: 7, gap: .25}]
+   - [txt, "The boy's tale was passed down through generations until it became legend...", 7]
+   - [txt, "But then...a day came when a fell wind began to blow across the kingdom.", 6]
+   - [txt, "The great evil that all thought had been forever sealed away by the hero...", 6]
+   - [txt, "...once again crept forth from the depths of the earth, eager to resume its dark designs.", 5]
+   - [set, drawing, im, s5, {gap: none}]
+   - [txt, "The people believed that the Hero of Time\nwould again come to save them.", 7]
+   - [txt, "...But the hero did not appear.", 6.5]
+   - [txt, "Faced by an onslaught of evil, the people\ncould do nothing but appeal to the gods.", 6.5]
+   - [txt, "In their last hour, as doom drew nigh, they\nleft their future in the hands of fate.", 6]
+   - [set, text, bc]
+   - [set, drawing, im]
+   - [set, text, mc, "What became of that kingdom...?\nNone remain who know.", {for: 7}]
+   - [set, text, mc, "", {for: 1}]
+   - [set, drawing, im, s6, {trans: fade}]
+   - [mod, drawing, im, s6, {trans: scale, dur: 43, range: [2, 1]}]
+   - [set, text, bc, "The memory of the kingdom vanished, but its legend survived on the wind's breath.", {for: 8, gap: .25}]
+   - [txt, "On a certain island, it became customary to garb boys in green when they came of age.", 9]
+   - [txt, "Clothed in the green of fields, they aspired to find heroic blades and cast down evil.", 9]
+   - [txt, "The elders wished only for the youths to know courage like the hero of legend...", 8]
+   - [set, text, bc]
+   - [set, drawing, im, "", {for: 1}]
+   - [goto, start]

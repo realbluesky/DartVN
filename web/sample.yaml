@@ -6,16 +6,16 @@ options:
   height: 1080
   #hardcoded defaults
   defaults:
-    dur: 1 
+    dur: 1
     dir: right
     trans: fade
     ease: easeInQuadratic
-    wait: 1
+    for: 1
     text_format: dialog
   #layers are ordered as they appear below, back to front
   layers: [bg, mg, fg, ui]
   positions:
-    tl: {top: 0, left: 0} 
+    tl: {top: 0, left: 0}
     stage_left: {bottom: 0, left: 100}
     stage_right: {bottom: 0, right: 100}
     center_top: {center: 0, top: 50}
@@ -49,25 +49,24 @@ script:
   # set "set position to display atlas/image/color/shape" - examples:
   # options:
   #   trans: fade|fadeacross|fadethru|none
-  #   wait: #secs [eg 3]|user|none
+  #   for: #secs [eg 3]|user|none
   #   [set, layer, position, atlas/image/color, {options}]
   #   [set, bg, bg, 0xFF000000, {trans: fade}]
   #   [set, mg, stage_left, asset_name, {trans: fadethru, color: 0xFF000000}]
   # label "create a placemark to go back to"
   # goto "take script to labelled point"
-  - [label, start]  
+  - [label, start]
   - [set, bg, tl, town, {trans: fade, dur: 2}]
   - [set, mg, center_middle, "DartVN Sample - Zelda Convo", {text_format: title, trans: fadeacross, dur: 2}]
   - [set, mg, center_middle, "", {dur: 2}]
   #- [say, link.stand, "How's everything going?",
   #    "That good?  I'm glad to hear it.",
   #    "Should this work this way, or what?"]
-  - [set, mg, stage_left, link.calm, {trans: fade, dur: .75, wait: 1}]
+  - [set, mg, stage_left, link.calm, {trans: fade, dur: .75, for: 1}]
   - [set, mg, stage_right, zelda.hand, {trans: fadethru, color: 0xFFFFFFFF, dur: .75}]
-  - [set, fg, center_middle, "text_bubble", {wait: 0, dur: 1}]
-  - [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, wait: 3}]
+  - [set, fg, center_middle, "text_bubble", {for: 0, dur: 1}]
+  - [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, for: 3}]
   - [set, fg] #clear a position by passsing nothing
   - [set, mg] #clear a layer by passing nothing
   - [set, bg, tl, 0xFF000000]
   - [goto, start]
-  

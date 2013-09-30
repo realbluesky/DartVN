@@ -828,7 +828,7 @@ Interceptor: {"": "Object;",
     return H.Primitives_objectHashCode(receiver);
   },
   toString$0: function(receiver) {
-    return H.Primitives_objectToString(receiver);
+    return "Instance of '" + H.Primitives_objectTypeName(receiver) + "'";
   }
 },
 
@@ -1063,9 +1063,6 @@ JSNumber: {"": "num/Interceptor;",
   },
   get$isNaN: function(receiver) {
     return isNaN(receiver);
-  },
-  remainder$1: function(receiver, b) {
-    return receiver % b;
   },
   abs$0: function(receiver) {
     return Math.abs(receiver);
@@ -2724,10 +2721,6 @@ Primitives_objectTypeName: function(object) {
   return H.S($name) + H.joinArguments(t1, 0);
 },
 
-Primitives_objectToString: function(object) {
-  return "Instance of '" + H.Primitives_objectTypeName(object) + "'";
-},
-
 Primitives_newFixedList: function($length) {
   var result = new Array($length);
   result.fixed$length = true;
@@ -2786,34 +2779,6 @@ Primitives_lazyAsJsDate: function(receiver) {
   if (receiver.date === void 0)
     receiver.date = new Date(receiver.millisecondsSinceEpoch);
   return receiver.date;
-},
-
-Primitives_getYear: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCFullYear() + 0 : H.Primitives_lazyAsJsDate(receiver).getFullYear() + 0;
-},
-
-Primitives_getMonth: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCMonth() + 1 : H.Primitives_lazyAsJsDate(receiver).getMonth() + 1;
-},
-
-Primitives_getDay: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCDate() + 0 : H.Primitives_lazyAsJsDate(receiver).getDate() + 0;
-},
-
-Primitives_getHours: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCHours() + 0 : H.Primitives_lazyAsJsDate(receiver).getHours() + 0;
-},
-
-Primitives_getMinutes: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCMinutes() + 0 : H.Primitives_lazyAsJsDate(receiver).getMinutes() + 0;
-},
-
-Primitives_getSeconds: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCSeconds() + 0 : H.Primitives_lazyAsJsDate(receiver).getSeconds() + 0;
-},
-
-Primitives_getMilliseconds: function(receiver) {
-  return receiver.isUtc ? H.Primitives_lazyAsJsDate(receiver).getUTCMilliseconds() + 0 : H.Primitives_lazyAsJsDate(receiver).getMilliseconds() + 0;
 },
 
 Primitives_getProperty: function(object, key) {
@@ -3885,7 +3850,7 @@ TypeImpl: {"": "Object;_typeName,_unmangledName",
     if (t1 != null)
       return t1;
     unmangledName = this._typeName;
-    unmangledName0 = H.unmangleGlobalNameIfPreservedAnyways(unmangledName);
+    unmangledName0 = init.mangledGlobalNames[unmangledName];
     unmangledName = unmangledName0 == null ? unmangledName : unmangledName0;
     this._unmangledName = unmangledName;
     return unmangledName;
@@ -4756,10 +4721,6 @@ ReversedListIterable: {"": "ListIterable;_source",
   $asListIterable: null,
   $asIterable: null,
   $asObject: null
-}}],
-["dart._js_names", "dart:_js_names", , H, {
-unmangleGlobalNameIfPreservedAnyways: function($name) {
-  return init.mangledGlobalNames[$name];
 }}],
 ["dart.async", "dart:async", , P, {
 _attachStackTrace: function(o, st) {
@@ -8046,7 +8007,7 @@ ListMixin: {"": "Object;",
     return this.sublist$2($receiver, start, null);
   },
   toString$0: function(receiver) {
-    var result, i, t1;
+    var result, i, t1, result0;
     for (i = 0; i < $.get$ListMixin__toStringList().length; ++i) {
       t1 = $.get$ListMixin__toStringList();
       if (i >= t1.length)
@@ -8054,12 +8015,16 @@ ListMixin: {"": "Object;",
       if (t1[i] === receiver)
         return "[...]";
     }
-    result = P.StringBuffer$("");
+    result0 = new P.StringBuffer("");
+    result0._contents = "";
+    result = result0;
     try {
       $.get$ListMixin__toStringList().push(receiver);
-      result.write$1("[");
+      t1 = result;
+      t1.set$_contents(t1.get$_contents() + "[");
       result.writeAll$2(receiver, ", ");
-      result.write$1("]");
+      t1 = result;
+      t1.set$_contents(t1.get$_contents() + "]");
     } finally {
       t1 = $.get$ListMixin__toStringList();
       if (0 >= t1.length)
@@ -8500,16 +8465,80 @@ DateTime: {"": "Object;millisecondsSinceEpoch,isUtc",
     return this.millisecondsSinceEpoch;
   },
   toString$0: function(_) {
-    var t1, y, m, d, h, min, sec, ms;
+    var t1, t2, t3, y, m, d, h, min, sec, ms;
     t1 = new P.DateTime_toString_twoDigits();
-    y = new P.DateTime_toString_fourDigits().call$1(H.Primitives_getYear(this));
-    m = t1.call$1(H.Primitives_getMonth(this));
-    d = t1.call$1(H.Primitives_getDay(this));
-    h = t1.call$1(H.Primitives_getHours(this));
-    min = t1.call$1(H.Primitives_getMinutes(this));
-    sec = t1.call$1(H.Primitives_getSeconds(this));
-    ms = new P.DateTime_toString_threeDigits().call$1(H.Primitives_getMilliseconds(this));
-    if (this.isUtc)
+    t2 = this.isUtc;
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getUTCFullYear() + 0;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getFullYear() + 0;
+    }
+    y = new P.DateTime_toString_fourDigits().call$1(t3);
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getUTCMonth() + 1;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getMonth() + 1;
+    }
+    m = t1.call$1(t3);
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getUTCDate() + 0;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getDate() + 0;
+    }
+    d = t1.call$1(t3);
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getUTCHours() + 0;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getHours() + 0;
+    }
+    h = t1.call$1(t3);
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getUTCMinutes() + 0;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getMinutes() + 0;
+    }
+    min = t1.call$1(t3);
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getUTCSeconds() + 0;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t3 = this.date.getSeconds() + 0;
+    }
+    sec = t1.call$1(t3);
+    if (t2) {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t1 = this.date.getUTCMilliseconds() + 0;
+    } else {
+      if (this.date === void 0)
+        this.date = new Date(this.millisecondsSinceEpoch);
+      t1 = this.date.getMilliseconds() + 0;
+    }
+    ms = new P.DateTime_toString_threeDigits().call$1(t1);
+    if (t2)
       return H.S(y) + "-" + H.S(m) + "-" + H.S(d) + " " + H.S(h) + ":" + H.S(min) + ":" + H.S(sec) + "." + H.S(ms) + "Z";
     else
       return H.S(y) + "-" + H.S(m) + "-" + H.S(d) + " " + H.S(h) + ":" + H.S(min) + ":" + H.S(sec) + "." + H.S(ms);
@@ -8633,23 +8662,23 @@ Duration: {"": "Object;_duration<",
     return this._duration & 0x1FFFFFFF;
   },
   toString$0: function(_) {
-    var t1, t2, twoDigitMinutes, twoDigitSeconds, sixDigitUs;
+    var t1, t2, t3, twoDigitMinutes, twoDigitSeconds, sixDigitUs;
     t1 = new P.Duration_toString_twoDigits();
     t2 = this._duration;
     if (t2 < 0)
-      return "-" + H.S(P.Duration$(0, 0, -t2, 0, 0, 0));
-    twoDigitMinutes = t1.call$1(C.JSNumber_methods.remainder$1(C.JSNumber_methods.$tdiv(t2, 60000000), 60));
-    twoDigitSeconds = t1.call$1(C.JSNumber_methods.remainder$1(C.JSNumber_methods.$tdiv(t2, 1000000), 60));
-    sixDigitUs = new P.Duration_toString_sixDigits().call$1(C.JSNumber_methods.remainder$1(t2, 1000000));
+      return "-" + H.S(new P.Duration(0 + -t2));
+    t3 = C.JSNumber_methods.$tdiv(t2, 60000000);
+    twoDigitMinutes = t1.call$1(t3 % 60);
+    t3 = C.JSNumber_methods.$tdiv(t2, 1000000);
+    twoDigitSeconds = t1.call$1(t3 % 60);
+    sixDigitUs = new P.Duration_toString_sixDigits().call$1(t2 % 1000000);
     return H.S(C.JSNumber_methods.$tdiv(t2, 3600000000)) + ":" + H.S(twoDigitMinutes) + ":" + H.S(twoDigitSeconds) + "." + H.S(sixDigitUs);
   },
   $isDuration: true,
   $asObject: null,
   static: {
 "": "Duration_MICROSECONDS_PER_MILLISECOND,Duration_MILLISECONDS_PER_SECOND,Duration_SECONDS_PER_MINUTE,Duration_MINUTES_PER_HOUR,Duration_HOURS_PER_DAY,Duration_MICROSECONDS_PER_SECOND,Duration_MICROSECONDS_PER_MINUTE,Duration_MICROSECONDS_PER_HOUR,Duration_MICROSECONDS_PER_DAY,Duration_MILLISECONDS_PER_MINUTE,Duration_MILLISECONDS_PER_HOUR,Duration_MILLISECONDS_PER_DAY,Duration_SECONDS_PER_HOUR,Duration_SECONDS_PER_DAY,Duration_MINUTES_PER_DAY,Duration_ZERO",
-Duration$: function(days, hours, microseconds, milliseconds, minutes, seconds) {
-  return new P.Duration(days * 86400000000 + hours * 3600000000 + minutes * 60000000 + seconds * 1000000 + milliseconds * 1000 + microseconds);
-}}
+}
 
 },
 
@@ -8819,7 +8848,7 @@ Object: {"": ";",
     return H.Primitives_objectHashCode(this);
   },
   toString$0: function(_) {
-    return H.Primitives_objectToString(this);
+    return "Instance of '" + H.Primitives_objectTypeName(this) + "'";
   },
   $isObject: true,
   $asObject: null
@@ -8829,7 +8858,7 @@ Match: {"": "Object;", $isMatch: true},
 
 StackTrace: {"": "Object;"},
 
-StringBuffer: {"": "Object;_contents<",
+StringBuffer: {"": "Object;_contents@",
   get$length: function(_) {
     return this._contents.length;
   },
@@ -11102,8 +11131,10 @@ Config: {"": "Object;onConfig,_config,characters,_canvas,_vn",
     defaults.forEach$1(defaults, new N.Config_configure_closure0(this));
     if (J.$index$asx(this._config, "options").containsKey$1("channels") === true)
       J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "channels"), new N.Config_configure_closure1(this));
-    J.$index$asx(this._config, "options").putIfAbsent$2("layers", new N.Config_configure_closure2());
-    J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "layers"), new N.Config_configure_closure3(this));
+    if (J.$index$asx(this._config, "options").containsKey$1("aliases") === true)
+      J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "aliases"), new N.Config_configure_closure2(this));
+    J.$index$asx(this._config, "options").putIfAbsent$2("layers", new N.Config_configure_closure3());
+    J.forEach$1$ax(J.$index$asx(J.$index$asx(this._config, "options"), "layers"), new N.Config_configure_closure4(this));
     opt = J.$index$asx(this._config, "options");
     H.Primitives_printString(J.toString$0(J.get$width$x(this._canvas)));
     t1 = opt.containsKey$1("width") === true && opt.containsKey$1("height") === true;
@@ -11134,10 +11165,10 @@ Config: {"": "Object;onConfig,_config,characters,_canvas,_vn",
       assets = J.$index$asx(this._config, "assets");
       imagePath = assets.containsKey$1("image_path") === true ? J.$index$asx(assets, "image_path") : "";
       if (assets.containsKey$1("images") === true)
-        J.forEach$1$ax(J.$index$asx(assets, "images"), new N.Config_configure_closure4(imagePath));
+        J.forEach$1$ax(J.$index$asx(assets, "images"), new N.Config_configure_closure5(imagePath));
       soundPath = assets.containsKey$1("sound_path") === true ? J.$index$asx(assets, "sound_path") : "";
       if (assets.containsKey$1("sounds") === true)
-        J.forEach$1$ax(J.$index$asx(assets, "sounds"), new N.Config_configure_closure5(soundPath));
+        J.forEach$1$ax(J.$index$asx(assets, "sounds"), new N.Config_configure_closure6(soundPath));
     }
     t1 = this._vn;
     t2 = $.stage;
@@ -11147,7 +11178,7 @@ Config: {"": "Object;onConfig,_config,characters,_canvas,_vn",
     t2.add$1(t2, this._vn);
     $.script = N.Script$(J.$index$asx(this._config, "script"));
     t2 = $.resourceManager;
-    t2.load$0(t2).then$1(new N.Config_configure_closure6(this));
+    t2.load$0(t2).then$1(new N.Config_configure_closure7(this));
   },
   get$configure: function() {
     return new T.BoundClosure$1(this, N.Config.prototype.configure$1, null, "configure$1");
@@ -11210,7 +11241,19 @@ Config_configure_closure1: {"": "Closure;this_2",
   $asObject: null
 },
 
-Config_configure_closure2: {"": "Closure;",
+Config_configure_closure2: {"": "Closure;this_3",
+  call$2: function(a, v) {
+    var t1, t2;
+    t1 = this.this_3._vn.aliases;
+    t2 = new N.Alias(v, null);
+    t1.$indexSet(t1, a, t2);
+    return t2;
+  },
+  "+call:2:0": 0,
+  $asObject: null
+},
+
+Config_configure_closure3: {"": "Closure;",
   call$0: function() {
     return ["bg"];
   },
@@ -11219,10 +11262,10 @@ Config_configure_closure2: {"": "Closure;",
   $is_void_: true
 },
 
-Config_configure_closure3: {"": "Closure;this_3",
+Config_configure_closure4: {"": "Closure;this_4",
   call$1: function(v) {
     var t1, t2, t3;
-    t1 = this.this_3._vn;
+    t1 = this.this_4._vn;
     t2 = P.List_List(null, Z.DisplayObject);
     H.setRuntimeTypeInfo(t2, [Z.DisplayObject]);
     t3 = $.DisplayObject__nextID;
@@ -11235,12 +11278,12 @@ Config_configure_closure3: {"": "Closure;this_3",
   $asObject: null
 },
 
-Config_configure_closure4: {"": "Closure;imagePath_4",
+Config_configure_closure5: {"": "Closure;imagePath_5",
   call$2: function($name, url) {
     var t1, t2, t3;
     t1 = J.endsWith$1$s(url, ".json");
     t2 = $.resourceManager;
-    t3 = this.imagePath_4;
+    t3 = this.imagePath_5;
     if (t1) {
       t1 = J.$add$ns(t3, url);
       t2.addTextureAtlas$3;
@@ -11255,11 +11298,11 @@ Config_configure_closure4: {"": "Closure;imagePath_4",
   $asObject: null
 },
 
-Config_configure_closure5: {"": "Closure;soundPath_5",
+Config_configure_closure6: {"": "Closure;soundPath_6",
   call$2: function($name, url) {
     var t1, t2;
     t1 = $.resourceManager;
-    t2 = J.$add$ns(this.soundPath_5, url);
+    t2 = J.$add$ns(this.soundPath_6, url);
     t1.addSound$3;
     t1._addResource$4("Sound", $name, t2, Z.Sound_load(t2, null));
     return;
@@ -11268,9 +11311,9 @@ Config_configure_closure5: {"": "Closure;soundPath_5",
   $asObject: null
 },
 
-Config_configure_closure6: {"": "Closure;this_6",
+Config_configure_closure7: {"": "Closure;this_7",
   call$1: function(rm) {
-    var t1 = this.this_6;
+    var t1 = this.this_7;
     if (t1.onConfig != null)
       t1.onConfig$1(t1);
   },
@@ -11279,6 +11322,36 @@ Config_configure_closure6: {"": "Closure;this_6",
 },
 
 Option: {"": "Object;name>"},
+
+Alias: {"": "Option;alias,name",
+  apply$1: function(line) {
+    var string, i, t1, t2;
+    line = P.List_List$from(J.map$1$ax(line, new N.Alias_apply_closure()), true, null);
+    string = J.toString$0(this.alias);
+    H.Primitives_printString(J.toString$0(string));
+    for (i = 1; t1 = J.getInterceptor(string), i < line.length; ++i) {
+      t2 = ":" + C.JSInt_methods.toString$0(i);
+      if (i >= line.length)
+        throw H.ioore(line, i);
+      string = t1.replaceAll$2(string, t2, J.toString$0(line[i]));
+    }
+    H.Primitives_printString(t1.toString$0(string));
+    return O.loadYaml(string);
+  }
+},
+
+Alias_apply_closure: {"": "Closure;",
+  call$1: function(l) {
+    var t1;
+    if (typeof l === "string")
+      t1 = C.JSString_methods.contains$1(l, new H.JSSyntaxRegExp(H.JSSyntaxRegExp_makeNative("[,:\"]", false, true, false), null, null)) || C.JSString_methods.contains$1(l, ":");
+    else
+      t1 = false;
+    return t1 ? C.JSString_methods.$add("\"", l) + "\"" : l;
+  },
+  "+call:1:0": 0,
+  $asObject: null
+},
 
 Channel: {"": "Option;name>,plays<,lib9$Option$name",
   add$1: function(_, sound) {
@@ -11408,15 +11481,15 @@ VNTransition: {"": "Option;name>,position,current,opts,vn,layer,prior,temp,tween
       this.position.removeChild$1(this.prior);
     J.set$alpha$x(this.current, 1);
     t1 = this.opts;
-    if (J.$eq(t1.$index(t1, "wait"), "user") === true)
+    if (J.$eq(t1.$index(t1, "for"), "user") === true)
       this.vn.set$prevNext([true, true]);
     else {
       t1 = this.opts;
-      t1 = t1.$index(t1, "wait");
+      t1 = t1.$index(t1, "for");
       if (typeof t1 === "number") {
         t1 = this.vn.get$juggler();
         t2 = this.opts;
-        t1.delayCall$2(new N.VNTransition__after_closure(), t2.$index(t2, "wait"));
+        t1.delayCall$2(new N.VNTransition__after_closure(), t2.$index(t2, "for"));
       }
     }
   },
@@ -11837,15 +11910,15 @@ VNTransition_fadeOutTransition_closure: {"": "Closure;this_0",
     t1 = this.this_0;
     t1.position.removeChild$1(t1.current);
     t2 = t1.opts;
-    if (J.$eq(t2.$index(t2, "wait"), "user") === true)
+    if (J.$eq(t2.$index(t2, "for"), "user") === true)
       t1.vn.set$prevNext([true, true]);
     else {
       t2 = t1.opts;
-      t2 = t2.$index(t2, "wait");
+      t2 = t2.$index(t2, "for");
       if (typeof t2 === "number") {
         t2 = t1.vn.get$juggler();
         t1 = t1.opts;
-        t2.delayCall$2(new N.VNTransition_fadeOutTransition__closure(), t1.$index(t1, "wait"));
+        t2.delayCall$2(new N.VNTransition_fadeOutTransition__closure(), t1.$index(t1, "for"));
       }
     }
   },
@@ -11998,13 +12071,18 @@ Script: {"": "Object;_script,_labels,_currentLine",
     }
   },
   exec$0: function() {
-    var line, t1, verb, args;
+    var line, vn, t1, t2, verb, args;
     H.fillLiteralMap([], P.LinkedHashMap_LinkedHashMap(null, null, null, null, null));
     line = J.$index$asx(this._script, this._currentLine);
+    vn = $.stage.getChildByName$1("vn");
+    t1 = J.getInterceptor$asx(line);
+    if (vn.get$aliases().containsKey$1(t1.$index(line, 0)) === true) {
+      t2 = vn.get$aliases();
+      line = t2.$index(t2, t1.$index(line, 0)).apply$1(line);
+    }
     t1 = J.getInterceptor$asx(line);
     verb = t1.$index(line, 0);
     args = t1.sublist$1(line, 1);
-    H.Primitives_printString(t1.toString$0(line));
     switch (verb) {
       case "play":
         N.Play$(args);
@@ -12161,7 +12239,7 @@ Set: {"": "Verb;args,mod",
             t4 = t1.tween$3(t2, t3, t4.$index(t4, opts.$index(opts, "ease")));
             t4._tweenPropertyFactory._addTweenProperty$1("alpha").targetValue = C.JSInt_methods.toDouble$0(0);
             t4._onComplete = new N.Set_closure1(box_0, vn, opts, layer);
-            if (J.$eq(opts.$index(opts, "wait"), "none") === true || opts.$index(opts, "wait") == null)
+            if (J.$eq(opts.$index(opts, "for"), "none") === true || opts.$index(opts, "for") == null)
               $.script.next$0();
             return;
           }
@@ -12175,51 +12253,58 @@ Set: {"": "Verb;args,mod",
           newObject = null;
       else if (typeof value === "number") {
         t1 = $.stage;
-        t1 = J.toInt$0$nx(t1.getBoundsTransformed$1(t1.get$_transformationMatrix())._width);
-        t3 = $.stage;
-        t3 = Z.BitmapData$(t1, J.toInt$0$nx(t3.getBoundsTransformed$1(t3.get$_transformationMatrix())._height), false, value, 1);
-        t1 = $.DisplayObject__nextID;
-        $.DisplayObject__nextID = t1 + 1;
-        newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-        newObject.set$bitmapData(t3);
+        t1 = Z.BitmapData$(t1._sourceWidth, t1._sourceHeight, false, value, 1);
+        t3 = $.DisplayObject__nextID;
+        $.DisplayObject__nextID = t3 + 1;
+        newObject = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+        newObject.set$bitmapData(t1);
         newObject._pixelSnapping = "auto";
         newObject._clipRectangle = null;
       } else {
         t3 = vn.get$assets();
-        if (t3 != null) {
-          t1 = J.$index$asx(t3, "images");
-          t3 = J.getInterceptor$s(value);
-          t4 = t3.split$1(value, ".");
-          if (0 >= t4.length)
-            throw H.ioore(t4, 0);
-          if (t1.containsKey$1(t4[0]) === true) {
-            t1 = t3.contains$1(value, ".");
-            t4 = $.resourceManager;
-            if (t1 === true) {
-              t1 = t3.split$1(value, ".");
-              if (0 >= t1.length)
-                throw H.ioore(t1, 0);
-              t1 = t4.getTextureAtlas$1(t1[0]);
-              t3 = t3.split$1(value, ".");
-              if (1 >= t3.length)
-                throw H.ioore(t3, 1);
-              t3 = t1.getBitmapData$1(t3[1]);
-              t1 = $.DisplayObject__nextID;
-              $.DisplayObject__nextID = t1 + 1;
-              newObject = new Z.Bitmap(null, null, null, t1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-              newObject.set$bitmapData(t3);
-              newObject._pixelSnapping = "auto";
-              newObject._clipRectangle = null;
-            } else {
-              t1 = t4.getBitmapData$1(value);
-              t3 = $.DisplayObject__nextID;
-              $.DisplayObject__nextID = t3 + 1;
-              newObject = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-              newObject.set$bitmapData(t1);
-              newObject._pixelSnapping = "auto";
-              newObject._clipRectangle = null;
-            }
-          } else if (J.$index$asx(vn.get$assets(), "shapes").containsKey$1(value) === true) {
+        if (t3 != null)
+          if (t3.containsKey$1("images") === true) {
+            t3 = J.$index$asx(vn.get$assets(), "images");
+            t4 = J.split$1$s(value, ".");
+            if (0 >= t4.length)
+              throw H.ioore(t4, 0);
+            t4 = t3.containsKey$1(t4[0]) === true;
+            t3 = t4;
+          } else
+            t3 = false;
+        else
+          t3 = false;
+        if (t3) {
+          t1 = J.getInterceptor$asx(value);
+          t3 = t1.contains$1(value, ".");
+          t4 = $.resourceManager;
+          if (t3 === true) {
+            t3 = t1.split$1(value, ".");
+            if (0 >= t3.length)
+              throw H.ioore(t3, 0);
+            t3 = t4.getTextureAtlas$1(t3[0]);
+            t1 = t1.split$1(value, ".");
+            if (1 >= t1.length)
+              throw H.ioore(t1, 1);
+            t1 = t3.getBitmapData$1(t1[1]);
+            t3 = $.DisplayObject__nextID;
+            $.DisplayObject__nextID = t3 + 1;
+            newObject = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+            newObject.set$bitmapData(t1);
+            newObject._pixelSnapping = "auto";
+            newObject._clipRectangle = null;
+          } else {
+            t1 = t4.getBitmapData$1(value);
+            t3 = $.DisplayObject__nextID;
+            $.DisplayObject__nextID = t3 + 1;
+            newObject = new Z.Bitmap(null, null, null, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+            newObject.set$bitmapData(t1);
+            newObject._pixelSnapping = "auto";
+            newObject._clipRectangle = null;
+          }
+        } else {
+          t3 = vn.get$assets();
+          if (t3 != null && t3.containsKey$1("shapes") === true && J.$index$asx(vn.get$assets(), "shapes").containsKey$1(value) === true) {
             sa = J.$index$asx(J.$index$asx(vn.get$assets(), "shapes"), value);
             if (sa.containsKey$1("stroke_color") === true)
               sw = sa.containsKey$1("stroke_width") === true ? J.$index$asx(sa, "stroke_width") : 1;
@@ -12237,13 +12322,13 @@ Set: {"": "Verb;args,mod",
             switch (t1.$index(sa, "shape")) {
               case "rect":
                 t3 = sa.containsKey$1("corner_radius");
-                t4 = shape._graphics;
-                t5 = J.getInterceptor$n(sw);
+                t4 = J.getInterceptor$n(sw);
+                t5 = shape._graphics;
                 if (t3 === true)
-                  t4.rectRound$6(sw, sw, J.$sub$n(t1.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t5.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), sw));
+                  t5.rectRound$6(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), sw));
                 else {
-                  t4._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t1.$index(sa, "width"), t5.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t5.$mul(sw, 2))));
-                  t4._identityRectangleRefresh = true;
+                  t5._commands.push(Z._GraphicsCommandRect$(sw, sw, J.$sub$n(t1.$index(sa, "width"), t4.$mul(sw, 2)), J.$sub$n(t1.$index(sa, "height"), t4.$mul(sw, 2))));
+                  t5._identityRectangleRefresh = true;
                 }
                 break;
               case "ellipse":
@@ -12276,13 +12361,13 @@ Set: {"": "Verb;args,mod",
               switch (t1.$index(sa, "shape")) {
                 case "rect":
                   t3 = sa.containsKey$1("corner_radius");
-                  t4 = stroke._graphics;
-                  t5 = J.getInterceptor$n(sw);
+                  t4 = J.getInterceptor$n(sw);
+                  t5 = stroke._graphics;
                   if (t3 === true)
-                    t4.rectRound$6(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t5.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t5.$div(sw, 2)));
+                    t5.rectRound$6(t4.$div(sw, 2), t4.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw), J.$sub$n(t1.$index(sa, "corner_radius"), t4.$div(sw, 2)), J.$sub$n(t1.$index(sa, "corner_radius"), t4.$div(sw, 2)));
                   else {
-                    t4._commands.push(Z._GraphicsCommandRect$(t5.$div(sw, 2), t5.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
-                    t4._identityRectangleRefresh = true;
+                    t5._commands.push(Z._GraphicsCommandRect$(t4.$div(sw, 2), t4.$div(sw, 2), J.$sub$n(t1.$index(sa, "width"), sw), J.$sub$n(t1.$index(sa, "height"), sw)));
+                    t5._identityRectangleRefresh = true;
                   }
                   break;
                 case "ellipse":
@@ -12310,26 +12395,25 @@ Set: {"": "Verb;args,mod",
             newObject.set$bitmapData(drawn);
             newObject._pixelSnapping = "auto";
             newObject._clipRectangle = null;
+          } else if (typeof value === "string") {
+            tf = J.$index$asx(J.$index$asx(t1.get$options(vn), "text_formats"), opts.$index(opts, "text_format"));
+            t1 = J.getInterceptor$asx(tf);
+            newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, "font"), t1.$index(tf, "size"), t1.$index(tf, "color"), false, false, false, "left", 0, 0, 0, 0, 0, 0));
+            newObject._multiline = true;
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+            newObject._wordWrap = true;
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+            t3 = newObject._defaultTextFormat;
+            t3.align = tf.containsKey$1("align") === true ? t1.$index(tf, "align") : "left";
+            newObject._width = J.toDouble$0$n(tf.containsKey$1("width") === true ? t1.$index(tf, "width") : $.stage._sourceWidth);
+            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+            if (tf.containsKey$1("height") === true) {
+              newObject._height = J.toDouble$0$n(t1.$index(tf, "height"));
+              newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
+            }
           } else
             newObject = null;
-        } else if (typeof value === "string") {
-          tf = J.$index$asx(J.$index$asx(t1.get$options(vn), "text_formats"), opts.$index(opts, "text_format"));
-          t1 = J.getInterceptor$asx(tf);
-          newObject = Z.TextField$(value, new Z.TextFormat(t1.$index(tf, "font"), t1.$index(tf, "size"), t1.$index(tf, "color"), false, false, false, "left", 0, 0, 0, 0, 0, 0));
-          newObject._multiline = true;
-          newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
-          newObject._wordWrap = true;
-          newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
-          t3 = newObject._defaultTextFormat;
-          t3.align = tf.containsKey$1("align") === true ? t1.$index(tf, "align") : "left";
-          newObject._width = J.toDouble$0$n(tf.containsKey$1("width") === true ? t1.$index(tf, "width") : $.stage._sourceWidth);
-          newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
-          if (tf.containsKey$1("height") === true) {
-            newObject._height = J.toDouble$0$n(t1.$index(tf, "height"));
-            newObject._refreshPending = (newObject._refreshPending | 3) >>> 0;
-          }
-        } else
-          newObject = null;
+        }
       }
       newObject._name = t2 ? "" : J.toString$0(value);
     } else {
@@ -12347,11 +12431,11 @@ Set: {"": "Verb;args,mod",
       if (priorObject != null)
         box_0.position_0.removeChild$1(priorObject);
       box_0.position_0.addChild$1(newObject);
-      t1 = opts.$index(opts, "wait");
+      t1 = opts.$index(opts, "for");
       if (typeof t1 === "number")
-        vn.get$juggler().delayCall$2(new N.Set_closure2(), opts.$index(opts, "wait"));
+        vn.get$juggler().delayCall$2(new N.Set_closure2(), opts.$index(opts, "for"));
     }
-    if (J.$eq(opts.$index(opts, "wait"), "none") === true || opts.$index(opts, "wait") == null)
+    if (J.$eq(opts.$index(opts, "for"), "none") === true || opts.$index(opts, "for") == null)
       $.script.next$0();
   },
   static: {
@@ -12380,9 +12464,9 @@ Set_closure0: {"": "Closure;vn_2,opts_3,layer_4",
       t1.removeChildren$0();
     J.set$alpha$x(t1, 1);
     t1 = this.opts_3;
-    t2 = t1.$index(t1, "wait");
+    t2 = t1.$index(t1, "for");
     if (typeof t2 === "number")
-      this.vn_2.get$juggler().delayCall$2(new N.Set__closure0(), t1.$index(t1, "wait"));
+      this.vn_2.get$juggler().delayCall$2(new N.Set__closure0(), t1.$index(t1, "for"));
   },
   "+call:0:0": 0,
   $asObject: null,
@@ -12403,9 +12487,9 @@ Set_closure1: {"": "Closure;box_0,vn_5,opts_6,layer_7",
     var t1, t2;
     this.layer_7.removeChild$1(this.box_0.position_0);
     t1 = this.opts_6;
-    t2 = t1.$index(t1, "wait");
+    t2 = t1.$index(t1, "for");
     if (typeof t2 === "number")
-      this.vn_5.get$juggler().delayCall$2(new N.Set__closure(), t1.$index(t1, "wait"));
+      this.vn_5.get$juggler().delayCall$2(new N.Set__closure(), t1.$index(t1, "for"));
   },
   "+call:0:0": 0,
   $asObject: null,
@@ -12430,7 +12514,7 @@ Set_closure2: {"": "Closure;",
   $is_void_: true
 },
 
-VN: {"": "DisplayObjectContainer;_juggler,_glassPlate,prevNext?,options>,assets<,channels<,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib0$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
+VN: {"": "DisplayObjectContainer;_juggler,_glassPlate,prevNext?,options>,assets<,channels<,aliases<,_children,_mouseChildren,_tabChildren,doubleClickEnabled,mouseEnabled,tabEnabled,tabIndex,_liblib0$_id,_x,_y,_pivotX,_pivotY,_scaleX,_scaleY,_skewX,_skewY,_rotation,_alpha,_visible,_off,_mask,_cache,_cacheRectangle,_cacheDebugBorder,_filters,_shadow,_compositeOperation,_name,_parent,_tmpMatrix,_transformationMatrixPrivate,_transformationMatrixRefresh,_eventStreams,_captureEventStreams",
   get$juggler: function() {
     return this._juggler;
   },
@@ -12500,15 +12584,16 @@ VN: {"": "DisplayObjectContainer;_juggler,_glassPlate,prevNext?,options>,assets<
   static: {
 "": "VN_scaleMode,VN_align,VN_ease",
 VN$: function(canvas) {
-  var t1, t2, t3;
+  var t1, t2, t3, t4;
   t1 = H.fillLiteralMap([], P.LinkedHashMap_LinkedHashMap(null, null, null, null, null));
-  t2 = P.List_List(null, Z.DisplayObject);
-  H.setRuntimeTypeInfo(t2, [Z.DisplayObject]);
-  t3 = $.DisplayObject__nextID;
-  $.DisplayObject__nextID = t3 + 1;
-  t3 = new N.VN(null, null, [false, true], null, null, t1, t2, true, true, false, true, true, 0, t3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
-  t3.VN$1(canvas);
-  return t3;
+  t2 = H.fillLiteralMap([], P.LinkedHashMap_LinkedHashMap(null, null, null, null, null));
+  t3 = P.List_List(null, Z.DisplayObject);
+  H.setRuntimeTypeInfo(t3, [Z.DisplayObject]);
+  t4 = $.DisplayObject__nextID;
+  $.DisplayObject__nextID = t4 + 1;
+  t4 = new N.VN(null, null, [false, true], null, null, t1, t2, t3, true, true, false, true, true, 0, t4, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, true, false, null, null, null, false, null, null, null, "", null, Z.Matrix$fromIdentity(), Z.Matrix$fromIdentity(), true, null, null);
+  t4.VN$1(canvas);
+  return t4;
 }}
 
 },
@@ -13089,6 +13174,11 @@ ScalarNode: {"": "Node;_content,value>,tag,anchor",
     var t1, t2;
     t1 = H.S(this.tag) + " \"";
     t2 = this._content;
+    if (typeof t2 !== "string")
+      return this.toString$0$bailout1(1, t2, t1);
+    return t1 + t2 + "\"";
+  },
+  toString$0$bailout1: function(state0, t2, t1) {
     return t1 + H.S(t2 != null ? t2 : this.get$canonicalContent()) + "\"";
   },
   zeroPad$2: function(str, $length) {
@@ -24082,13 +24172,14 @@ init.globalFunctions.TransitionFunction_easeOutBounce$closure = Z.TransitionFunc
 init.globalFunctions.TransitionFunction_easeInOutBounce$closure = Z.TransitionFunction_easeInOutBounce$closure = new Z.Closure$easeInOutBounce(Z.TransitionFunction_easeInOutBounce, "TransitionFunction_easeInOutBounce$closure");
 init.globalFunctions.TransitionFunction_easeOutInBounce$closure = Z.TransitionFunction_easeOutInBounce$closure = new Z.Closure$easeOutInBounce(Z.TransitionFunction_easeOutInBounce, "TransitionFunction_easeOutInBounce$closure");
 // Runtime type support
+V._Range.$isObject = true;
 Z._EventStream0.$isStream = true;
 Z._EventStream0.$isObject = true;
 Z.EnterFrameEvent.$isObject = true;
 Z.ExitFrameEvent.$isObject = true;
 Z.RenderEvent.$isObject = true;
-Z.MouseEvent.$isMouseEvent = true;
 Z.MouseEvent.$isObject = true;
+Z.MouseEvent.$isMouseEvent = true;
 Z.KeyboardEvent.$isKeyboardEvent = true;
 Z.KeyboardEvent.$isObject = true;
 P._BroadcastSubscription.$is_BroadcastSubscription = true;
@@ -24096,31 +24187,31 @@ P._BroadcastSubscription.$is_BufferingStreamSubscription = true;
 P._BroadcastSubscription.$is_EventSink = true;
 P._BroadcastSubscription.$isStreamSubscription = true;
 P._BroadcastSubscription.$isObject = true;
-Z.TextEvent.$isObject = true;
 Z.TextEvent.$isTextEvent = true;
+Z.TextEvent.$isObject = true;
 W.ProgressEvent.$isEvent0 = true;
 W.ProgressEvent.$isObject = true;
 P.Future.$isFuture = true;
 P.Future.$isObject = true;
 Z.DisplayObject.$isDisplayObject = true;
 Z.DisplayObject.$isObject = true;
-W.HttpRequest.$isObject = true;
 W.HttpRequest.$isEventTarget = true;
+W.HttpRequest.$isObject = true;
 P.Stream.$isStream = true;
 P.Stream.$isObject = true;
 P.StreamSubscription.$isStreamSubscription = true;
 P.StreamSubscription.$isObject = true;
 Z._Touch.$isObject = true;
+W.AudioElement.$isNode0 = true;
 W.AudioElement.$isEventTarget = true;
 W.AudioElement.$isObject = true;
 W.AudioElement.$isElement = true;
-W.AudioElement.$isNode0 = true;
 Z.Stage.$isDisplayObject = true;
 Z.Stage.$isObject = true;
-Z.BitmapData.$isBitmapData = true;
-Z.BitmapData.$isObject = true;
 P.DateTime.$isDateTime = true;
 P.DateTime.$isObject = true;
+Z.BitmapData.$isObject = true;
+Z.BitmapData.$isBitmapData = true;
 P.Duration.$isDuration = true;
 P.Duration.$isObject = true;
 W.CanvasElement.$isCanvasElement = true;
@@ -24128,15 +24219,15 @@ W.CanvasElement.$isElement = true;
 W.CanvasElement.$isNode0 = true;
 W.CanvasElement.$isEventTarget = true;
 W.CanvasElement.$isObject = true;
-P.AudioBuffer.$isObject = true;
 P.AudioBuffer.$isAudioBuffer = true;
+P.AudioBuffer.$isObject = true;
 Z._GraphicsCommand.$isObject = true;
 P._EventSink.$is_EventSink = true;
 P._EventSink.$isObject = true;
+P._BufferingStreamSubscription.$isObject = true;
 P._BufferingStreamSubscription.$is_BufferingStreamSubscription = true;
 P._BufferingStreamSubscription.$is_EventSink = true;
 P._BufferingStreamSubscription.$isStreamSubscription = true;
-P._BufferingStreamSubscription.$isObject = true;
 P.Function.$isFunction = true;
 P.Function.$isObject = true;
 W.KeyboardEvent0.$isKeyboardEvent0 = true;
@@ -24151,69 +24242,68 @@ P.StackTrace.$isObject = true;
 Z.Sound.$isObject = true;
 Z.SoundChannel.$isSoundChannel = true;
 Z.SoundChannel.$isObject = true;
-W.Point0.$isPoint0 = true;
 W.Point0.$isObject = true;
+W.Point0.$isPoint0 = true;
 P.Symbol.$isSymbol = true;
 P.Symbol.$isObject = true;
 Z.AudioElementSoundChannel.$isAudioElementSoundChannel = true;
 Z.AudioElementSoundChannel.$isSoundChannel = true;
 Z.AudioElementSoundChannel.$isObject = true;
 W.Touch.$isObject = true;
+W.TouchEvent0.$isEvent0 = true;
 W.TouchEvent0.$isObject = true;
 W.TouchEvent0.$isTouchEvent0 = true;
-W.TouchEvent0.$isEvent0 = true;
 Z._FontStyleMetrics.$isObject = true;
 H._IsolateContext.$isObject = true;
-Z.TextLineMetrics.$isObject = true;
 H._IsolateEvent.$isObject = true;
+Z.TextLineMetrics.$isObject = true;
+J.JSBool.$isbool = true;
+J.JSBool.$isObject = true;
 W.MouseEvent0.$isMouseEvent0 = true;
 W.MouseEvent0.$isEvent0 = true;
 W.MouseEvent0.$isObject = true;
-J.JSBool.$isbool = true;
-J.JSBool.$isObject = true;
 W.WheelEvent.$isWheelEvent = true;
 W.WheelEvent.$isMouseEvent0 = true;
 W.WheelEvent.$isEvent0 = true;
 W.WheelEvent.$isObject = true;
 Z.ResourceManagerResource.$isObject = true;
-Z.TextureAtlas.$isObject = true;
 J.JSArray.$isObject = true;
+Z.TextureAtlas.$isObject = true;
 Z.TextureAtlasFrame.$isObject = true;
 Z.Animatable.$isAnimatable = true;
 Z.Animatable.$isObject = true;
-W.Element.$isElement = true;
+J.JSNumber.$isnum = true;
+J.JSNumber.$isObject = true;
 W.Element.$isNode0 = true;
 W.Element.$isEventTarget = true;
 W.Element.$isObject = true;
-J.JSNumber.$isnum = true;
-J.JSNumber.$isObject = true;
-W.Node0.$isNode0 = true;
-W.Node0.$isEventTarget = true;
-W.Node0.$isObject = true;
+W.Element.$isElement = true;
 J.JSInt.$isint = true;
 J.JSInt.$isnum = true;
 J.JSInt.$isObject = true;
-Z.TweenProperty.$isObject = true;
+W.Node0.$isObject = true;
+W.Node0.$isNode0 = true;
+W.Node0.$isEventTarget = true;
 J.JSString.$isString = true;
 J.JSString.$isObject = true;
+Z.TweenProperty.$isObject = true;
 R.Node.$isNode = true;
 R.Node.$isObject = true;
+Z.Tween.$isObject = true;
 Z.Tween.$isTween = true;
 Z.Tween.$isAnimatable = true;
-Z.Tween.$isObject = true;
-W.Event0.$isEvent0 = true;
-W.Event0.$isObject = true;
 Z.Point.$isPoint = true;
 Z.Point.$isObject = true;
+W.Event0.$isEvent0 = true;
+W.Event0.$isObject = true;
 Z.Rectangle.$isRectangle = true;
 Z.Rectangle.$isObject = true;
-R.ScalarNode.$isObject = true;
+P.ReceivePort.$isObject = true;
 R.ScalarNode.$isScalarNode = true;
 R.ScalarNode.$isNode = true;
-P.ReceivePort.$isObject = true;
+R.ScalarNode.$isObject = true;
 W.EventTarget.$isEventTarget = true;
 W.EventTarget.$isObject = true;
-V._Range.$isObject = true;
 // getInterceptor methods
 J.getInterceptor = function(receiver) {
   if (typeof receiver == "number") {

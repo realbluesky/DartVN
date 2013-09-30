@@ -39,7 +39,7 @@ class Set extends Verb {
             ..onComplete = () {
           if(layer.numChildren>0) layer.removeChildren();
           layer.alpha = 1;
-          if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
+          if(opts['for'] is num) vn.juggler.delayCall(()=> script.next(), opts['for']);
         };
         return; //free to jump out now
       }
@@ -50,70 +50,67 @@ class Set extends Verb {
           if(position != null) {
             vn.juggler.tween(position, opts['dur'], VN.ease[opts['ease']])
               ..animate.alpha.to(0)
-              ..onComplete = () { layer.removeChild(position); if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']); };
-            if(opts['wait'] == 'none' || opts['wait'] == null) script.next();
+              ..onComplete = () { layer.removeChild(position); if(opts['for'] is num) vn.juggler.delayCall(()=> script.next(), opts['for']); };
+            if(opts['for'] == 'none' || opts['for'] == null) script.next();
             return; //free to jump out
           }
         newObject = new Bitmap();
         }
       }
       //color
-      else if(value is num) newObject = new Bitmap(new BitmapData(stage.width.toInt(), stage.height.toInt(), false, value));
-      //asset?
-      else if(vn.assets != null) {
-        if(vn.assets['images'].containsKey(value.split('.')[0])) {
-          if(value.contains('.')) newObject = new Bitmap(resourceManager.getTextureAtlas(value.split('.')[0]).getBitmapData(value.split('.')[1]));
-          else newObject = new Bitmap(resourceManager.getBitmapData(value));
+      else if(value is num) newObject = new Bitmap(new BitmapData(stage.sourceWidth, stage.sourceHeight, false, value));
+      else if(vn.assets != null && vn.assets.containsKey('images') && vn.assets['images'].containsKey(value.split('.')[0])) {
+        if(value.contains('.')) newObject = new Bitmap(resourceManager.getTextureAtlas(value.split('.')[0]).getBitmapData(value.split('.')[1]));
+        else newObject = new Bitmap(resourceManager.getBitmapData(value));
+      }
+      else if(vn.assets != null && vn.assets.containsKey('shapes') && vn.assets['shapes'].containsKey(value)) {
+        Map sa = vn.assets['shapes'][value]; //shape arguments
+        var sw = sa.containsKey('stroke_color')?(sa.containsKey('stroke_width')?sa['stroke_width']:1):0;
+        Shape shape = new Shape();
+        shape.graphics.beginPath();
+        switch(sa['shape']) {
+          case 'rect':
+            if(sa.containsKey('corner_radius')) shape.graphics.rectRound(sw, sw, sa['width']-sw*2, sa['height']-sw*2, sa['corner_radius']-sw, sa['corner_radius']-sw);
+            else shape.graphics.rect(sw, sw, sa['width']-sw*2, sa['height']-sw*2);
+            break;
+          case 'ellipse':
+            shape.graphics.ellipse(sa['width']/2, sa['height']/2, sa['width']-sw*2, sa['height']-sw*2);
+            break;
         }
-        else if(vn.assets['shapes'].containsKey(value)) {
-          Map sa = vn.assets['shapes'][value]; //shape arguments
-          var sw = sa.containsKey('stroke_color')?(sa.containsKey('stroke_width')?sa['stroke_width']:1):0;
-          Shape shape = new Shape();
-          shape.graphics.beginPath();
+        shape.graphics.closePath();
+        if(sa.containsKey('fill_color')) shape.graphics.fillColor(sa['fill_color']);
+        BitmapData drawn = new BitmapData(sa['width'], sa['height'], true, 0x00000000);
+        drawn.draw(shape);
+        if(sa.containsKey('stroke_color')) {
+          Shape stroke = new Shape();
+          stroke.graphics.beginPath();
           switch(sa['shape']) {
             case 'rect':
-              if(sa.containsKey('corner_radius')) shape.graphics.rectRound(sw, sw, sa['width']-sw*2, sa['height']-sw*2, sa['corner_radius']-sw, sa['corner_radius']-sw);
-              else shape.graphics.rect(sw, sw, sa['width']-sw*2, sa['height']-sw*2);
+              if(sa.containsKey('corner_radius')) stroke.graphics.rectRound(sw/2, sw/2, sa['width']-sw, sa['height']-sw, sa['corner_radius']-sw/2, sa['corner_radius']-sw/2);
+              else stroke.graphics.rect(sw/2, sw/2, sa['width']-sw, sa['height']-sw);
               break;
             case 'ellipse':
-              shape.graphics.ellipse(sa['width']/2, sa['height']/2, sa['width']-sw*2, sa['height']-sw*2);
+              stroke.graphics.ellipse(sa['width']/2, sa['height']/2, sa['width']-sw, sa['height']-sw);
               break;
           }
-          shape.graphics.closePath();
-          if(sa.containsKey('fill_color')) shape.graphics.fillColor(sa['fill_color']);
-          BitmapData drawn = new BitmapData(sa['width'], sa['height'], true, 0x00000000);
-          drawn.draw(shape);
-          if(sa.containsKey('stroke_color')) {
-            Shape stroke = new Shape();
-            stroke.graphics.beginPath();
-            switch(sa['shape']) {
-              case 'rect':
-                if(sa.containsKey('corner_radius')) stroke.graphics.rectRound(sw/2, sw/2, sa['width']-sw, sa['height']-sw, sa['corner_radius']-sw/2, sa['corner_radius']-sw/2);
-                else stroke.graphics.rect(sw/2, sw/2, sa['width']-sw, sa['height']-sw);
-                break;
-              case 'ellipse':
-                stroke.graphics.ellipse(sa['width']/2, sa['height']/2, sa['width']-sw, sa['height']-sw);
-                break;
-            }
-            stroke.graphics.closePath();
-            stroke.graphics.strokeColor(sa['stroke_color'], sw);
-            drawn.draw(stroke);
-          }
-          newObject = new Bitmap(drawn);
+          stroke.graphics.closePath();
+          stroke.graphics.strokeColor(sa['stroke_color'], sw);
+          drawn.draw(stroke);
         }
+        newObject = new Bitmap(drawn);
       }
-        //not a color or asset (image or shape), so just display the text
-        else if(value is String) {
-        Map tf = vn.options['text_formats'][opts['text_format']];
-        newObject = new TextField(value, new TextFormat(tf['font'], tf['size'], tf['color']))
-          ..multiline = true
-          ..wordWrap = true
-          ..defaultTextFormat.align = tf.containsKey('align')?tf['align']:TextFormatAlign.LEFT
-          ..width = tf.containsKey('width')?tf['width']:stage.sourceWidth;
+      //not a color or asset (image or shape), so just display the text
+      else if(value is String) {
+      Map tf = vn.options['text_formats'][opts['text_format']];
+      newObject = new TextField(value, new TextFormat(tf['font'], tf['size'], tf['color']))
+        ..multiline = true
+        ..wordWrap = true
+        ..defaultTextFormat.align = tf.containsKey('align')?tf['align']:TextFormatAlign.LEFT
+        ..width = tf.containsKey('width')?tf['width']:stage.sourceWidth;
 
-        if(tf.containsKey('height')) newObject.height=tf['height'];
+      if(tf.containsKey('height')) newObject.height=tf['height'];
 
-      }
+    }
 
       //position.add(newObject);
       newObject.name = (value == null)?'':value.toString();
@@ -140,10 +137,10 @@ class Set extends Verb {
     else {
         if(priorObject != null) position.removeChild(priorObject);
         position.addChild(newObject);
-        if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
+        if(opts['for'] is num) vn.juggler.delayCall(()=> script.next(), opts['for']);
       }
 
-    if(opts['wait'] == 'none' || opts['wait'] == null) script.next();
+    if(opts['for'] == 'none' || opts['for'] == null) script.next();
 
   }
 

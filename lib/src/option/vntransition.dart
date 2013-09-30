@@ -6,39 +6,39 @@ class VNTransition extends Option {
   var current;
   Map opts;
   VN vn;
-  
-  VNTransition(Position position, var current, Map args) { 
-    this.vn = stage.getChildByName('vn'); 
+
+  VNTransition(Position position, var current, Map args) {
+    this.vn = stage.getChildByName('vn');
     this.position = position;
     this.current = current;
     this.opts = args;
   }
-  
+
   DisplayObjectContainer layer;
   DisplayObject prior;
   DisplayObject temp;
   Tween tween;
-  
+
   void _before() {
     //always need to check for prior if mode isn't add
     if(opts['mode']!='add' && position.numChildren > 0) prior = position.getChildAt(0);
   }
-  
+
   void _during() {
     //print(args.toString());
   }
-  
+
   void _after() {
     //if prior was set, need to remove it
     if(prior != null && prior != current && position.getChildByName(prior.name) != null) position.removeChild(prior);
     current.alpha = 1;
-    if(opts['wait'] == 'user') vn.prevNext = [true,true];
-    else if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
+    if(opts['for'] == 'user') vn.prevNext = [true,true];
+    else if(opts['for'] is num) vn.juggler.delayCall(()=> script.next(), opts['for']);
   }
 
 //-----------------------------------------------------------------------------//
  void fadeTransition() {
-   name = 'fade'; 
+   name = 'fade';
    _before();
     _during();
     current.alpha = 0;
@@ -50,25 +50,25 @@ class VNTransition extends Option {
 
 //-----------------------------------------------------------------------------//
  void crossFadeTransition() {
-    name = 'crossfade'; 
+    name = 'crossfade';
     _before();
     _during();
     current.alpha = 0;
     position.add(current);
-    
+
     if(prior != null) vn.juggler.tween(prior, opts['dur']/2, VN.ease[opts['ease']])
       ..animate.alpha.to(0)
       ..onComplete = () => position.removeChild(prior);
-    
+
     tween = vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']]);
     if(opts['gap'] is num) tween.delay = opts['dur'] + opts['gap'];
     tween..animate.alpha.to(1.0)
          ..onComplete = _after;
-  } 
- 
+  }
+
 //-----------------------------------------------------------------------------//
 void fadeOutTransition() {
-  name = 'fadeout'; 
+  name = 'fadeout';
   if(opts['mod'] == null) {
     _before();
     position.add(current);
@@ -78,13 +78,13 @@ void fadeOutTransition() {
   tween..animate.alpha.to(0)
        ..onComplete = () {
          position.removeChild(current);
-         if(opts['wait'] == 'user') vn.prevNext = [true,true];
-         else if(opts['wait'] is num) vn.juggler.delayCall(()=> script.next(), opts['wait']);
+         if(opts['for'] == 'user') vn.prevNext = [true,true];
+         else if(opts['for'] is num) vn.juggler.delayCall(()=> script.next(), opts['for']);
        };
 }
 
 //---------------------------------------------------------------------------------//
-  void fadeThruTransition() {  
+  void fadeThruTransition() {
     name = 'fadethru';
     _before();
     _during();
@@ -96,27 +96,27 @@ void fadeOutTransition() {
     current.alpha = 0;
     position.add(current);
     position.add(temp);
-  
+
     vn.juggler.tween(temp, opts['dur']/2, VN.ease[opts['ease']])
         ..animate.alpha.to(1.0)
         ..onComplete = () => current.alpha = 1;
-  
+
     vn.juggler.tween(temp, opts['dur']/2, VN.ease[opts['ease']])
       ..animate.alpha.to(0.0)
       ..delay = opts['dur']/2
       ..onComplete = _after;
-    
+
     vn.juggler.delayCall(()=> position.removeChild(temp), opts['dur']);
   }
 
 
 //---------------------------------------------------------------------------------//
-  void fadeAcrossTransition() {  
+  void fadeAcrossTransition() {
     name = 'fadeacross';
-    _before();   
+    _before();
     _during();
     if(current is! Bitmap) current = new Bitmap(new BitmapData(current.width.toInt(), current.height.toInt(), true, 0x00000000)..draw(current));
-    current.clipRectangle = new Rectangle.zero(); 
+    current.clipRectangle = new Rectangle.zero();
     var fadePortion = 1/5;
     var stops = [0,1];
     var gradientWidthHeight = [current.width*fadePortion,0];
@@ -141,7 +141,7 @@ void fadeOutTransition() {
         horizontal = false;
         startStop = [current.height,-current.height*fadePortion];
         break;
-    }              
+    }
     Shape fade = new Shape();
     temp = new Bitmap(current.bitmapData);
     GraphicsGradient gradient = new GraphicsGradient.linear(0, 0, gradientWidthHeight[0], gradientWidthHeight[1])
@@ -171,13 +171,13 @@ void fadeOutTransition() {
         case 'up': current.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), current.width.toInt(), max(startStop[0]-value+startStop[1],0));
         break;
       }
-    }).onComplete = _after;    
+    }).onComplete = _after;
     vn.juggler.delayCall(()=> position.removeChild(temp), opts['dur']);
   }
-  
+
 
 //-----------------------------------------------------------------------------//
-  void slideTransition() {  
+  void slideTransition() {
     name = 'slide';
     _before();
     _during();
@@ -187,20 +187,20 @@ void fadeOutTransition() {
                   'left':   stage.width,
                   'up':     stage.height,
                   'down':  -current.height}[opts['dir']];
-    var horizontal = ['right','left'].contains(opts['dir']);    
-    
+    var horizontal = ['right','left'].contains(opts['dir']);
+
     var trans = vn.juggler.transition(start, horizontal?current.x:current.y, opts['dur'], VN.ease[opts['ease']], (value) {
       if(horizontal) current.x = value;
       else current.y = value;
 
     });
-    
+
     trans..onStart = (() =>  current.alpha=1 )
-         ..onComplete = _after; 
+         ..onComplete = _after;
   }
 
 //-----------------------------------------------------------------------------//
-  void scaleTransition() {  
+  void scaleTransition() {
     name = 'scale';
     if(opts['mod'] == null) {
       _before();
@@ -213,31 +213,31 @@ void fadeOutTransition() {
     current.y += current.height/2;
     current.scaleX = current.scaleY = opts['range'][0];
 
-    
+
     vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']])
       ..animate.scaleX.to(opts['range'][1])
       ..animate.scaleY.to(opts['range'][1]);
-    
-  }  
-  
-  void panTransition() {  
+
+  }
+
+  void panTransition() {
     name = 'pan';
     //Bitmap current;
-    
+
     if(opts['mod'] == null) {
       _before();
       position.add(current);
     }
     var nx = current.x + opts['dist'][0];
-    var ny = current.y + opts['dist'][1];    
-    
+    var ny = current.y + opts['dist'][1];
+
     tween = vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']]);
     if(nx!=current.x) tween.animate.x.to(nx);
     if(ny!=current.y) tween.animate.y.to(ny);
-   
+
     tween.onComplete = _after;
-    
-  }  
-  
+
+  }
+
 }
-  
+

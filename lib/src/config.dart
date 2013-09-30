@@ -38,6 +38,11 @@ class Config {
       _config['options']['channels'].forEach((v) => _vn.channels[v] = new Channel(v));
     }
 
+    //add aliases if present
+    if(_config['options'].containsKey('aliases')) {
+      _config['options']['aliases'].forEach((a,v) => _vn.aliases[a] = new Alias(v));
+    }
+
     //add layers, glassplate added onConfig so it is always on top
     _config['options'].putIfAbsent('layers', ()=>['bg']);
     _config['options']['layers'].forEach((v) => _vn.addChild(new Layer()..name = v));

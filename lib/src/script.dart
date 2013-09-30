@@ -42,9 +42,13 @@ class Script {
     Map options = {};
     line = _script[_currentLine];
 
+    //check for alias
+    VN vn = stage.getChildByName('vn');
+    if(vn.aliases.containsKey(line[0])) line = vn.aliases[line[0]].apply(line);
+
     var verb = line[0];
     List args = line.sublist(1);
-    print(line);
+
     switch(verb) {
       case 'play': new Play(args);
         break;
