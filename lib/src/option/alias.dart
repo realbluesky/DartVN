@@ -11,9 +11,9 @@ class Alias extends Option {
     }));
 
     var string = alias.toString();
-    print(string);
+
     for(var i = 1; i<line.length; i++) string = string.replaceAll(':'+i.toString(), line[i].toString());
-    print(string);
+
     return loadYaml(string);
   }
 

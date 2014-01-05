@@ -102,7 +102,7 @@ class Set extends Verb {
       //not a color or asset (image or shape), so just display the text
       else if(value is String) {
       Map tf = vn.options['text_formats'][opts['text_format']];
-      newObject = new TextField(value, new TextFormat(tf['font'], tf['size'], tf['color']))
+      newObject = new RichTextField(value, new RichTextFormat(tf['font'], tf['size'], tf['color']))
         ..multiline = true
         ..wordWrap = true
         ..defaultTextFormat.align = tf.containsKey('align')?tf['align']:TextFormatAlign.LEFT

@@ -18,7 +18,7 @@ class Config {
     if(script.endsWith('.yaml') || script.endsWith('.yml') || script.endsWith('.json'))
       var request = html.HttpRequest.getString(script).then(configure);
     else { //probably not ok to assume a textarea here, but most times it should be...?
-      html.TextAreaElement txt = html.query(script);
+      html.TextAreaElement txt = html.querySelector(script);
       configure(txt.value);
     }
   }
@@ -48,7 +48,7 @@ class Config {
     _config['options']['layers'].forEach((v) => _vn.addChild(new Layer()..name = v));
 
     var opt = _config['options'];
-    print(_canvas.width);
+
     if(opt.containsKey('width') && opt.containsKey('height')) stage = new Stage('vnStage', _canvas, opt['width'], opt['height']);
     else stage = new Stage('vnStage', _canvas);
     stage.scaleMode = opt.containsKey('scale')?VN.scaleMode[opt['scale']]:StageScaleMode.NO_SCALE;

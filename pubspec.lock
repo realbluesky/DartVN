@@ -9,6 +9,14 @@ packages:
     description: meta
     source: hosted
     version: "0.7.5"
+  path:
+    description: path
+    source: hosted
+    version: "0.9.0"
+  stack_trace:
+    description: stack_trace
+    source: hosted
+    version: "0.9.0"
   stagexl:
     description:
       ref: null
@@ -16,6 +24,21 @@ packages:
       url: "https://github.com/bp74/StageXL.git"
     source: git
     version: "0.8.5"
+  stagexl_richtextfield:
+    description:
+      ref: null
+      resolved-ref: "69d449dca76a9d749bc75b3b4a7d08bbaff07e15"
+      url: "https://github.com/realbluesky/StageXL_RichTextField.git"
+    source: git
+    version: "0.0.0"
+  unittest:
+    description: unittest
+    source: hosted
+    version: "0.9.0"
+  xml:
+    description: xml
+    source: hosted
+    version: "0.9.5"
   yaml:
     description: yaml
     source: hosted

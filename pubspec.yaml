@@ -6,4 +6,6 @@ dependencies:
   browser: any
   stagexl:
     git: https://github.com/bp74/StageXL.git
+  stagexl_richtextfield:
+    git: https://github.com/realbluesky/StageXL_RichTextField.git
   yaml: any

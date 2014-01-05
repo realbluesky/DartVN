@@ -13,7 +13,6 @@ class Position extends DisplayObjectContainer {
 
   void add(DisplayObject child) {
     List xy =_getXY(args, [child.width, child.height]);
-    print('child dim: '+child.width.toString()+' x '+child.height.toString());
     child.x = xy[0];
     child.y = xy[1];
     addChild(child);
@@ -27,7 +26,6 @@ class Position extends DisplayObjectContainer {
     num height = wh[1];
     num sw = stage.sourceWidth;
     num sh = stage.sourceHeight;
-    print('stage dim:'+sw.toString()+' x '+sh.toString());
     args.forEach((edge, distance) {
       if(!hor) {
         hor = true;

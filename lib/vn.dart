@@ -1,9 +1,10 @@
 library dartvn;
 
 import 'dart:html' as html;
-import 'dart:math';
 import 'package:stagexl/stagexl.dart';
+import 'package:stagexl_richtextfield/stagexl_richtextfield.dart';
 import 'package:yaml/yaml.dart';
+import 'dart:math' show max, min;
 
 part 'src/config.dart';
 part 'src/character.dart';
