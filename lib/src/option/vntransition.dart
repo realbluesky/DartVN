@@ -153,19 +153,25 @@ void fadeOutTransition() {
         ..closePath()
         ..fillGradient(gradient)
         ;
-    var alphaMask = new BitmapData(fade.width, fade.height, true, 0x00000000)
+    var alphaMask = new BitmapData(fade.width.toInt(), fade.height.toInt(), true, 0x00000000)
         ..draw(fade);
     var alphaMaskFilter = new AlphaMaskFilter(alphaMask); 
     temp
         ..filters = [alphaMaskFilter]
-        ..applyCache(current.x.toInt(),current.y.toInt(),current.width.toInt(),current.height.toInt());
+        //..applyCache(current.x.toInt(),current.y.toInt(),current.width.toInt(),current.height.toInt(), debugBorder: true);
+        ..applyCache(startStop[0].toInt(),startStop[1].toInt(),fade.width.toInt(),fade.height.toInt(), debugBorder: true);
     position.add(temp);
     position.add(current);
     vn.juggler.transition(startStop[0], startStop[1], opts['dur'], VN.ease[opts['ease']], (value) {
+            
       alphaMaskFilter.matrix
         ..identity()
-        ..translate(horizontal?value:0, horizontal?0:value);
-      temp.refreshCache();
+        ..translate(horizontal?value:0, horizontal?0:value)
+        ;
+      temp.applyCache(horizontal?value:0, horizontal?0:value, fade.width.toInt(), fade.height.toInt(), debugBorder: true);
+      
+      //temp.refreshCache();
+
       switch(opts['dir']) {
         case 'right': current.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),current.width.toInt()), current.height.toInt());
         break;
@@ -176,6 +182,8 @@ void fadeOutTransition() {
         case 'up': current.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), current.width.toInt(), max(startStop[0]-value+startStop[1],0));
         break;
       }
+      
+      
     })..onComplete = _after
       ..roundToInt = true;
     vn.juggler.delayCall(()=> position.removeChild(temp), opts['dur']);

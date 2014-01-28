@@ -11225,32 +11225,25 @@ var $$ = {};
       t5._gradient = gradient;
       t2.push(t5);
       t3._identityRectangleRefresh = true;
-      alphaMask = Z.BitmapData$(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._width, fade.getBoundsTransformed$1(fade.get$transformationMatrix())._height, true, 0, 1);
+      alphaMask = Z.BitmapData$(J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._width), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._height), true, 0, 1);
       alphaMask.draw$1(fade);
       alphaMaskFilter = Z.AlphaMaskFilter$(alphaMask, null);
       t3 = this.temp;
       t3._filters = [alphaMaskFilter];
-      t5 = this.current;
-      t5 = C.JSNumber_methods.toInt$0(t5.get$x(t5));
-      t2 = this.current;
-      t2 = C.JSNumber_methods.toInt$0(t2.get$y(t2));
-      t4 = this.current;
-      t4 = J.toInt$0$n(t4.get$width(t4));
-      t6 = this.current;
-      t3.applyCache$4(t5, t2, t4, J.toInt$0$n(t6.get$height(t6)));
-      t6 = this.position;
-      t6.add$1(t6, this.temp);
-      t6 = this.position;
-      t6.add$1(t6, this.current);
-      t6 = this.vn.get$juggler();
-      t4 = t1.startStop_1;
-      t2 = t4[0];
-      t4 = t4[1];
-      t5 = this.opts;
-      t5 = t5.$index(t5, "dur");
-      t3 = $.get$VN_ease();
+      t3.applyCache$5$debugBorder(C.JSInt_methods.toInt$0(t1.startStop_1[0]), C.JSInt_methods.toInt$0(t1.startStop_1[1]), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._width), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._height), true);
+      t3 = this.position;
+      t3.add$1(t3, this.temp);
+      t3 = this.position;
+      t3.add$1(t3, this.current);
+      t3 = this.vn.get$juggler();
+      t5 = t1.startStop_1;
+      t2 = t5[0];
+      t5 = t5[1];
+      t4 = this.opts;
+      t4 = t4.$index(t4, "dur");
+      t6 = $.get$VN_ease();
       t7 = this.opts;
-      t1 = t6.transition$5(t6, t2, t4, t5, t3.$index(t3, t7.$index(t7, "ease")), new N.VNTransition_fadeAcrossTransition_closure(t1, this, alphaMaskFilter));
+      t1 = t3.transition$5(t3, t2, t5, t4, t6.$index(t6, t7.$index(t7, "ease")), new N.VNTransition_fadeAcrossTransition_closure(t1, this, fade, alphaMaskFilter));
       t1._onComplete = this.get$_after();
       t1._roundToInt = true;
       t1 = this.vn.get$juggler();
@@ -11435,17 +11428,22 @@ var $$ = {};
     }, "call$0", null, 0, 0, null, "call"]
   },
   VNTransition_fadeAcrossTransition_closure: {
-    "": "Closure:226;box_0,this_1,alphaMaskFilter_2",
+    "": "Closure:226;box_0,this_1,fade_2,alphaMaskFilter_3",
     call$1: [function(value) {
-      var t1, t2, t3, t4, t5;
-      t1 = this.alphaMaskFilter_2._matrix;
+      var t1, t2, t3, t4, t5, t6;
+      t1 = this.alphaMaskFilter_3._matrix;
       t1.identity$0();
       t2 = this.box_0;
       t3 = t2.horizontal_0;
       t4 = t3 ? value : 0;
       t1.translate$2(t1, t4, t3 ? 0 : value);
       t1 = this.this_1;
-      t1.temp.refreshCache$0();
+      t4 = t1.temp;
+      t3 = t2.horizontal_0;
+      t5 = t3 ? value : 0;
+      t3 = t3 ? 0 : value;
+      t6 = this.fade_2;
+      t4.applyCache$5$debugBorder(t5, t3, J.toInt$0$n(t6.getBoundsTransformed$1(t6.get$transformationMatrix())._width), J.toInt$0$n(t6.getBoundsTransformed$1(t6.get$transformationMatrix())._height), true);
       t3 = t1.opts;
       switch (t3.$index(t3, "dir")) {
         case "right":
@@ -11490,9 +11488,9 @@ var $$ = {};
     }, "call$1", null, 2, 0, null, 15, "call"]
   },
   VNTransition_fadeAcrossTransition_closure0: {
-    "": "Closure:214;this_3",
+    "": "Closure:214;this_4",
     call$0: [function() {
-      var t1 = this.this_3;
+      var t1 = this.this_4;
       return t1.position.removeChild$1(t1.temp);
     }, "call$0", null, 0, 0, null, "call"]
   },
@@ -17447,9 +17445,9 @@ var $$ = {};
       t2._height;
       canvas = t1._stagexl$_canvas;
       matrix = t1._quad.get$drawMatrix();
-      t1 = -x;
-      t2 = -y;
-      matrix.translate$2(matrix, t1, t2);
+      t1 = J.getInterceptor$n(x);
+      t2 = J.getInterceptor$n(y);
+      matrix.translate$2(matrix, t1.$negate(x), t2.$negate(y));
       renderContext = Z.RenderContextCanvas$(canvas, 16777215);
       renderState = Z.RenderState$(renderContext, matrix);
       renderContext.clear$0(renderContext);
@@ -17457,7 +17455,7 @@ var $$ = {};
       if (this._filters != null) {
         cacheBitmapData = Z.BitmapData$fromRenderTextureQuad(this._cacheTexture._quad, null, null);
         bounds = this.getBoundsTransformed$1($.get$_identityMatrix());
-        bounds.offset$2(bounds, t1, t2);
+        bounds.offset$2(bounds, t1.$negate(x), t2.$negate(y));
         for (t1 = this._filters, t1.length, t1 = new H.ListIterator(t1, 1, 0, null); t1.moveNext$0();) {
           filter = t1._current;
           filterOverlap = filter.get$overlap();
@@ -17468,8 +17466,8 @@ var $$ = {};
           filterBounds = new Z.Rectangle0(t2, t3, t4, t5);
           t6 = filterOverlap._x;
           t7 = filterOverlap._y;
-          filterBounds._x = t2 + t6;
-          filterBounds._y = t3 + t7;
+          filterBounds._x = J.$add$ns(t2, t6);
+          filterBounds._y = J.$add$ns(t3, t7);
           t7 = filterOverlap._width;
           t3 = filterOverlap._height;
           filterBounds._width = J.$add$ns(t4, t7);
@@ -17632,7 +17630,7 @@ var $$ = {};
       return false;
     }, "call$1", "get$contains", 2, 0, null, 286],
     getBoundsTransformed$2: [function(matrix, returnRectangle) {
-      var t1, t2, left, $top, right, bottom, i, child, rectangle, left0, top0, t3, right0, bottom0;
+      var t1, t2, left, $top, right, bottom, i, child, rectangle;
       if (returnRectangle == null)
         returnRectangle = new Z.Rectangle0(0, 0, 0, 0);
       t1 = this._children;
@@ -17642,35 +17640,25 @@ var $$ = {};
         child = t1[i];
         t2.copyFromAndConcat$2(child.get$transformationMatrix(), matrix);
         rectangle = child.getBoundsTransformed$2(t2, returnRectangle);
-        left0 = rectangle._x;
-        if (left0 < left)
-          left = left0;
-        top0 = rectangle._y;
-        if (top0 < $top)
-          $top = top0;
-        t3 = rectangle._width;
-        if (typeof t3 !== "number")
-          return H.iae(t3);
-        right0 = left0 + t3;
-        if (right0 > right)
-          right = right0;
-        t3 = rectangle._height;
-        if (typeof t3 !== "number")
-          return H.iae(t3);
-        bottom0 = top0 + t3;
-        if (bottom0 > bottom)
-          bottom = bottom0;
+        if (J.$lt$n(rectangle._x, left))
+          left = rectangle._x;
+        if (J.$lt$n(rectangle._y, $top))
+          $top = rectangle._y;
+        if (J.$gt$n(J.$add$ns(rectangle._x, rectangle._width), right))
+          right = J.$add$ns(rectangle._x, rectangle._width);
+        if (J.$gt$n(J.$add$ns(rectangle._y, rectangle._height), bottom))
+          bottom = J.$add$ns(rectangle._y, rectangle._height);
       }
       returnRectangle._x = left;
       returnRectangle._y = $top;
-      returnRectangle._width = right - left;
-      returnRectangle._height = bottom - $top;
+      returnRectangle._width = J.$sub$n(right, left);
+      returnRectangle._height = J.$sub$n(bottom, $top);
       return returnRectangle;
     }, function(matrix) {
       return this.getBoundsTransformed$2(matrix, null);
     }, "getBoundsTransformed$1", "call$2", null, "get$getBoundsTransformed", 2, 2, null, 56, 176, 179],
     hitTestInput$2: [function(localX, localY) {
-      var t1, i, hit, child, mask, matrix, deltaX, deltaY, t2, t3, t4, childX, childY, t5, displayObject;
+      var t1, i, hit, child, mask, matrix, deltaX, deltaY, t2, t3, t4, childX, childY, displayObject;
       localX = J.toDouble$0$n(localX);
       localY = J.toDouble$0$n(localY);
       for (t1 = this._children, i = t1.length - 1, hit = null; i >= 0; --i) {
@@ -17690,25 +17678,7 @@ var $$ = {};
           if (mask != null) {
             mask.targetSpace;
             t2 = mask._rectangle;
-            t3 = t2._x;
-            if (t3 <= childX) {
-              t4 = t2._y;
-              if (t4 <= childY) {
-                t5 = t2._width;
-                if (typeof t5 !== "number")
-                  return H.iae(t5);
-                if (t3 + t5 >= childX) {
-                  t2 = t2._height;
-                  if (typeof t2 !== "number")
-                    return H.iae(t2);
-                  t2 = t4 + t2 >= childY;
-                } else
-                  t2 = false;
-              } else
-                t2 = false;
-            } else
-              t2 = false;
-            if (!t2)
+            if (!(J.$le$n(t2._x, childX) && J.$le$n(t2._y, childY) && J.$ge$n(J.$add$ns(t2._x, t2._width), childX) && J.$ge$n(J.$add$ns(t2._y, t2._height), childY)))
               continue;
           }
           displayObject = child.hitTestInput$2(childX, childY);
@@ -19035,7 +19005,7 @@ var $$ = {};
       t1.flush$0(t1);
     }, "call$0", "get$flush", 0, 0, null],
     beginRenderMask$3: [function(renderState, mask, matrix) {
-      var t1, t2, l, t, t3, r, b;
+      var t1, t2, l, t, r, b;
       if (this._maskDepth === 0) {
         t1 = this._renderProgram;
         t1.flush$0(t1);
@@ -19051,14 +19021,8 @@ var $$ = {};
       t2 = mask._rectangle;
       l = t2._x;
       t = t2._y;
-      t3 = t2._width;
-      if (typeof t3 !== "number")
-        return H.iae(t3);
-      r = l + t3;
-      t2 = t2._height;
-      if (typeof t2 !== "number")
-        return H.iae(t2);
-      b = t + t2;
+      r = J.$add$ns(l, t2._width);
+      b = J.$add$ns(t2._y, t2._height);
       this._updateState$2(t1, this._renderTexture);
       t1.renderTriangle$8(l, t, r, t, r, b, matrix, 4294902015);
       this._updateState$2(t1, this._renderTexture);
@@ -19389,7 +19353,7 @@ var $$ = {};
       this._renderingContext.vertexAttribPointer(this._aVertexColorLocation, 4, 5126, false, 24, 8);
     }, "call$1", "get$activate", 2, 0, null, 368],
     renderTriangle$8: [function(x1, y1, x2, y2, x3, y3, matrix, color) {
-      var colorA, colorR, colorG, colorB, a, b, c, d, tx, ty, t1, index, t2;
+      var colorA, colorR, colorG, colorB, a, b, c, d, tx, ty, index, t1, t2, t3;
       colorA = (color >>> 24 & 255) / 255;
       colorR = (color >>> 16 & 255) / 255;
       colorG = (color >>> 8 & 255) / 255;
@@ -19400,30 +19364,35 @@ var $$ = {};
       d = matrix._d;
       tx = matrix._tx;
       ty = matrix._ty;
-      t1 = this._triangleCount;
-      index = t1 * 18;
-      t2 = this._vertexList;
-      if (index > t2.length - 18)
+      index = this._triangleCount * 18;
+      t1 = this._vertexList;
+      if (index > t1.length - 18)
         return;
-      t2[index + 0] = x1 * a + y1 * c + tx;
-      t2[index + 1] = x1 * b + y1 * d + ty;
-      t2[index + 2] = colorR;
-      t2[index + 3] = colorG;
-      t2[index + 4] = colorB;
-      t2[index + 5] = colorA;
-      t2[index + 6] = x2 * a + y2 * c + tx;
-      t2[index + 7] = x2 * b + y2 * d + ty;
-      t2[index + 8] = colorR;
-      t2[index + 9] = colorG;
-      t2[index + 10] = colorB;
-      t2[index + 11] = colorA;
-      t2[index + 12] = x3 * a + y3 * c + tx;
-      t2[index + 13] = x3 * b + y3 * d + ty;
-      t2[index + 14] = colorR;
-      t2[index + 15] = colorG;
-      t2[index + 16] = colorB;
-      t2[index + 17] = colorA;
-      t1 += 3;
+      t2 = J.getInterceptor$n(x1);
+      t3 = J.getInterceptor$n(y1);
+      t1[index + 0] = J.$add$ns(J.$add$ns(t2.$mul(x1, a), t3.$mul(y1, c)), tx);
+      t1[index + 1] = J.$add$ns(J.$add$ns(t2.$mul(x1, b), t3.$mul(y1, d)), ty);
+      t1[index + 2] = colorR;
+      t1[index + 3] = colorG;
+      t1[index + 4] = colorB;
+      t1[index + 5] = colorA;
+      t3 = J.getInterceptor$n(x2);
+      t2 = J.getInterceptor$n(y2);
+      t1[index + 6] = J.$add$ns(J.$add$ns(t3.$mul(x2, a), t2.$mul(y2, c)), tx);
+      t1[index + 7] = J.$add$ns(J.$add$ns(t3.$mul(x2, b), t2.$mul(y2, d)), ty);
+      t1[index + 8] = colorR;
+      t1[index + 9] = colorG;
+      t1[index + 10] = colorB;
+      t1[index + 11] = colorA;
+      t2 = J.getInterceptor$n(x3);
+      t3 = J.getInterceptor$n(y3);
+      t1[index + 12] = J.$add$ns(J.$add$ns(t2.$mul(x3, a), t3.$mul(y3, c)), tx);
+      t1[index + 13] = J.$add$ns(J.$add$ns(t2.$mul(x3, b), t3.$mul(y3, d)), ty);
+      t1[index + 14] = colorR;
+      t1[index + 15] = colorG;
+      t1[index + 16] = colorB;
+      t1[index + 17] = colorA;
+      t1 = this._triangleCount + 3;
       this._triangleCount = t1;
       if (t1 === 256)
         this.flush$0(this);
@@ -19614,45 +19583,65 @@ var $$ = {};
       return Z.Matrix$(c, s, -s, c, scale * t1 - t2 * c + t3 * s, scale * this._textureY - t2 * s - t3 * c);
     },
     clip$1: [function(_, rectangle) {
-      var right, left, t1, left0, bottom, $top, t2, top0, t3, right0, bottom0, textureX, textureY;
+      var right, left, t1, left0, t2, $top, t3, top0, right0, bottom, bottom0, textureX, textureY;
       right = this._offsetX;
       left = right + this._textureWidth;
       t1 = rectangle._x;
-      left0 = right > t1 ? right : t1;
-      if (left < left0)
-        left0 = left;
-      bottom = this._offsetY;
-      $top = bottom + this._textureHeight;
-      t2 = rectangle._y;
-      top0 = bottom > t2 ? bottom : t2;
-      if ($top < top0)
-        top0 = $top;
-      t3 = rectangle._width;
-      if (typeof t3 !== "number")
-        return H.iae(t3);
-      t3 = t1 + t3;
-      right0 = left < t3 ? left : t3;
-      if (right > right0)
-        right0 = right;
-      t1 = rectangle._height;
       if (typeof t1 !== "number")
         return H.iae(t1);
-      t1 = t2 + t1;
-      bottom0 = $top < t1 ? $top : t1;
-      if (bottom > bottom0)
-        bottom0 = bottom;
+      if (right > t1)
+        left0 = right;
+      else
+        left0 = t1;
+      if (left < left0)
+        left0 = left;
+      t2 = this._offsetY;
+      $top = t2 + this._textureHeight;
+      t3 = rectangle._y;
+      if (typeof t3 !== "number")
+        return H.iae(t3);
+      if (t2 > t3)
+        top0 = t2;
+      else
+        top0 = t3;
+      $top = $top < top0 ? $top : top0;
+      t2 = rectangle._width;
+      if (typeof t2 !== "number")
+        return H.iae(t2);
+      t2 = t1 + t2;
+      right0 = left < t2 ? left : t2;
+      right = right > right0 ? right : right0;
+      bottom = this._offsetY;
+      t1 = bottom + this._textureHeight;
+      t2 = J.$add$ns(rectangle._y, rectangle._height);
+      if (typeof t2 !== "number")
+        return H.iae(t2);
+      if (t1 < t2)
+        bottom0 = t1;
+      else
+        bottom0 = t2;
+      bottom = bottom > bottom0 ? bottom : bottom0;
       t1 = this._rotation;
       t2 = t1 === 0;
       t3 = this._textureX;
-      textureX = t2 ? t3 - right + left0 : t3 + bottom - top0;
+      textureX = t2 ? t3 - this._offsetX + left0 : t3 + this._offsetY - $top;
       t3 = this._textureY;
-      textureY = t2 ? t3 - bottom + top0 : t3 - right + left0;
-      return Z.RenderTextureQuad$(this._renderTexture, t1, left0, top0, textureX, textureY, right0 - left0, bottom0 - top0);
+      textureY = t2 ? t3 - this._offsetY + $top : t3 - this._offsetX + left0;
+      return Z.RenderTextureQuad$(this._renderTexture, t1, left0, $top, textureX, textureY, right - left0, bottom - $top);
     }, "call$1", "get$clip", 2, 0, null, 378],
     cut$1: [function(rectangle) {
-      var renderTextureQuad = this.clip$1(this, rectangle);
-      renderTextureQuad._offsetX = renderTextureQuad._offsetX - rectangle._x;
-      renderTextureQuad._offsetY = renderTextureQuad._offsetY - rectangle._y;
+      var renderTextureQuad, t1, t2;
+      renderTextureQuad = this.clip$1(this, rectangle);
+      t1 = renderTextureQuad._offsetX;
+      t2 = rectangle._x;
+      if (typeof t2 !== "number")
+        return H.iae(t2);
+      renderTextureQuad._offsetX = t1 - t2;
+      t2 = renderTextureQuad._offsetY;
+      t1 = rectangle._y;
+      if (typeof t1 !== "number")
+        return H.iae(t1);
+      renderTextureQuad._offsetY = t2 - t1;
       return renderTextureQuad;
     }, "call$1", "get$cut", 2, 0, null, 378],
     RenderTextureQuad$8: function(renderTexture, rotation, offsetX, offsetY, textureX, textureY, textureWidth, textureHeight) {
@@ -20153,16 +20142,13 @@ var $$ = {};
       this._ty = t1 + translationY;
     }, "call$2", "get$translate", 4, 0, null, 387, 388],
     setTo$6: [function(a, b, c, d, tx, ty) {
-      var t1, t2;
-      t1 = C.JSNumber_methods.toDouble$0(a);
-      this._a = t1;
+      this._a = C.JSNumber_methods.toDouble$0(a);
       this._b = b;
       this._c = c;
-      t2 = C.JSNumber_methods.toDouble$0(d);
-      this._d = t2;
-      this._tx = C.JSNumber_methods.toDouble$0(tx);
-      this._ty = C.JSNumber_methods.toDouble$0(ty);
-      this._det = t1 * t2 - b * c;
+      this._d = C.JSNumber_methods.toDouble$0(d);
+      this._tx = J.toDouble$0$n(tx);
+      this._ty = J.toDouble$0$n(ty);
+      this._det = this._a * this._d - this._b * this._c;
     }, "call$6", "get$setTo", 12, 0, null, 97, 128, 298, 350, 389, 390],
     copyFrom$1: [function(matrix) {
       this._a = matrix._a;
@@ -20261,45 +20247,17 @@ var $$ = {};
       this._height = t1.get$y(value);
     },
     contains$2: [function(_, px, py) {
-      var t1, t2, t3;
-      t1 = this._x;
-      if (t1 <= px) {
-        t2 = this._y;
-        if (t2 <= py) {
-          t3 = this._width;
-          if (typeof t3 !== "number")
-            return H.iae(t3);
-          if (t1 + t3 >= px) {
-            t1 = this._height;
-            if (typeof t1 !== "number")
-              return H.iae(t1);
-            t1 = t2 + t1 >= py;
-          } else
-            t1 = false;
-        } else
-          t1 = false;
-      } else
-        t1 = false;
-      return t1;
+      return J.$le$n(this._x, px) && J.$le$n(this._y, py) && J.$ge$n(J.$add$ns(this._x, this._width), px) && J.$ge$n(J.$add$ns(this._y, this._height), py);
     }, "call$2", "get$contains", 4, 0, null, 393, 394],
     offset$2: [function(_, dx, dy) {
-      this._x = this._x + dx;
-      this._y = this._y + dy;
+      this._x = J.$add$ns(this._x, dx);
+      this._y = J.$add$ns(this._y, dy);
     }, "call$2", "get$offset", 4, 0, null, 395, 396],
     align$0: [function() {
-      var rLeft, rTop, t1, t2, rRight;
-      rLeft = C.JSNumber_methods.floor$0(this._x);
-      rTop = C.JSNumber_methods.floor$0(this._y);
-      t1 = this._x;
-      t2 = this._width;
-      if (typeof t2 !== "number")
-        return H.iae(t2);
-      rRight = C.JSNumber_methods.toInt$0(Math.ceil(t1 + t2));
-      t2 = this._y;
-      t1 = this._height;
-      if (typeof t1 !== "number")
-        return H.iae(t1);
-      return new Z.Rectangle0(rLeft, rTop, rRight - rLeft, C.JSNumber_methods.toInt$0(Math.ceil(t2 + t1)) - rTop);
+      var rLeft, rTop;
+      rLeft = J.floor$0$n(this._x);
+      rTop = J.floor$0$n(this._y);
+      return new Z.Rectangle0(rLeft, rTop, J.ceil$0$n(J.$add$ns(this._x, this._width)) - rLeft, J.ceil$0$n(J.$add$ns(this._y, this._height)) - rTop);
     }, "call$0", "get$align", 0, 0, 397]
   },
   Vector: {
@@ -22476,6 +22434,9 @@ J.elementAt$1$ax = function(receiver, a0) {
 };
 J.endsWith$1$s = function(receiver, a0) {
   return J.getInterceptor$s(receiver).endsWith$1(receiver, a0);
+};
+J.floor$0$n = function(receiver) {
+  return J.getInterceptor$n(receiver).floor$0(receiver);
 };
 J.forEach$1$ax = function(receiver, a0) {
   return J.getInterceptor$ax(receiver).forEach$1(receiver, a0);
