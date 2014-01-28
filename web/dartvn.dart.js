@@ -11230,7 +11230,7 @@ var $$ = {};
       alphaMaskFilter = Z.AlphaMaskFilter$(alphaMask, null);
       t3 = this.temp;
       t3._filters = [alphaMaskFilter];
-      t3.applyCache$5$debugBorder(C.JSInt_methods.toInt$0(t1.startStop_1[0]), C.JSInt_methods.toInt$0(t1.startStop_1[1]), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._width), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._height), true);
+      t3.applyCache$5$debugBorder(C.JSInt_methods.toInt$0(t1.startStop_1[0]), C.JSInt_methods.toInt$0(t1.startStop_1[1]), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._width), J.toInt$0$n(fade.getBoundsTransformed$1(fade.get$transformationMatrix())._height), false);
       t3 = this.position;
       t3.add$1(t3, this.temp);
       t3 = this.position;
@@ -11443,7 +11443,7 @@ var $$ = {};
       t5 = t3 ? value : 0;
       t3 = t3 ? 0 : value;
       t6 = this.fade_2;
-      t4.applyCache$5$debugBorder(t5, t3, J.toInt$0$n(t6.getBoundsTransformed$1(t6.get$transformationMatrix())._width), J.toInt$0$n(t6.getBoundsTransformed$1(t6.get$transformationMatrix())._height), true);
+      t4.applyCache$5$debugBorder(t5, t3, J.toInt$0$n(t6.getBoundsTransformed$1(t6.get$transformationMatrix())._width), J.toInt$0$n(t6.getBoundsTransformed$1(t6.get$transformationMatrix())._height), false);
       t3 = t1.opts;
       switch (t3.$index(t3, "dir")) {
         case "right":

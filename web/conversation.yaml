@@ -59,18 +59,18 @@ script:
   # goto "take script to labelled point"
   - [label, start]
   - [set, bg, tl, 0x000000, {dur: 0, for: 0}]
-  #- [set, bg, tl, town, {trans: fadeacross, dir: down, dur: 3}] #performance here is yucky
-  #- [set, mg, center_middle, "DartVN Sample - Zelda Convo", {text_format: title, trans: fadeacross, dur: 2}]
-  #- [set, mg, center_middle, "", {dur: 2}]
+  - [set, bg, tl, town, {trans: fadeacross, dir: down, dur: 3}] #performance here is yucky
+  - [set, mg, center_middle, "DartVN Sample - Zelda Convo", {text_format: title, trans: fadeacross, dur: 2}]
+  - [set, mg, center_middle, "", {dur: 2}]
   #- [say, link.stand, "How's everything going?",
   #    "That good?  I'm glad to hear it.",
   #    "Should this work this way, or what?"]
-  #- [set, mg, stage_left, link.calm, {trans: fade, dur: .75, for: 1}]
-  - [set, mg, stage_right, zelda.hand, {trans: fadeacross, dir: down, dur: 50, ease: linear}] #some sort of clipRectangle bug causes flashing?
-  #- [mod, mg, stage_right, zelda.hand, {trans: scale, range: [1, 1.2], dur: 2, for: 0}]
-  #- [set, fg, center_middle, "text_bubble", {for: 0, dur: 1}]
-  #- [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, for: 3}]
-  #- [set, fg, null, null, {for: 0}] #clear a position by passing nothing
+  - [set, mg, stage_left, link.calm, {trans: fade, dur: .75, for: 1}]
+  - [set, mg, stage_right, zelda.hand, {trans: fadeacross, dir: down, dur: 3, ease: linear}] #some sort of clipRectangle bug causes flashing?
+  - [mod, mg, stage_right, zelda.hand, {trans: scale, range: [1, 1.2], dur: 2, for: 0}]
+  - [set, fg, center_middle, "text_bubble", {for: 0, dur: 1}]
+  - [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, for: 3}]
+  - [set, fg, null, null, {for: 0}] #clear a position by passing nothing
   - [set, mg] #clear a layer by passing nothing
   - [set, bg, tl, 0xFF000000]
   - [goto, start]

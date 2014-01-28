@@ -159,7 +159,7 @@ void fadeOutTransition() {
     temp
         ..filters = [alphaMaskFilter]
         //..applyCache(current.x.toInt(),current.y.toInt(),current.width.toInt(),current.height.toInt(), debugBorder: true);
-        ..applyCache(startStop[0].toInt(),startStop[1].toInt(),fade.width.toInt(),fade.height.toInt(), debugBorder: true);
+        ..applyCache(startStop[0].toInt(),startStop[1].toInt(),fade.width.toInt(),fade.height.toInt(), debugBorder: false);
     position.add(temp);
     position.add(current);
     vn.juggler.transition(startStop[0], startStop[1], opts['dur'], VN.ease[opts['ease']], (value) {
@@ -168,7 +168,7 @@ void fadeOutTransition() {
         ..identity()
         ..translate(horizontal?value:0, horizontal?0:value)
         ;
-      temp.applyCache(horizontal?value:0, horizontal?0:value, fade.width.toInt(), fade.height.toInt(), debugBorder: true);
+      temp.applyCache(horizontal?value:0, horizontal?0:value, fade.width.toInt(), fade.height.toInt(), debugBorder: false);
       
       //temp.refreshCache();
 
