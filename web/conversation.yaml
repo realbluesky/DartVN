@@ -70,7 +70,7 @@ script:
   - [mod, mg, stage_right, zelda.hand, {trans: scale, range: [1, 1.2], dur: 2, for: 0}]
   - [set, fg, center_middle, "text_bubble", {for: 0, dur: 1}]
   - [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, for: 3}]
-  - [set, fg, null, null, {for: none}] #clear a position by passing nothing
+  - [set, fg, null, null, {for: 0}] #clear a position by passing nothing
   - [set, mg] #clear a layer by passing nothing
   - [set, bg, tl, 0xFF000000]
   - [goto, start]
