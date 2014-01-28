@@ -4,11 +4,7 @@ packages:
   browser:
     description: browser
     source: hosted
-    version: "0.7.5"
-  meta:
-    description: meta
-    source: hosted
-    version: "0.7.5"
+    version: "0.9.1"
   path:
     description: path
     source: hosted
@@ -18,19 +14,16 @@ packages:
     source: hosted
     version: "0.9.0"
   stagexl:
-    description:
-      ref: null
-      resolved-ref: "9924ab97dfea6b1abe4ba9d79a9b9fb424541444"
-      url: "https://github.com/bp74/StageXL.git"
-    source: git
-    version: "0.8.5"
+    description: stagexl
+    source: hosted
+    version: "0.9.0"
   stagexl_richtextfield:
     description:
       ref: null
-      resolved-ref: "69d449dca76a9d749bc75b3b4a7d08bbaff07e15"
+      resolved-ref: d4bfbd9cfc366878e3bd745cfc9cad08b7703c93
       url: "https://github.com/realbluesky/StageXL_RichTextField.git"
     source: git
-    version: "0.0.0"
+    version: "0.1.1"
   unittest:
     description: unittest
     source: hosted
@@ -42,4 +35,4 @@ packages:
   yaml:
     description: yaml
     source: hosted
-    version: "0.7.5"
+    version: "0.9.0"

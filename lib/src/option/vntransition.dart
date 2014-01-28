@@ -119,48 +119,53 @@ void fadeOutTransition() {
     current.clipRectangle = new Rectangle.zero();
     var fadePortion = 1/5;
     var stops = [0,1];
-    var gradientWidthHeight = [current.width*fadePortion,0];
-    var pathWidthHeight = [current.width*fadePortion,current.height];
+    var gradientWidthHeight = [(current.width*fadePortion).toInt(),0];
+    var pathWidthHeight = [(current.width*fadePortion).toInt(),current.height.toInt()];
     bool horizontal = true;
-    var startStop = [-current.width*fadePortion, current.width];
+    var startStop = [(-current.width*fadePortion).toInt(), current.width.toInt()];
     switch(opts['dir']) {
       case 'left':
         stops = new List.from(stops.reversed);
-        startStop = [current.width,-current.width*fadePortion];
+        startStop = [current.width.toInt(),(-current.width*fadePortion).toInt()];
         break;
       case 'down':
-        gradientWidthHeight = [0,current.height*fadePortion];
-        pathWidthHeight = [current.width,current.height*fadePortion];
+        gradientWidthHeight = [0,(current.height*fadePortion).toInt()];
+        pathWidthHeight = [current.width.toInt(),(current.height*fadePortion).toInt()];
         horizontal = false;
-        startStop = [-current.height*fadePortion, current.height];
+        startStop = [(-current.height*fadePortion).toInt(), current.height.toInt()];
         break;
       case 'up':
         stops = new List.from(stops.reversed);
-        gradientWidthHeight = [0,current.height*fadePortion];
-        pathWidthHeight = [current.width,current.height*fadePortion];
+        gradientWidthHeight = [0,(current.height*fadePortion).toInt()];
+        pathWidthHeight = [current.width.toInt(),(current.height*fadePortion).toInt()];
         horizontal = false;
-        startStop = [current.height,-current.height*fadePortion];
+        startStop = [current.height.toInt(),(-current.height*fadePortion).toInt()];
         break;
     }
     Shape fade = new Shape();
     temp = new Bitmap(current.bitmapData);
     GraphicsGradient gradient = new GraphicsGradient.linear(0, 0, gradientWidthHeight[0], gradientWidthHeight[1])
-    ..addColorStop(stops[0], 0xFF000000)
+      ..addColorStop(stops[0], 0xFF000000)
       ..addColorStop(stops[1], 0x00000000);
     fade.graphics
         ..beginPath()
         ..rect(0, 0, pathWidthHeight[0], pathWidthHeight[1])
         ..closePath()
-        ..fillGradient(gradient);
+        ..fillGradient(gradient)
+        ;
     var alphaMask = new BitmapData(fade.width, fade.height, true, 0x00000000)
         ..draw(fade);
+    var alphaMaskFilter = new AlphaMaskFilter(alphaMask); 
     temp
-        ..filters = [new AlphaMaskFilter(alphaMask)]
-        ..applyCache(startStop[0].toInt(),startStop[1].toInt(),fade.width.toInt(),fade.height.toInt());
+        ..filters = [alphaMaskFilter]
+        ..applyCache(current.x.toInt(),current.y.toInt(),current.width.toInt(),current.height.toInt());
     position.add(temp);
     position.add(current);
     vn.juggler.transition(startStop[0], startStop[1], opts['dur'], VN.ease[opts['ease']], (value) {
-      temp.applyCache(horizontal?value.toInt():0, horizontal?0:value.toInt(), fade.width.toInt(),fade.height.toInt());
+      alphaMaskFilter.matrix
+        ..identity()
+        ..translate(horizontal?value:0, horizontal?0:value);
+      temp.refreshCache();
       switch(opts['dir']) {
         case 'right': current.clipRectangle = new Rectangle(0, 0, min(max(0,value+1),current.width.toInt()), current.height.toInt());
         break;
@@ -171,7 +176,8 @@ void fadeOutTransition() {
         case 'up': current.clipRectangle = new Rectangle(0, max(value-startStop[1]-1,0), current.width.toInt(), max(startStop[0]-value+startStop[1],0));
         break;
       }
-    }).onComplete = _after;
+    })..onComplete = _after
+      ..roundToInt = true;
     vn.juggler.delayCall(()=> position.removeChild(temp), opts['dur']);
   }
 
@@ -216,7 +222,8 @@ void fadeOutTransition() {
 
     vn.juggler.tween(current, opts['dur'], VN.ease[opts['ease']])
       ..animate.scaleX.to(opts['range'][1])
-      ..animate.scaleY.to(opts['range'][1]);
+      ..animate.scaleY.to(opts['range'][1])
+      ..onComplete = _after;
 
   }
 

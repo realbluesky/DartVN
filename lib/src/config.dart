@@ -28,6 +28,7 @@ class Config {
 
     //set some defaults where not provided
     Map defaults = {'dur': 1.0, 'dir': 'right', 'gap': 'none', 'wait': 'none','trans': 'crossfade'};
+    _config['options'].putIfAbsent('webgl', ()=>true);
     _config['options'].putIfAbsent('defaults', ()=>{});
     defaults.forEach((k,v) {
       _config['options']['defaults'].putIfAbsent(k, ()=>v);
@@ -48,9 +49,8 @@ class Config {
     _config['options']['layers'].forEach((v) => _vn.addChild(new Layer()..name = v));
 
     var opt = _config['options'];
-
-    if(opt.containsKey('width') && opt.containsKey('height')) stage = new Stage('vnStage', _canvas, opt['width'], opt['height']);
-    else stage = new Stage('vnStage', _canvas);
+    if(opt.containsKey('width') && opt.containsKey('height')) stage = new Stage(_canvas, webGL: opt['webgl'], width: opt['width'], height: opt['height']);
+    else stage = new Stage(_canvas, webGL: opt['webgl']);
     stage.scaleMode = opt.containsKey('scale')?VN.scaleMode[opt['scale']]:StageScaleMode.NO_SCALE;
     stage.align = opt.containsKey('align')?VN.align[opt['align']]:StageAlign.NONE;
 
@@ -93,6 +93,14 @@ class Config {
 
     resourceManager.load().then((rm) {
       if(onConfig != null) onConfig(this);
+    });
+    
+    //loading indicator
+    resourceManager.onProgress.listen((e) {
+      var finished = resourceManager.finishedResources;
+      var pending = resourceManager.pendingResources;
+      var failed = resourceManager.failedResources;
+      print("Resource Progress -> finished: ${finished.length}, pending:${pending.length}, failed:${failed.length}");
     });
 
   }

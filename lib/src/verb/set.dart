@@ -2,7 +2,6 @@ part of dartvn;
 
 class Set extends Verb {
   List args;
-
   bool mod;
 
   Set(List args, {this.mod: false}) {
@@ -141,6 +140,7 @@ class Set extends Verb {
       }
 
     if(opts['for'] == 'none' || opts['for'] == null) script.next();
+    //else if(opts['for'] == 'user') vn.prevNext = [false, true];
 
   }
 

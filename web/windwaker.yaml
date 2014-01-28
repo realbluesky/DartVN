@@ -20,6 +20,7 @@ options:
     bc: {center: 0, bottom: 70}
   text_formats:
     story: {font: 'Calibri, Tahoma, Verdana, sans-serif', size: 40, color: 0xFFFFFFFF, width: 800, height: 131, align: left}
+    click: {font: 'Calibri, Tahoma, Verdana, sans-serif', size: 90, color: 0xFFAAAAFF, align: center}
   aliases:
     txt: [set, text, bc, :1, {for: :2}]
 assets:
@@ -28,7 +29,9 @@ assets:
   sounds:
     legendaryHero: ../assets/windwaker/sound/story.mp3
 script:
-   - [label, start]
+   - [set, background, tl, 0xFF000000, {trans: fade, dur: 0}]
+   - [set, text, mc, "Click to Start", {text_format: click, trans: fade, for: user}]
+   - [set, text, mc, "", {for: 1}]
    - [play, backgroundMusic, legendaryHero]
    - [set, background, tl, 0xFF000000, {trans: fade, dur: 0, for: .5}]
    - [set, text, mc, "This is but one of the legends of which the people speak...", {trans: fade, for: 6}]
@@ -68,4 +71,3 @@ script:
    - [txt, "The elders wished only for the youths to know courage like the hero of legend...", 8]
    - [set, text, bc]
    - [set, drawing, im, "", {for: 1}]
-   - [goto, start]

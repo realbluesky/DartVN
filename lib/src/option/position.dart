@@ -57,7 +57,7 @@ class Position extends DisplayObjectContainer {
 
     });
 
-    return [x,y];
+    return [x.toInt(),y.toInt()];
   }
 
 }

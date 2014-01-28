@@ -4,6 +4,7 @@ options:
   align: none #none, left, right, top, topLeft, topRight, bottom, bottomLeft, bottomRight
   width: 1920
   height: 1080
+  webgl: true #true/false, default true
   #hardcoded defaults
   defaults:
     dur: 1
@@ -25,12 +26,13 @@ options:
     bl: {bottom: 0, left: 0}
   text_formats:
     #name: ['font, stack', size, color, bold, italic]
-    title: {font: '"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', size: 60, color: 0xFFFFFFFF, bold: true}
-    dialog: {font: '"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', size: 34, color: 0xFFFFFFFF}
+    title: {font: '"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', size: 60, color: 0xFFFFFFFF, bold: true, align: center}
+    dialog: {font: '"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif', size: 34, color: 0xFFFFFFFF, align: center}
 assets:
   image_path: ../assets/image/
   images:
     town: town.jpg
+    dock: dock.jpg
     #anything ending in .json will be loaded as a TextureAtlas, comments below just for reference
     #image assets with . in the name are assumed to come from an atlas, so don't use them in other asset names
     link: link.json #boomerang, bow, calm, fairy, flute, jump, map, sword, whip
@@ -50,23 +52,25 @@ script:
   # options:
   #   trans: fade|fadeacross|fadethru|none
   #   for: #secs [eg 3]|user|none
-  #   [set, layer, position, atlas/image/color, {options}]
+  #   [set, layer, position, atlas/image/color/text, {options}]
   #   [set, bg, bg, 0xFF000000, {trans: fade}]
   #   [set, mg, stage_left, asset_name, {trans: fadethru, color: 0xFF000000}]
   # label "create a placemark to go back to"
   # goto "take script to labelled point"
   - [label, start]
-  - [set, bg, tl, town, {trans: fade, dur: 2}]
+  - [set, bg, tl, 0x000000, {dur: 0, for: 0}]
+  - [set, bg, tl, town, {trans: fadeacross, dir: down, dur: 3}] #performance here is yucky
   - [set, mg, center_middle, "DartVN Sample - Zelda Convo", {text_format: title, trans: fadeacross, dur: 2}]
   - [set, mg, center_middle, "", {dur: 2}]
   #- [say, link.stand, "How's everything going?",
   #    "That good?  I'm glad to hear it.",
   #    "Should this work this way, or what?"]
   - [set, mg, stage_left, link.calm, {trans: fade, dur: .75, for: 1}]
-  - [set, mg, stage_right, zelda.hand, {trans: fadethru, color: 0xFFFFFFFF, dur: .75}]
+  - [set, mg, stage_right, zelda.hand, {trans: fadeacross, dir: down, dur: 30}] #some sort of clipRectangle bug causes flashing?
+  - [mod, mg, stage_right, zelda.hand, {trans: scale, range: [1, 1.2], dur: 2, for: 0}]
   - [set, fg, center_middle, "text_bubble", {for: 0, dur: 1}]
   - [set, fg, center_middle, "Sample Dialog - need to implement 'say' verb.", {text_format: dialog, mode: add, for: 3}]
-  - [set, fg] #clear a position by passsing nothing
+  - [set, fg, null, null, {for: none}] #clear a position by passing nothing
   - [set, mg] #clear a layer by passing nothing
   - [set, bg, tl, 0xFF000000]
   - [goto, start]

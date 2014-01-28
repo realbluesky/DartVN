@@ -46,6 +46,7 @@ class Script {
     VN vn = stage.getChildByName('vn');
     if(vn.aliases.containsKey(line[0])) line = vn.aliases[line[0]].apply(line);
 
+    //every line is a yaml array starting with a verb and followed by a number of arguments
     var verb = line[0];
     List args = line.sublist(1);
 

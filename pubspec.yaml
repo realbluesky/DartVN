@@ -1,11 +1,11 @@
 name: dartvn
-version: 0.0.0
 author: Alex Gann
+version: 0.0.0
 description: Visual Novel engine
 dependencies:
   browser: any
-  stagexl:
-    git: https://github.com/bp74/StageXL.git
+  stagexl: '>=0.9.0 <0.10.0'
   stagexl_richtextfield:
     git: https://github.com/realbluesky/StageXL_RichTextField.git
-  yaml: any
+    version: '>=0.1.1'
+  yaml: 0.9.0
